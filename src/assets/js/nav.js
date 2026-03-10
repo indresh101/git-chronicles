@@ -118,6 +118,12 @@
       }
     }
 
+    // Check if we're on the glossary page
+    var glossarySlug = lang === 'fr' ? '/fr/glossaire/' : '/en/glossary/';
+    if (path === glossarySlug) {
+      return { type: 'glossary' };
+    }
+
     // Check if we're on a codex page
     var codexPrefix = getCodexPathPrefix();
     if (path.indexOf(codexPrefix) !== -1) {
@@ -190,6 +196,14 @@
       html += '</a>';
     });
     html += '</div>';
+
+    // Glossary
+    var glossaryHref = lang === 'fr' ? '/fr/glossaire/' : '/en/glossary/';
+    var glossaryLabel = lang === 'fr' ? 'Glossaire' : 'Glossary';
+    html += '<div class="arc-group">';
+    html += '<a href="' + glossaryHref + '" class="quest-link' + (context.type === 'glossary' ? ' active' : '') + '">';
+    html += glossaryLabel;
+    html += '</a></div>';
 
     nav.innerHTML = html;
   }

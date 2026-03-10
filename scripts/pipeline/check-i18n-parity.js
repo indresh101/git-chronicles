@@ -15,6 +15,11 @@ const PAIRS = [
   { fr: "fr/codex", en: "en/codex", byFilename: true },
 ];
 
+// Standalone pages that must exist in both languages
+const STANDALONE_PAGES = [
+  { fr: "fr/glossaire.njk", en: "en/glossary.njk" },
+];
+
 let errors = 0;
 let matched = 0;
 
@@ -108,6 +113,21 @@ for (const pair of PAIRS) {
         errors++;
       }
     }
+  }
+}
+
+// Check standalone pages
+for (const sp of STANDALONE_PAGES) {
+  const frExists = fs.existsSync(path.join(SRC, sp.fr));
+  const enExists = fs.existsSync(path.join(SRC, sp.en));
+  if (frExists && !enExists) {
+    console.error(`MISSING EN: ${sp.fr} exists but ${sp.en} is missing`);
+    errors++;
+  } else if (!frExists && enExists) {
+    console.error(`MISSING FR: ${sp.en} exists but ${sp.fr} is missing`);
+    errors++;
+  } else if (frExists && enExists) {
+    matched++;
   }
 }
 

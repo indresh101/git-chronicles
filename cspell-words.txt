@@ -46,6 +46,7 @@ Eleventy
 Nunjucks
 Pagefind
 pagefind
+esbuild
 frontmatter
 cspell
 keydown

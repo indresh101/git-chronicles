@@ -1,0 +1,189 @@
+---
+layout: layouts/base.njk
+lang: en
+title: "Technology Glossary"
+permalink: /en/glossary/
+---
+
+<!-- Hero -->
+<section class="hero">
+  <h1>Technology Glossary</h1>
+  <p class="subtitle">Every technology mentioned in the Chronicles</p>
+</section>
+
+<section>
+  <div class="narrative">
+    <p>
+      This glossary lists all the tools and technologies you will encounter throughout
+      your learning journey, as well as those powering this site. Each entry links
+      to the official documentation.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     Section 1: Technologies taught in the course
+     ============================================================ -->
+
+<section>
+  <h2 class="codex-section-title">Technologies taught in the course</h2>
+
+  <h3>Version control</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://git-scm.com/" target="_blank" rel="noopener">Git</a></td><td>Distributed version control system, at the heart of every quest</td></tr>
+      <tr><td><a href="https://git-scm.com/docs/git-lfs" target="_blank" rel="noopener">Git LFS</a></td><td>Git extension for managing large files (binaries, assets)</td></tr>
+      <tr><td><a href="https://semver.org/" target="_blank" rel="noopener">Semantic Versioning</a></td><td>Version naming convention (MAJOR.MINOR.PATCH)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Platforms and forges</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></td><td>Most popular Git hosting platform</td></tr>
+      <tr><td><a href="https://about.gitlab.com/" target="_blank" rel="noopener">GitLab</a></td><td>Complete DevOps platform, self-hostable</td></tr>
+      <tr><td><a href="https://bitbucket.org/" target="_blank" rel="noopener">Bitbucket</a></td><td>Atlassian's Git forge</td></tr>
+      <tr><td><a href="https://forgejo.org/" target="_blank" rel="noopener">Forgejo</a></td><td>Lightweight, open source, self-hostable Git forge</td></tr>
+      <tr><td><a href="https://gitea.com/" target="_blank" rel="noopener">Gitea</a></td><td>Lightweight Git forge written in Go</td></tr>
+      <tr><td><a href="https://radicle.xyz/" target="_blank" rel="noopener">Radicle</a></td><td>Peer-to-peer, decentralized and sovereign Git forge</td></tr>
+    </tbody>
+  </table>
+
+  <h3>CI/CD and automation</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://docs.github.com/en/actions" target="_blank" rel="noopener">GitHub Actions</a></td><td>CI/CD system integrated into GitHub (YAML workflows)</td></tr>
+      <tr><td><a href="https://docs.gitlab.com/ci/" target="_blank" rel="noopener">GitLab CI</a></td><td>CI/CD pipeline integrated into GitLab</td></tr>
+      <tr><td><a href="https://support.atlassian.com/bitbucket-cloud/docs/get-started-with-bitbucket-pipelines/" target="_blank" rel="noopener">Bitbucket Pipelines</a></td><td>CI/CD integrated into Bitbucket</td></tr>
+      <tr><td><a href="https://www.jenkins.io/" target="_blank" rel="noopener">Jenkins</a></td><td>Historical open source automation server</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Infrastructure and deployment</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://www.docker.com/" target="_blank" rel="noopener">Docker</a></td><td>Application containerization platform</td></tr>
+      <tr><td><a href="https://kubernetes.io/" target="_blank" rel="noopener">Kubernetes</a></td><td>Container orchestrator for large-scale deployment</td></tr>
+      <tr><td><a href="https://www.terraform.io/" target="_blank" rel="noopener">Terraform</a></td><td>Multi-cloud Infrastructure as Code (IaC)</td></tr>
+      <tr><td><a href="https://argo-cd.readthedocs.io/" target="_blank" rel="noopener">ArgoCD</a></td><td>GitOps continuous deployment tool for Kubernetes</td></tr>
+      <tr><td><a href="https://fluxcd.io/" target="_blank" rel="noopener">Flux</a></td><td>GitOps tool for Kubernetes synchronization</td></tr>
+      <tr><td><a href="https://kustomize.io/" target="_blank" rel="noopener">Kustomize</a></td><td>Kubernetes configuration management without templates</td></tr>
+      <tr><td><a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a></td><td>Free static site hosting from a GitHub repository</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Monorepos and build</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://nx.dev/" target="_blank" rel="noopener">Nx</a></td><td>Smart build system for JavaScript/TypeScript monorepos</td></tr>
+      <tr><td><a href="https://turbo.build/" target="_blank" rel="noopener">Turborepo</a></td><td>High-performance build system for JS monorepos</td></tr>
+      <tr><td><a href="https://bazel.build/" target="_blank" rel="noopener">Bazel</a></td><td>Google's multi-language build system</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Data Science and Machine Learning</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://jupyter.org/" target="_blank" rel="noopener">Jupyter</a></td><td>Interactive notebooks for scientific computing</td></tr>
+      <tr><td><a href="https://dvc.org/" target="_blank" rel="noopener">DVC</a></td><td>Data Version Control - data and ML pipeline versioning</td></tr>
+      <tr><td><a href="https://onnx.ai/" target="_blank" rel="noopener">ONNX</a></td><td>Open format for machine learning model exchange</td></tr>
+      <tr><td><a href="https://jupytext.readthedocs.io/" target="_blank" rel="noopener">Jupytext</a></td><td>Sync Jupyter notebooks with plain text files</td></tr>
+      <tr><td><a href="https://github.com/kynan/nbstripout" target="_blank" rel="noopener">nbstripout</a></td><td>Git filter to strip notebook outputs</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Hardware and electronics</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://www.kicad.org/" target="_blank" rel="noopener">KiCad</a></td><td>Open source electronic design suite (schematics, PCB)</td></tr>
+      <tr><td><a href="https://github.com/Gasman2014/KiCad-Diff" target="_blank" rel="noopener">kidiff</a></td><td>Visual diff tool for KiCad schematics</td></tr>
+      <tr><td><a href="https://github.com/leandrosq/plotgitsch" target="_blank" rel="noopener">plotgitsch</a></td><td>Schematic change visualization in Git</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Design and creation</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://www.figma.com/" target="_blank" rel="noopener">Figma</a></td><td>Collaborative online design tool</td></tr>
+      <tr><td><a href="https://www.abstract.com/" target="_blank" rel="noopener">Abstract</a></td><td>Version control for design files</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Security and authentication</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://www.openssh.com/" target="_blank" rel="noopener">SSH</a></td><td>Secure protocol for authentication and transfer</td></tr>
+      <tr><td><a href="https://gnupg.org/" target="_blank" rel="noopener">GPG</a></td><td>Cryptographic encryption and commit signing</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="fancy-separator"></div>
+
+<!-- ============================================================
+     Section 2: Technologies powering this site
+     ============================================================ -->
+
+<section>
+  <h2 class="codex-section-title">Technologies powering this site</h2>
+
+  <div class="narrative">
+    <p>
+      This site is itself an open source project. Here is the tech stack that makes it run.
+    </p>
+  </div>
+
+  <h3>Generation and templates</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://www.11ty.dev/" target="_blank" rel="noopener">Eleventy (11ty)</a></td><td>Simple and fast static site generator (v3)</td></tr>
+      <tr><td><a href="https://mozilla.github.io/nunjucks/" target="_blank" rel="noopener">Nunjucks</a></td><td>Template engine used for all pages (.njk)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Search</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://pagefind.app/" target="_blank" rel="noopener">Pagefind</a></td><td>Client-side static search engine, bilingual</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Build and optimization</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://esbuild.github.io/" target="_blank" rel="noopener">esbuild</a></td><td>Ultra-fast JavaScript bundler, used for CSS/JS minification</td></tr>
+      <tr><td><a href="https://github.com/terser/html-minifier-terser" target="_blank" rel="noopener">html-minifier-terser</a></td><td>HTML minification in production</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Code quality</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://cspell.org/" target="_blank" rel="noopener">cspell</a></td><td>Spell checker for code and content (FR/EN)</td></tr>
+      <tr><td><a href="https://typicode.github.io/husky/" target="_blank" rel="noopener">Husky</a></td><td>Git hooks manager (pre-commit)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Hosting and CI/CD</h3>
+  <table class="glossary-table">
+    <thead><tr><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a></td><td>Production hosting for this site</td></tr>
+      <tr><td><a href="https://docs.github.com/en/actions" target="_blank" rel="noopener">GitHub Actions</a></td><td>Automated build, tests and deployment on every push</td></tr>
+      <tr><td><a href="https://lychee.cli.rs/" target="_blank" rel="noopener">Lychee</a></td><td>Dead link checker for the site</td></tr>
+    </tbody>
+  </table>
+</section>
