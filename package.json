@@ -4,7 +4,7 @@
   "description": "An interactive Git course with fantasy narrative - bilingual (FR/EN)",
   "scripts": {
     "dev": "npx eleventy --serve",
-    "build": "npm run spell && npx eleventy",
+    "build": "npm run spell && NODE_ENV=production npx eleventy && node scripts/pipeline/minify-assets.js && npx pagefind --site _site",
     "spell": "cspell \"src/**/*.njk\" \"README*.md\"",
     "spell:fr": "cspell \"src/fr/**/*.njk\" \"README.fr.md\"",
     "spell:en": "cspell \"src/en/**/*.njk\" \"README.md\"",
@@ -18,7 +18,10 @@
     "@11ty/eleventy": "^3.0.0",
     "@cspell/dict-fr-fr": "^2.3.2",
     "cspell": "^9.7.0",
-    "husky": "^9.1.7"
+    "esbuild": "^0.27.3",
+    "html-minifier-terser": "^7.2.0",
+    "husky": "^9.1.7",
+    "pagefind": "^1.4.0"
   },
   "license": "SEE LICENSE IN LICENSE-CODE"
 }

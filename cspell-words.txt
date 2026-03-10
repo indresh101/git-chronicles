@@ -44,8 +44,11 @@ monorepos
 polyrepo
 Eleventy
 Nunjucks
+Pagefind
+pagefind
 frontmatter
 cspell
+keydown
 husky
 pre-commit
 rebaser
