@@ -29,7 +29,7 @@ permalink: /fr/quetes/22-la-tour-de-guet/
 
     <h3>Le rôle d'un seed dans le réseau P2P</h3>
 
-    <p>Un <span class="keyword">seed node</span> (noeud graine) est un ordinateur qui reste <strong>connecté en permanence</strong> au réseau Radicle. Son rôle :</p>
+    <p>Un <span class="keyword">seed node</span> (nœud graine) est un ordinateur qui reste <strong>connecté en permanence</strong> au réseau Radicle. Son rôle :</p>
 
     <ul>
       <li><strong>Disponibilité</strong> : il garde une copie des projets qu'il suit, même quand les auteurs sont hors ligne</li>
@@ -54,7 +54,7 @@ Alice (hors ligne)
         <tr>
           <th>Caractéristique</th>
           <th>Peer (pair ordinaire)</th>
-          <th>Seed (noeud graine)</th>
+          <th>Seed (nœud graine)</th>
         </tr>
       </thead>
       <tbody>
@@ -118,7 +118,7 @@ Alice (hors ligne)
     <!-- Section 3 : Installation -->
     <h2>Installer <span class="keyword">radicle-node</span></h2>
 
-    <p>Le noeud Radicle est inclus dans l'installation de <code>rad</code> que tu as faite dans la quête précédente. Le composant qui fait tourner le noeud s'appelle <span class="git-cmd">radicle-node</span>.</p>
+    <p>Le nœud Radicle est inclus dans l'installation de <code>rad</code> que tu as faite dans la quête précédente. Le composant qui fait tourner le nœud s'appelle <span class="git-cmd">radicle-node</span>.</p>
 
     <pre data-lang="bash"><code># Si rad est déjà installé, le nœud est disponible
 rad node --help
@@ -140,9 +140,9 @@ ls ~/.radicle/bin/
     <div class="fancy-separator"></div>
 
     <!-- Section 4 : Configuration -->
-    <h2><span class="keyword">Configuration</span> du noeud</h2>
+    <h2><span class="keyword">Configuration</span> du nœud</h2>
 
-    <p>Le fichier de configuration de ton noeud Radicle se trouve dans <code>~/.radicle/config.json</code>. C'est là que tu définis le comportement de ta tour de guet.</p>
+    <p>Le fichier de configuration de ton nœud Radicle se trouve dans <code>~/.radicle/config.json</code>. C'est là que tu définis le comportement de ta tour de guet.</p>
 
     <h3>Le fichier de configuration</h3>
 
@@ -180,7 +180,7 @@ cat ~/.radicle/config.json</code></pre>
       <tbody>
         <tr>
           <td><code>alias</code></td>
-          <td>Un nom lisible pour ton noeud (visible par les pairs)</td>
+          <td>Un nom lisible pour ton nœud (visible par les pairs)</td>
         </tr>
         <tr>
           <td><code>listen</code></td>
@@ -188,7 +188,7 @@ cat ~/.radicle/config.json</code></pre>
         </tr>
         <tr>
           <td><code>externalAddresses</code></td>
-          <td>L'adresse publique de ton noeud (IP ou domaine)</td>
+          <td>L'adresse publique de ton nœud (IP ou domaine)</td>
         </tr>
         <tr>
           <td><code>policy</code></td>
@@ -203,7 +203,7 @@ cat ~/.radicle/config.json</code></pre>
 
     <h3>Policies : track et block</h3>
 
-    <p>Les <span class="keyword">policies</span> contrôlent quels projets ton noeud accepte de répliquer :</p>
+    <p>Les <span class="keyword">policies</span> contrôlent quels projets ton nœud accepte de répliquer :</p>
 
     <pre data-lang="bash"><code># Suivre un projet spécifique (le répliquer sur ton nœud)
 rad track rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA
@@ -224,7 +224,7 @@ rad untrack rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA</code></pre>
     <!-- Section 5 : Firewall -->
     <h2>Ouvrir le <span class="keyword">pare-feu</span></h2>
 
-    <p>Pour que d'autres pairs puissent se connecter à ton noeud, le port <strong>8776</strong> (TCP) doit être accessible depuis l'extérieur.</p>
+    <p>Pour que d'autres pairs puissent se connecter à ton nœud, le port <strong>8776</strong> (TCP) doit être accessible depuis l'extérieur.</p>
 
     <h3>Avec UFW (Ubuntu / Debian)</h3>
 
@@ -249,15 +249,15 @@ sudo firewall-cmd --list-ports</code></pre>
 sudo iptables -A INPUT -p tcp --dport 8776 -j ACCEPT</code></pre>
 
     <div class="key-message">
-      <p>Le port <strong>8776</strong> est le port par défaut du protocole Radicle. C'est l'équivalent du port 22 pour SSH ou du port 443 pour HTTPS. Si ton noeud est derrière un routeur (Raspberry Pi chez toi), pense aussi à configurer la redirection de port sur ta box.</p>
+      <p>Le port <strong>8776</strong> est le port par défaut du protocole Radicle. C'est l'équivalent du port 22 pour SSH ou du port 443 pour HTTPS. Si ton nœud est derrière un routeur (Raspberry Pi chez toi), pense aussi à configurer la redirection de port sur ta box.</p>
     </div>
 
     <div class="fancy-separator"></div>
 
     <!-- Section 6 : Démarrage -->
-    <h2>Démarrer et <span class="keyword">surveiller</span> le noeud</h2>
+    <h2>Démarrer et <span class="keyword">surveiller</span> le nœud</h2>
 
-    <h3>Démarrer le noeud</h3>
+    <h3>Démarrer le nœud</h3>
 
     <pre data-lang="bash"><code># Démarrer le nœud Radicle
 rad node start
@@ -276,7 +276,7 @@ rad node status
 # Connected peers: 3
 # Tracked repos: 5</code></pre>
 
-    <h3>Arrêter le noeud</h3>
+    <h3>Arrêter le nœud</h3>
 
     <pre data-lang="bash"><code># Arrêter proprement
 rad node stop</code></pre>
@@ -297,7 +297,7 @@ rad inspect
 # Arrêter de suivre un projet
 rad untrack rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA</code></pre>
 
-    <p>Quand tu suis un projet, ton noeud :</p>
+    <p>Quand tu suis un projet, ton nœud :</p>
 
     <ol>
       <li>Télécharge toutes les données du projet (code, patches, issues)</li>
@@ -310,7 +310,7 @@ rad untrack rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA</code></pre>
     <!-- Section 8 : Monitoring -->
     <h2><span class="keyword">Monitoring</span> et diagnostic</h2>
 
-    <h3>Les logs du noeud</h3>
+    <h3>Les logs du nœud</h3>
 
     <pre data-lang="bash"><code># Voir les logs en temps réel
 rad node logs
@@ -351,7 +351,7 @@ rad node connect &lt;node-id&gt;@&lt;adresse&gt;:8776</code></pre>
           <td>Vérifier UFW/firewalld, redirection de port</td>
         </tr>
         <tr>
-          <td>Le noeud ne démarre pas</td>
+          <td>Le nœud ne démarre pas</td>
           <td>Pas d'identité créée</td>
           <td>Exécuter <code>rad auth</code> d'abord</td>
         </tr>
@@ -439,10 +439,10 @@ exit</code></pre>
     <div class="fancy-separator"></div>
 
     <!-- Exercice pratique -->
-    <h2>Exercice pratique - <span class="keyword">Lancer un noeud local</span></h2>
+    <h2>Exercice pratique - <span class="keyword">Lancer un nœud local</span></h2>
 
     <div class="quest-objective">
-      <p>Dans cet exercice, tu vas configurer et lancer un noeud Radicle sur ta propre machine. Pas besoin de VPS - on simule le fonctionnement d'un seed en local.</p>
+      <p>Dans cet exercice, tu vas configurer et lancer un nœud Radicle sur ta propre machine. Pas besoin de VPS - on simule le fonctionnement d'un seed en local.</p>
     </div>
 
     <div class="steps">
@@ -462,7 +462,7 @@ rad config
 
 # Note les paramètres : listen, policy, scope</code></pre>
 
-      <h3>Étape 3 - Démarrer le noeud</h3>
+      <h3>Étape 3 - Démarrer le nœud</h3>
 
       <pre data-lang="bash"><code># Lance le nœud
 rad node start
@@ -521,19 +521,19 @@ rad node status</code></pre>
       <tbody>
         <tr>
           <td><code>rad node start</code></td>
-          <td>Démarrer le noeud Radicle</td>
+          <td>Démarrer le nœud Radicle</td>
         </tr>
         <tr>
           <td><code>rad node stop</code></td>
-          <td>Arrêter le noeud</td>
+          <td>Arrêter le nœud</td>
         </tr>
         <tr>
           <td><code>rad node status</code></td>
-          <td>Afficher l'état du noeud (pairs, projets)</td>
+          <td>Afficher l'état du nœud (pairs, projets)</td>
         </tr>
         <tr>
           <td><code>rad node logs</code></td>
-          <td>Voir les logs du noeud en temps réel</td>
+          <td>Voir les logs du nœud en temps réel</td>
         </tr>
         <tr>
           <td><code>rad node peers</code></td>
@@ -553,7 +553,7 @@ rad node status</code></pre>
         </tr>
         <tr>
           <td><code>rad config</code></td>
-          <td>Afficher la configuration du noeud</td>
+          <td>Afficher la configuration du nœud</td>
         </tr>
         <tr>
           <td><code>systemctl start radicle-node</code></td>
@@ -576,6 +576,6 @@ rad node status</code></pre>
     <div class="narrative">
       <p>Le Guetteur s'approche de la fenêtre de sa tour. De là-haut, le réseau de chemins qui relie les villages libres est clairement visible - des lignes sinueuses tracées par des générations de voyageurs.</p>
       <p>« Ta tour est prête. Peut-être qu'elle ne veillera que sur tes propres projets pour l'instant. Mais un jour, d'autres voyageurs la trouveront, et ils seront reconnaissants qu'elle soit là. »</p>
-      <p>Il te tend une carte ancienne, couverte de symboles représentant d'autres tours, d'autres noeuds, d'autres pairs disséminés à travers le royaume.</p>
+      <p>Il te tend une carte ancienne, couverte de symboles représentant d'autres tours, d'autres nœuds, d'autres pairs disséminés à travers le royaume.</p>
       <p>« Tu as les outils et tu as ta tour. Il te reste une dernière chose à apprendre : comment <strong>tisser des liens</strong> avec les autres voyageurs. Car une tour seule dans la brume ne sert à rien - c'est le <strong>réseau</strong> qui fait la force. »</p>
     </div>

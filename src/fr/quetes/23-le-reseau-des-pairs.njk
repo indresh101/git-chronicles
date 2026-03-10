@@ -94,7 +94,7 @@ rad inspect
 rad id edit</code></pre>
 
     <div class="tip">
-      <p><strong>Attention :</strong> La syntaxe exacte pour ajouter ou retirer des delegates peut varier selon la version de Radicle. Les commandes <code>rad id update --delegate</code> et <code>rad id update --revoke</code> existaient dans des versions precedentes. Depuis Heartwood, utilise <code>rad id edit</code> pour modifier l'identite du projet (delegates et threshold). Consulte <code>rad id --help</code> pour la syntaxe de ta version.</p>
+      <p><strong>Attention :</strong> La syntaxe exacte pour ajouter ou retirer des delegates peut varier selon la version de Radicle. Les commandes <code>rad id update --delegate</code> et <code>rad id update --revoke</code> existaient dans des versions précédentes. Depuis Heartwood, utilise <code>rad id edit</code> pour modifier l'identité du projet (delegates et threshold). Consulte <code>rad id --help</code> pour la syntaxe de ta version.</p>
     </div>
 
     <h3>Le threshold (seuil)</h3>
@@ -239,7 +239,7 @@ git push-all</code></pre>
 
     <h3>radicle-explorer (auto-hébergé)</h3>
 
-    <p>Tu peux aussi héberger ta propre interface web avec <span class="keyword">radicle-explorer</span>. C'est une application web qui se connecte à ton noeud local :</p>
+    <p>Tu peux aussi héberger ta propre interface web avec <span class="keyword">radicle-explorer</span>. C'est une application web qui se connecte à ton nœud local :</p>
 
     <pre data-lang="bash"><code># Installer radicle-explorer (nécessite Node.js)
 # Le code source est disponible sur GitHub :
@@ -253,10 +253,10 @@ npm run dev
 # Ouvre http://localhost:3000</code></pre>
 
     <div class="tip">
-      <p><strong>Note :</strong> L'interface web publique officielle est accessible sur <a href="https://app.radicle.xyz">app.radicle.xyz</a>. Tu n'as besoin d'auto-heberger l'explorer que si tu veux une interface web pour ton propre noeud.</p>
+      <p><strong>Note :</strong> L'interface web publique officielle est accessible sur <a href="https://app.radicle.xyz">app.radicle.xyz</a>. Tu n'as besoin d'auto-héberger l'explorer que si tu veux une interface web pour ton propre nœud.</p>
     </div>
 
-    <p>L'explorer se connecte à l'API HTTP de ton noeud Radicle et affiche les projets, patches et issues dans une interface web élégante.</p>
+    <p>L'explorer se connecte à l'API HTTP de ton nœud Radicle et affiche les projets, patches et issues dans une interface web élégante.</p>
 
     <div class="fancy-separator"></div>
 
@@ -343,11 +343,11 @@ npm run dev
 
     <h3>Heartwood - le protocole</h3>
 
-    <p><span class="keyword">Heartwood</span> est le nom du protocole qui fait tourner Radicle. C'est le "coeur de bois" - la fondation technique sur laquelle tout repose. Heartwood définit :</p>
+    <p><span class="keyword">Heartwood</span> est le nom du protocole qui fait tourner Radicle. C'est le "cœur de bois" - la fondation technique sur laquelle tout repose. Heartwood définit :</p>
 
     <ul>
       <li>Comment les pairs se découvrent et se connectent</li>
-      <li>Comment les données sont répliquées entre les noeuds</li>
+      <li>Comment les données sont répliquées entre les nœuds</li>
       <li>Le format des patches, issues et autres objets collaboratifs</li>
       <li>Le système d'identité basé sur les DIDs</li>
     </ul>
@@ -370,7 +370,7 @@ npm run dev
         </tr>
         <tr>
           <td><strong>radicle-node</strong></td>
-          <td>Le noeud qui participe au réseau P2P</td>
+          <td>Le nœud qui participe au réseau P2P</td>
         </tr>
         <tr>
           <td><strong>radicle-httpd</strong></td>
@@ -536,7 +536,7 @@ rad issue close &lt;issue-id&gt;</code></pre>
     </div>
 
     <div class="tip">
-      <p><strong>Note :</strong> Sur une seule machine, la synchronisation entre les deux profils passe par le noeud local. Dans un vrai scénario, Alice et Bob seraient sur des machines différentes, connectés via le réseau Radicle. Le workflow reste exactement le même.</p>
+      <p><strong>Note :</strong> Sur une seule machine, la synchronisation entre les deux profils passe par le nœud local. Dans un vrai scénario, Alice et Bob seraient sur des machines différentes, connectés via le réseau Radicle. Le workflow reste exactement le même.</p>
     </div>
 
     <div class="fancy-separator"></div>
@@ -590,7 +590,7 @@ rad issue close &lt;issue-id&gt;</code></pre>
         </tr>
         <tr>
           <td><strong>radicle-httpd</strong></td>
-          <td>API HTTP pour connecter des interfaces au noeud</td>
+          <td>API HTTP pour connecter des interfaces au nœud</td>
         </tr>
       </tbody>
     </table>
@@ -612,7 +612,7 @@ rad issue close &lt;issue-id&gt;</code></pre>
 
     <div class="narrative">
       <p>Tu ranges le compas dans ton sac de voyage, à côté de tous les outils que tu as accumulés au fil des quêtes. Le Maître Archiviste te sourit une dernière fois.</p>
-      <p>« Va, <strong>Voyageur Libre</strong>. Le réseau t'attend. Et souviens-toi : dans un monde pair-à-pair, chaque noeud compte. <strong>Y compris le tien.</strong> »</p>
+      <p>« Va, <strong>Voyageur Libre</strong>. Le réseau t'attend. Et souviens-toi : dans un monde pair-à-pair, chaque nœud compte. <strong>Y compris le tien.</strong> »</p>
       <p>Il redescend vers la Citadelle. Tu restes un moment sur la crête, la carte des pairs dans une main, le compas dans l'autre. Devant toi, les chemins libres s'étendent à l'infini - et pour la première fois, tu sais exactement <strong>lequel prendre</strong>.</p>
     </div>
 
