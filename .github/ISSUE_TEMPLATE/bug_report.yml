@@ -1,0 +1,64 @@
+name: Bug Report
+description: Report a broken page, script error, or rendering issue
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Website (rendering, navigation, styling)
+        - Verification script (verifier.sh / verifier.ps1)
+        - Content error (typo, incorrect command, wrong explanation)
+        - Build / CI
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: page
+    attributes:
+      label: Affected page or quest
+      placeholder: "e.g. Quest 03 - The First Scroll, or /fr/quetes/03-le-premier-parchemin/"
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options:
+        - French (FR)
+        - English (EN)
+        - Both
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      placeholder: Describe the bug clearly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: What should have happened instead.
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "OS, browser, shell (bash/PowerShell), Git version..."
+      value: |
+        - OS:
+        - Browser:
+        - Shell:
+        - Git version:
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      placeholder: Drag and drop screenshots here if relevant.

@@ -19,6 +19,13 @@
   <link rel="alternate" hreflang="x-default" href="/fr/">
 </head>
 <body>
+  <div class="wip-banner">
+    {% if lang == "fr" %}
+      🚧 Ce site est en cours de construction. Le contenu peut évoluer.
+    {% else %}
+      🚧 This site is a work in progress. Content may change.
+    {% endif %}
+  </div>
   <header class="site-header">
     <a href="/{{ lang }}/" class="logo">
       {%- if lang == "fr" %}Les Chroniques du Versionneur{% else %}The Git Chronicles{% endif -%}
