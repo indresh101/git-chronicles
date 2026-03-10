@@ -19,7 +19,7 @@
     { arc: 2, title: { fr: "Arc 2 - Les Branches du Destin", en: "Arc 2 - Branches of Destiny" }, quests: [
       { id: "06", name: { fr: "L'Arbre des Possibles", en: "The Tree of Possibilities" }, slug: { fr: "06-larbre-des-possibles", en: "06-the-tree-of-possibilities" }, available: true },
       { id: "07", name: { fr: "Le Conflit des Royaumes", en: "The Conflict of Kingdoms" }, slug: { fr: "07-le-conflit-des-royaumes", en: "07-the-conflict-of-kingdoms" }, available: true },
-      { id: "08", name: { fr: "Reecrire l'Histoire", en: "Rewriting History" }, slug: { fr: "08-reecrire-lhistoire", en: "08-rewriting-history" }, available: true },
+      { id: "08", name: { fr: "Réécrire l'Histoire", en: "Rewriting History" }, slug: { fr: "08-reecrire-lhistoire", en: "08-rewriting-history" }, available: true },
       { id: "09", name: { fr: "Les Portails Distants", en: "The Distant Portals" }, slug: { fr: "09-les-portails-distants", en: "09-the-distant-portals" }, available: true },
       { id: "10", name: { fr: "Le Protocole des Guildes", en: "The Guild Protocol" }, slug: { fr: "10-le-protocole-des-guildes", en: "10-the-guild-protocol" }, available: true }
     ]},
@@ -30,22 +30,22 @@
       { id: "14", name: { fr: "Les Outils de l'Archiviste", en: "The Archivist's Tools" }, slug: { fr: "14-les-outils-de-larchiviste", en: "14-the-archivists-tools" }, available: true }
     ]},
     { arc: 4, title: { fr: "Arc 4 - Les Forges Automatiques", en: "Arc 4 - The Automated Forges" }, quests: [
-      { id: "15", name: { fr: "Les Forges Eternelles", en: "The Eternal Forges" }, slug: { fr: "15-les-forges-eternelles", en: "15-the-eternal-forges" }, available: true },
+      { id: "15", name: { fr: "Les Forges Éternelles", en: "The Eternal Forges" }, slug: { fr: "15-les-forges-eternelles", en: "15-the-eternal-forges" }, available: true },
       { id: "16", name: { fr: "Les Actions du Royaume", en: "The Kingdom's Actions" }, slug: { fr: "16-les-actions-du-royaume", en: "16-the-kingdoms-actions" }, available: true },
-      { id: "17", name: { fr: "Les Epreuves Automatiques", en: "The Automated Trials" }, slug: { fr: "17-les-epreuves-automatiques", en: "17-the-automated-trials" }, available: true },
-      { id: "18", name: { fr: "Le Deploiement Sacre", en: "The Sacred Deployment" }, slug: { fr: "18-le-deploiement-sacre", en: "18-the-sacred-deployment" }, available: true },
+      { id: "17", name: { fr: "Les Épreuves Automatiques", en: "The Automated Trials" }, slug: { fr: "17-les-epreuves-automatiques", en: "17-the-automated-trials" }, available: true },
+      { id: "18", name: { fr: "Le Déploiement Sacré", en: "The Sacred Deployment" }, slug: { fr: "18-le-deploiement-sacre", en: "18-the-sacred-deployment" }, available: true },
       { id: "19", name: { fr: "Les Autres Forges", en: "The Other Forges" }, slug: { fr: "19-les-autres-forges", en: "19-the-other-forges" }, available: true }
     ]},
-    { arc: 5, title: { fr: "Arc 5 - Au-dela des Guildes", en: "Arc 5 - Beyond the Guilds" }, quests: [
+    { arc: 5, title: { fr: "Arc 5 - Au-delà des Guildes", en: "Arc 5 - Beyond the Guilds" }, quests: [
       { id: "20", name: { fr: "Les Chemins Libres", en: "The Free Paths" }, slug: { fr: "20-les-chemins-libres", en: "20-the-free-paths" }, available: true },
       { id: "21", name: { fr: "Le Disciple de Radicle", en: "The Radicle Disciple" }, slug: { fr: "21-le-disciple-de-radicle", en: "21-the-radicle-disciple" }, available: true },
       { id: "22", name: { fr: "La Tour de Guet", en: "The Watchtower" }, slug: { fr: "22-la-tour-de-guet", en: "22-the-watchtower" }, available: true },
       { id: "23", name: { fr: "Le Grand Rituel", en: "The Grand Ritual" }, slug: { fr: "23-le-grand-rituel", en: "23-the-grand-ritual" }, available: true }
     ]},
-    { arc: 6, title: { fr: "Arc 6 - Les Sentiers Oublies", en: "Arc 6 - The Forgotten Paths" }, quests: [
+    { arc: 6, title: { fr: "Arc 6 - Les Sentiers Oubliés", en: "Arc 6 - The Forgotten Paths" }, quests: [
       { id: "A1", name: { fr: "Les Forges du Titan", en: "The Titan's Forges" }, slug: { fr: "A1-les-forges-du-titan", en: "A1-the-titans-forges" }, available: true },
       { id: "A2", name: { fr: "Les Archives Infinies", en: "The Infinite Archives" }, slug: { fr: "A2-les-archives-infinies", en: "A2-the-infinite-archives" }, available: true },
-      { id: "A3", name: { fr: "La Cite Monde", en: "The World City" }, slug: { fr: "A3-la-cite-monde", en: "A3-the-world-city" }, available: true },
+      { id: "A3", name: { fr: "La Cité-Monde", en: "The World City" }, slug: { fr: "A3-la-cite-monde", en: "A3-the-world-city" }, available: true },
       { id: "A4", name: { fr: "Le Forgeron d'Acier", en: "The Steel Smith" }, slug: { fr: "A4-le-forgeron-dacier", en: "A4-the-steel-smith" }, available: true },
       { id: "A5", name: { fr: "Les Courants du Destin", en: "The Currents of Destiny" }, slug: { fr: "A5-les-courants-du-destin", en: "A5-the-currents-of-destiny" }, available: true },
       { id: "A6", name: { fr: "L'Atelier des Enlumineurs", en: "The Illuminators' Workshop" }, slug: { fr: "A6-latelier-des-enlumineurs", en: "A6-the-illuminators-workshop" }, available: true }
@@ -54,9 +54,25 @@
 
   var CHEATSHEETS = [
     { id: "cs1", name: { fr: "Git Essentiel", en: "Git Essentials" }, slug: { fr: "git-essentiel", en: "git-essentials" } },
-    { id: "cs2", name: { fr: "Git Avance", en: "Advanced Git" }, slug: { fr: "git-avance", en: "advanced-git" } },
+    { id: "cs2", name: { fr: "Git Avancé", en: "Advanced Git" }, slug: { fr: "git-avance", en: "advanced-git" } },
     { id: "cs3", name: { fr: "Git LFS", en: "Git LFS" }, slug: { fr: "git-lfs", en: "git-lfs" } },
     { id: "cs4", name: { fr: "Radicle", en: "Radicle" }, slug: { fr: "radicle", en: "radicle" } }
+  ];
+
+  var CODEX = [
+    { id: "cx-idx", name: { fr: "Le Codex", en: "The Codex" }, slug: { fr: "index", en: "index" }, isIndex: true },
+    { id: "cx-ma", name: { fr: "Maitre Archiviste", en: "Master Archivist" }, slug: { fr: "maitre-archiviste", en: "master-archivist" } },
+    { id: "cx-al", name: { fr: "Aldric le Scribe", en: "Aldric the Scribe" }, slug: { fr: "aldric-le-scribe", en: "aldric-the-scribe" } },
+    { id: "cx-be", name: { fr: "Berenice", en: "Berenice" }, slug: { fr: "berenice", en: "berenice" } },
+    { id: "cx-el", name: { fr: "Elara la Sage", en: "Elara the Wise" }, slug: { fr: "elara-la-sage", en: "elara-the-wise" } },
+    { id: "cx-cs", name: { fr: "Citadelle du Savoir", en: "Citadel of Knowledge" }, slug: { fr: "citadelle-du-savoir", en: "citadel-of-knowledge" } },
+    { id: "cx-ga", name: { fr: "Guilde des Archivistes", en: "Archivists' Guild" }, slug: { fr: "guilde-des-archivistes", en: "archivists-guild" } },
+    { id: "cx-ts", name: { fr: "Les Trois Salles", en: "The Three Halls" }, slug: { fr: "les-trois-salles", en: "the-three-halls" } },
+    { id: "cx-fs", name: { fr: "Foret de Sombrebois", en: "Darkwood Forest" }, slug: { fr: "foret-de-sombrebois", en: "darkwood-forest" } },
+    { id: "cx-at", name: { fr: "Atelier du Tisseur", en: "Time Weaver's Workshop" }, slug: { fr: "atelier-du-tisseur-de-temps", en: "time-weavers-workshop" } },
+    { id: "cx-ss", name: { fr: "Salle des Sceaux", en: "Hall of Seals" }, slug: { fr: "salle-des-sceaux", en: "hall-of-seals" } },
+    { id: "cx-vf", name: { fr: "Vallee des Forges", en: "Valley of Forges" }, slug: { fr: "vallee-des-forges-eternelles", en: "valley-of-eternal-forges" } },
+    { id: "cx-pd", name: { fr: "Portails Distants", en: "Distant Portals" }, slug: { fr: "les-portails-distants", en: "the-distant-portals" } }
   ];
 
   // Flatten all quests into a single array
@@ -79,6 +95,10 @@
     return lang === 'fr' ? '/fr/cheatsheets/' : '/en/cheatsheets/';
   }
 
+  function getCodexPathPrefix() {
+    return lang === 'fr' ? '/fr/codex/' : '/en/codex/';
+  }
+
   // Detect current context from URL
   function detectContext() {
     var path = window.location.pathname;
@@ -96,6 +116,21 @@
       if (path.indexOf(CHEATSHEETS[j].slug[lang]) !== -1) {
         return { type: 'cheatsheet', index: j, cheatsheet: CHEATSHEETS[j] };
       }
+    }
+
+    // Check if we're on a codex page
+    var codexPrefix = getCodexPathPrefix();
+    if (path.indexOf(codexPrefix) !== -1) {
+      for (var k = 0; k < CODEX.length; k++) {
+        var codexSlug = CODEX[k].slug[lang];
+        if (CODEX[k].isIndex && path === codexPrefix) {
+          return { type: 'codex', index: k, codex: CODEX[k] };
+        }
+        if (!CODEX[k].isIndex && path.indexOf(codexSlug) !== -1) {
+          return { type: 'codex', index: k, codex: CODEX[k] };
+        }
+      }
+      return { type: 'codex', index: 0, codex: CODEX[0] };
     }
 
     // Homepage or unknown
@@ -124,7 +159,7 @@
       html += '<h3 class="arc-title">' + arc.title[lang] + '</h3>';
       arc.quests.forEach(function(q) {
         var isActive = context.type === 'quest' && context.quest && context.quest.id === q.id;
-        var questLabel = (lang === 'fr' ? 'Quete' : 'Quest');
+        var questLabel = (lang === 'fr' ? 'Quête' : 'Quest');
         html += '<a href="' + questPrefix + q.slug[lang] + '/" class="quest-link' + (isActive ? ' active' : '') + '">';
         html += questLabel + ' ' + q.id + ' - ' + q.name[lang];
         html += '</a>';
@@ -134,11 +169,24 @@
 
     // Cheatsheets
     html += '<div class="arc-group">';
-    html += '<h3 class="arc-title">' + (lang === 'fr' ? 'Aide-memoire' : 'Cheatsheets') + '</h3>';
+    html += '<h3 class="arc-title">' + (lang === 'fr' ? 'Aide-mémoire' : 'Cheatsheets') + '</h3>';
     CHEATSHEETS.forEach(function(cs) {
       var isActive = context.type === 'cheatsheet' && context.cheatsheet && context.cheatsheet.id === cs.id;
       html += '<a href="' + csPrefix + cs.slug[lang] + '/" class="quest-link' + (isActive ? ' active' : '') + '">';
       html += cs.name[lang];
+      html += '</a>';
+    });
+    html += '</div>';
+
+    // Codex
+    var cxPrefix = getCodexPathPrefix();
+    html += '<div class="arc-group">';
+    html += '<h3 class="arc-title">' + (lang === 'fr' ? 'Codex' : 'Codex') + '</h3>';
+    CODEX.forEach(function(cx) {
+      var isActive = context.type === 'codex' && context.codex && context.codex.id === cx.id;
+      var href = cx.isIndex ? cxPrefix : cxPrefix + cx.slug[lang] + '/';
+      html += '<a href="' + href + '" class="quest-link' + (isActive ? ' active' : '') + '">';
+      html += cx.name[lang];
       html += '</a>';
     });
     html += '</div>';
@@ -157,7 +205,7 @@
     var allQuests = getAllQuests();
     var idx = context.index;
     var questPrefix = getQuestPathPrefix();
-    var prevLabel = lang === 'fr' ? 'Precedent' : 'Previous';
+    var prevLabel = lang === 'fr' ? 'Précédent' : 'Previous';
     var nextLabel = lang === 'fr' ? 'Suivant' : 'Next';
     var html = '';
 
