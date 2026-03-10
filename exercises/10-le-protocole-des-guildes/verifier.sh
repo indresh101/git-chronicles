@@ -1,33 +1,36 @@
+# SPDX-License-Identifier: MIT
 #!/usr/bin/env bash
 # =============================================================================
-# Quête 10 - Le Protocole des Guildes - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 10 - Le Protocole des Guildes - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../../lib/verifier-common.sh"
+source "$SCRIPT_DIR/../../lib/common.sh"
+_parse_lang_flag "$@"
+_load_theme_messages
 
-QUETE_TITRE="Quête 10 - Le Protocole des Guildes"
-afficher_banniere "$QUETE_TITRE"
+QUEST_TITLE="Quête 10 - Le Protocole des Guildes"
+show_banner "$QUEST_TITLE"
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-verifier_etape 1 "Tu es dans un dépôt Git" \
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+check_step 1 "Tu es dans un dépôt Git" \
     'git rev-parse --is-inside-work-tree'
 
-# ---- Étape 2 : La branche main/master existe ----
-verifier_etape 2 "La branche principale (main ou master) existe" \
+# ---- Step 2 : La branche main/master existe ----
+check_step 2 "La branche principale (main ou master) existe" \
     'git branch --list main master | grep -qE "main|master"'
 
-# ---- Étape 3 : Au moins 3 commits au total ----
-verifier_etape 3 "Il y a au moins 3 commits dans l'historique" \
+# ---- Step 3 : Au moins 3 commits au total ----
+check_step 3 "Il y a au moins 3 commits dans l'historique" \
     '[ "$(git log --oneline 2>/dev/null | wc -l)" -ge 3 ]'
 
-# ---- Étape 4 : Un commit de merge existe (preuve du --no-ff) ----
-verifier_etape 4 "Un commit de merge existe (Protocole respecté)" \
+# ---- Step 4 : Un commit de merge existe (preuve du --no-ff) ----
+check_step 4 "Un commit de merge existe (Protocole respecté)" \
     'git log --merges --oneline 2>/dev/null | grep -q .'
 
-# ---- Étape 5 : Pas de branche de proposition restante (nettoyée) ----
-verifier_etape 5 "La branche de proposition a été nettoyée" \
+# ---- Step 5 : Pas de branche de proposition restante (nettoyée) ----
+check_step 5 "La branche de proposition a été nettoyée" \
     '[ "$(git branch | grep -v "main\|master\|\*" | wc -l)" -eq 0 ]'
 
-afficher_score
+show_score

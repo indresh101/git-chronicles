@@ -1,27 +1,30 @@
+# SPDX-License-Identifier: MIT
 # =============================================================================
-# Quête 17 - Les Épreuves Automatiques - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 17 - Les Épreuves Automatiques - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-. "$ScriptDir\..\..\lib\verifier-common.ps1"
+. "$ScriptDir\..\..\lib\common.ps1"
+_Parse-LangFlag $args
+_Load-ThemeMessages
 
-$script:QueteTitre = "Quête 17 - Les Épreuves Automatiques"
-Afficher-Banniere $script:QueteTitre
+$script:QuestTitle = "Quête 17 - Les Épreuves Automatiques"
+Show-Banner $script:QuestTitle
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-Verifier-Etape 1 "Tu es dans un dépôt Git" {
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+Check-Step 1 "Tu es dans un dépôt Git" {
     $result = & git rev-parse --is-inside-work-tree 2>&1
     $LASTEXITCODE -eq 0
 }
 
-# ---- Étape 2 : Le dossier .github/workflows existe ----
-Verifier-Etape 2 "Le dossier .github/workflows existe" {
+# ---- Step 2 : Le dossier .github/workflows existe ----
+Check-Step 2 "Le dossier .github/workflows existe" {
     Test-Path ".github/workflows" -PathType Container
 }
 
-# ---- Étape 3 : Un workflow YAML contient une stratégie de matrice ----
-Verifier-Etape 3 "Un workflow contient une stratégie de matrice (matrix)" {
+# ---- Step 3 : Un workflow YAML contient une stratégie de matrice ----
+Check-Step 3 "Un workflow contient une stratégie de matrice (matrix)" {
     $fichiers = Get-ChildItem -Path ".github/workflows" -Include "*.yml","*.yaml" -ErrorAction SilentlyContinue
     if (-not $fichiers -or ($fichiers | Measure-Object).Count -eq 0) { return $false }
     foreach ($f in $fichiers) {
@@ -31,8 +34,8 @@ Verifier-Etape 3 "Un workflow contient une stratégie de matrice (matrix)" {
     return $false
 }
 
-# ---- Étape 4 : Le workflow contient plusieurs étapes (steps) ----
-Verifier-Etape 4 "Le workflow contient plusieurs étapes (steps)" {
+# ---- Step 4 : Le workflow contient plusieurs étapes (steps) ----
+Check-Step 4 "Le workflow contient plusieurs étapes (steps)" {
     $fichiers = Get-ChildItem -Path ".github/workflows" -Include "*.yml","*.yaml" -ErrorAction SilentlyContinue
     if (-not $fichiers -or ($fichiers | Measure-Object).Count -eq 0) { return $false }
     $fichier = $fichiers | Select-Object -First 1
@@ -41,8 +44,8 @@ Verifier-Etape 4 "Le workflow contient plusieurs étapes (steps)" {
     $matches.Count -ge 2
 }
 
-# ---- Étape 5 : Au moins un script de test existe ----
-Verifier-Etape 5 "Au moins un script de test existe" {
+# ---- Step 5 : Au moins un script de test existe ----
+Check-Step 5 "Au moins un script de test existe" {
     $testFiles = @()
     $testFiles += Get-ChildItem -Path "." -Filter "test-*.sh" -ErrorAction SilentlyContinue
     $testFiles += Get-ChildItem -Path "." -Filter "test-*.bash" -ErrorAction SilentlyContinue
@@ -52,4 +55,4 @@ Verifier-Etape 5 "Au moins un script de test existe" {
     ($testFiles | Measure-Object).Count -ge 1
 }
 
-Afficher-Score
+Show-Score

@@ -1,36 +1,39 @@
+# SPDX-License-Identifier: MIT
 # =============================================================================
-# Quête 03 - Le Premier Parchemin - Script de vérification (PowerShell)
-# Projet  : Les Chroniques du Versionneur
+# Quête 03 - Le Premier Parchemin - Verification script (PowerShell)
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 #
 # Usage   : Lancer DEPUIS le dossier mon-archive/
 #           ..\verifier.ps1
 # =============================================================================
 
-. "$PSScriptRoot\..\..\lib\verifier-common.ps1"
+. "$PSScriptRoot\..\..\lib\common.ps1"
+_Parse-LangFlag $args
+_Load-ThemeMessages
 
-$script:QueteTitre = "Quête 03 - Le Premier Parchemin"
-Afficher-Banniere -Titre $script:QueteTitre
+$script:QuestTitle = "Quête 03 - Le Premier Parchemin"
+Show-Banner -Title $script:QuestTitle
 
-# --- Étape 1 : On est dans un dépôt git ---
-Verifier-Etape -Numero 1 -Description "Tu es dans un dépôt Git" -CommandeTest {
-    Verifier-DansRepo
+# --- Step 1 : On est dans un dépôt git ---
+Check-Step -Number 1 -Description "Tu es dans un dépôt Git" -TestCommand {
+    Check-InRepo
 }
 
-# --- Étape 2 : Au moins 2 commits ---
-Verifier-Etape -Numero 2 -Description "Tu as au moins 2 commits" -CommandeTest {
+# --- Step 2 : Au moins 2 commits ---
+Check-Step -Number 2 -Description "Tu as au moins 2 commits" -TestCommand {
     $count = & git rev-list --count HEAD 2>$null
     if ($LASTEXITCODE -ne 0) { return $false }
     return ([int]$count -ge 2)
 }
 
-# --- Étape 3 : mission.txt est tracké ---
-Verifier-Etape -Numero 3 -Description "Le fichier mission.txt est suivi par Git" -CommandeTest {
+# --- Step 3 : mission.txt est tracké ---
+Check-Step -Number 3 -Description "Le fichier mission.txt est suivi par Git" -TestCommand {
     & git ls-files --error-unmatch mission.txt 2>$null | Out-Null
     return ($LASTEXITCODE -eq 0)
 }
 
-# --- Étape 4 : Le premier message de commit n'est pas générique ---
-Verifier-Etape -Numero 4 -Description "Ton premier commit a un message personnalisé" -CommandeTest {
+# --- Step 4 : Le premier message de commit n'est pas générique ---
+Check-Step -Number 4 -Description "Ton premier commit a un message personnalisé" -TestCommand {
     $premierMsg = (& git log --reverse --format="%s" 2>$null) | Select-Object -First 1
     if ([string]::IsNullOrWhiteSpace($premierMsg)) { return $false }
     $generiques = @("Initial commit", "initial commit", "first commit", "init")
@@ -38,4 +41,4 @@ Verifier-Etape -Numero 4 -Description "Ton premier commit a un message personnal
     return $true
 }
 
-Afficher-Score
+Show-Score

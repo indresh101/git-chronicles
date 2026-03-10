@@ -1,17 +1,20 @@
+# SPDX-License-Identifier: MIT
 #!/usr/bin/env bash
 # =============================================================================
-# Quête 01 - La Guilde des Archivistes - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 01 - La Guilde des Archivistes - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../../lib/verifier-common.sh"
+source "$SCRIPT_DIR/../../lib/common.sh"
+_parse_lang_flag "$@"
+_load_theme_messages
 
-QUETE_TITRE="Quête 01 - La Guilde des Archivistes"
-afficher_banniere "$QUETE_TITRE"
+QUEST_TITLE="Quête 01 - La Guilde des Archivistes"
+show_banner "$QUEST_TITLE"
 
-verifier_etape 1 "Git est installé" 'command -v git >/dev/null 2>&1'
-verifier_etape 2 "Ton nom est configuré" '[ -n "$(git config --global user.name)" ]'
-verifier_etape 3 "Ton email est configuré" '[ -n "$(git config --global user.email)" ]'
+check_step 1 "Git est installé" 'command -v git >/dev/null 2>&1'
+check_step 2 "Ton nom est configuré" '[ -n "$(git config --global user.name)" ]'
+check_step 3 "Ton email est configuré" '[ -n "$(git config --global user.email)" ]'
 
-afficher_score
+show_score

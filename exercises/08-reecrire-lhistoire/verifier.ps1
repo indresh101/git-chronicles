@@ -1,39 +1,42 @@
+# SPDX-License-Identifier: MIT
 # =============================================================================
-# Quête 08 - Réécrire l'Histoire - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 08 - Réécrire l'Histoire - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-. "$ScriptDir\..\..\lib\verifier-common.ps1"
+. "$ScriptDir\..\..\lib\common.ps1"
+_Parse-LangFlag $args
+_Load-ThemeMessages
 
-$script:QueteTitre = "Quête 08 - Réécrire l'Histoire"
-Afficher-Banniere $script:QueteTitre
+$script:QuestTitle = "Quête 08 - Réécrire l'Histoire"
+Show-Banner $script:QuestTitle
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-Verifier-Etape 1 "Tu es dans un dépôt Git" {
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+Check-Step 1 "Tu es dans un dépôt Git" {
     $result = & git rev-parse --is-inside-work-tree 2>&1
     $LASTEXITCODE -eq 0
 }
 
-# ---- Étape 2 : Le reflog contient un amend ----
-Verifier-Etape 2 "Tu as utilisé git commit --amend (visible dans le reflog)" {
+# ---- Step 2 : Le reflog contient un amend ----
+Check-Step 2 "Tu as utilisé git commit --amend (visible dans le reflog)" {
     $reflog = & git reflog 2>&1
     if ($LASTEXITCODE -ne 0) { return $false }
     ($reflog | Out-String) -match "(?i)amend"
 }
 
-# ---- Étape 3 : Le reflog contient un rebase ----
-Verifier-Etape 3 "Tu as effectué un rebase (visible dans le reflog)" {
+# ---- Step 3 : Le reflog contient un rebase ----
+Check-Step 3 "Tu as effectué un rebase (visible dans le reflog)" {
     $reflog = & git reflog 2>&1
     if ($LASTEXITCODE -ne 0) { return $false }
     ($reflog | Out-String) -match "(?i)rebase"
 }
 
-# ---- Étape 4 : Au moins 3 commits existent ----
-Verifier-Etape 4 "Au moins 3 commits existent dans l'historique" {
+# ---- Step 4 : Au moins 3 commits existent ----
+Check-Step 4 "Au moins 3 commits existent dans l'historique" {
     $count = & git rev-list --count HEAD 2>&1
     if ($LASTEXITCODE -ne 0) { return $false }
     [int]$count -ge 3
 }
 
-Afficher-Score
+Show-Score

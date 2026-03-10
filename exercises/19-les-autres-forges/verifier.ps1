@@ -1,45 +1,48 @@
+# SPDX-License-Identifier: MIT
 # =============================================================================
-# Quête 19 - Les Autres Forges - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 19 - Les Autres Forges - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-. "$ScriptDir\..\..\lib\verifier-common.ps1"
+. "$ScriptDir\..\..\lib\common.ps1"
+_Parse-LangFlag $args
+_Load-ThemeMessages
 
-$script:QueteTitre = "Quête 19 - Les Autres Forges"
-Afficher-Banniere $script:QueteTitre
+$script:QuestTitle = "Quête 19 - Les Autres Forges"
+Show-Banner $script:QuestTitle
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-Verifier-Etape 1 "Tu es dans un dépôt Git" {
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+Check-Step 1 "Tu es dans un dépôt Git" {
     $result = & git rev-parse --is-inside-work-tree 2>&1
     $LASTEXITCODE -eq 0
 }
 
-# ---- Étape 2 : Le fichier GitHub Actions existe ----
-Verifier-Etape 2 "Le fichier .github/workflows/ci.yml existe" {
+# ---- Step 2 : Le fichier GitHub Actions existe ----
+Check-Step 2 "Le fichier .github/workflows/ci.yml existe" {
     $files = Get-ChildItem -Path ".github/workflows" -Filter "*.yml" -ErrorAction SilentlyContinue
     $null -ne $files -and ($files | Measure-Object).Count -ge 1
 }
 
-# ---- Étape 3 : Le fichier GitLab CI existe ----
-Verifier-Etape 3 "Le fichier .gitlab-ci.yml existe" {
+# ---- Step 3 : Le fichier GitLab CI existe ----
+Check-Step 3 "Le fichier .gitlab-ci.yml existe" {
     Test-Path ".gitlab-ci.yml"
 }
 
-# ---- Étape 4 : Le fichier Bitbucket Pipelines existe ----
-Verifier-Etape 4 "Le fichier bitbucket-pipelines.yml existe" {
+# ---- Step 4 : Le fichier Bitbucket Pipelines existe ----
+Check-Step 4 "Le fichier bitbucket-pipelines.yml existe" {
     Test-Path "bitbucket-pipelines.yml"
 }
 
-# ---- Étape 5 : Le script de test existe ----
-Verifier-Etape 5 "Le script de test scripts/test.sh existe" {
+# ---- Step 5 : Le script de test existe ----
+Check-Step 5 "Le script de test scripts/test.sh existe" {
     Test-Path "scripts/test.sh"
 }
 
-# ---- Étape 6 : Au moins un commit a été créé ----
-Verifier-Etape 6 "Au moins un commit a été créé" {
+# ---- Step 6 : Au moins un commit a été créé ----
+Check-Step 6 "Au moins un commit a été créé" {
     $result = & git log --oneline -1 2>&1
     $LASTEXITCODE -eq 0
 }
 
-Afficher-Score
+Show-Score

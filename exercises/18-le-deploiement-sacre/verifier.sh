@@ -1,29 +1,32 @@
+# SPDX-License-Identifier: MIT
 #!/usr/bin/env bash
 # =============================================================================
-# Quête 18 - Le Déploiement Sacré - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 18 - Le Déploiement Sacré - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../../lib/verifier-common.sh"
+source "$SCRIPT_DIR/../../lib/common.sh"
+_parse_lang_flag "$@"
+_load_theme_messages
 
-QUETE_TITRE="Quête 18 - Le Déploiement Sacré"
-afficher_banniere "$QUETE_TITRE"
+QUEST_TITLE="Quête 18 - Le Déploiement Sacré"
+show_banner "$QUEST_TITLE"
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-verifier_etape 1 "Tu es dans un dépôt Git" \
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+check_step 1 "Tu es dans un dépôt Git" \
     'git rev-parse --is-inside-work-tree'
 
-# ---- Étape 2 : Le dossier .github/workflows existe avec au moins un fichier YAML ----
-verifier_etape 2 "Un dossier .github/workflows existe avec un workflow" \
+# ---- Step 2 : Le dossier .github/workflows existe avec au moins un fichier YAML ----
+check_step 2 "Un dossier .github/workflows existe avec un workflow" \
     'ls .github/workflows/*.yml .github/workflows/*.yaml 2>/dev/null | grep -q .'
 
-# ---- Étape 3 : Le workflow mentionne le déploiement (production ou deploy) ----
-verifier_etape 3 "Le workflow mentionne le déploiement (production ou deploy)" \
+# ---- Step 3 : Le workflow mentionne le déploiement (production ou deploy) ----
+check_step 3 "Le workflow mentionne le déploiement (production ou deploy)" \
     'grep -rqlE "production|deploy" .github/workflows/ 2>/dev/null'
 
-# ---- Étape 4 : Au moins un tag existe ----
-verifier_etape 4 "Au moins un tag de version existe" \
+# ---- Step 4 : Au moins un tag existe ----
+check_step 4 "Au moins un tag de version existe" \
     '[ "$(git tag | wc -l)" -ge 1 ]'
 
-afficher_score
+show_score

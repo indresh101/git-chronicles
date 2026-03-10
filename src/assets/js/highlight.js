@@ -1,12 +1,13 @@
+// SPDX-License-Identifier: MIT
 /* ============================================================
-   Les Chroniques du Versionneur - Coloration syntaxique legere
-   Fonctionne en file:// - pas de dependances externes
+   Les Chroniques du Versionneur - Lightweight syntax highlighting
+   Works with file:// - no external dependencies
    ============================================================ */
 
 (function () {
   'use strict';
 
-  // --- Utilitaire : echapper le HTML ---
+  // --- Utility: escape HTML ---
   function esc(text) {
     return text
       .replace(/&/g, '&amp;')
@@ -14,7 +15,7 @@
       .replace(/>/g, '&gt;');
   }
 
-  // --- Utilitaire : envelopper dans un span ---
+  // --- Utility: wrap in a span ---
   function span(cls, content) {
     return '<span class="hl-' + cls + '">' + content + '</span>';
   }
@@ -27,18 +28,18 @@
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
 
-      // Ligne de commentaire
+      // Comment line
       if (/^\s*#/.test(line)) {
         result.push(span('comment', esc(line)));
         continue;
       }
 
-      // Traitement token par token
+      // Token-by-token processing
       var highlighted = '';
       var j = 0;
 
       while (j < line.length) {
-        // Chaines entre guillemets doubles
+        // Double-quoted strings
         if (line[j] === '"') {
           var end = line.indexOf('"', j + 1);
           if (end === -1) end = line.length - 1;
@@ -47,7 +48,7 @@
           continue;
         }
 
-        // Chaines entre guillemets simples
+        // Single-quoted strings
         if (line[j] === "'") {
           var end2 = line.indexOf("'", j + 1);
           if (end2 === -1) end2 = line.length - 1;
@@ -56,14 +57,14 @@
           continue;
         }
 
-        // Commentaire en milieu de ligne
+        // Mid-line comment
         if (line[j] === '#') {
           highlighted += span('comment', esc(line.substring(j)));
           j = line.length;
           continue;
         }
 
-        // Mots / tokens
+        // Words / tokens
         var match = line.substring(j).match(/^[^\s"'#]+/);
         if (match) {
           var token = match[0];
@@ -72,22 +73,22 @@
             // Flags (--global, -S, --version, etc.)
             highlighted += span('flag', esc(token));
           } else if (/^(sudo|cd|mkdir|cp|ls|cat|echo|touch|rm|mv|grep|bash|source|export)$/.test(token)) {
-            // Commandes shell courantes
+            // Common shell commands
             highlighted += span('builtin', esc(token));
           } else if (/^git$/.test(token)) {
-            // Commande git
+            // Git command
             highlighted += span('cmd', esc(token));
           } else if (/^(init|status|add|commit|log|diff|clone|push|pull|fetch|merge|rebase|branch|checkout|switch|restore|remote|stash|reset|tag|config|show|bisect|blame|reflog|cherry-pick|bundle|worktree|archive)$/.test(token)) {
-            // Sous-commandes git (quand elles suivent 'git')
+            // Git subcommands (when following 'git')
             highlighted += span('subcmd', esc(token));
           } else if (/^(apt|dnf|pacman|brew|xcode-select)$/.test(token)) {
-            // Gestionnaires de paquets
+            // Package managers
             highlighted += span('builtin', esc(token));
           } else if (/^\$\w+/.test(token) || /^\$\{/.test(token)) {
             // Variables
             highlighted += span('variable', esc(token));
           } else if (/^[.~\/]/.test(token) && /[\/.]/.test(token)) {
-            // Chemins de fichiers
+            // File paths
             highlighted += span('path', esc(token));
           } else {
             highlighted += esc(token);
@@ -97,7 +98,7 @@
           continue;
         }
 
-        // Espaces et autres caracteres
+        // Spaces and other characters
         highlighted += esc(line[j]);
         j++;
       }
@@ -116,7 +117,7 @@
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
 
-      // Ligne de commentaire
+      // Comment line
       if (/^\s*#/.test(line)) {
         result.push(span('comment', esc(line)));
         continue;
@@ -126,7 +127,7 @@
       var j = 0;
 
       while (j < line.length) {
-        // Chaines entre guillemets doubles
+        // Double-quoted strings
         if (line[j] === '"') {
           var end = line.indexOf('"', j + 1);
           if (end === -1) end = line.length - 1;
@@ -135,7 +136,7 @@
           continue;
         }
 
-        // Chaines entre guillemets simples
+        // Single-quoted strings
         if (line[j] === "'") {
           var end2 = line.indexOf("'", j + 1);
           if (end2 === -1) end2 = line.length - 1;
@@ -144,31 +145,31 @@
           continue;
         }
 
-        // Commentaire en milieu de ligne
+        // Mid-line comment
         if (line[j] === '#') {
           highlighted += span('comment', esc(line.substring(j)));
           j = line.length;
           continue;
         }
 
-        // Mots / tokens
+        // Words / tokens
         var match = line.substring(j).match(/^[^\s"'#]+/);
         if (match) {
           var token = match[0];
 
           if (/^-\w/.test(token)) {
-            // Parametres PowerShell (-Force, -Path, etc.)
+            // PowerShell parameters (-Force, -Path, etc.)
             highlighted += span('flag', esc(token));
           } else if (/^\$\w+/.test(token)) {
-            // Variables PowerShell
+            // PowerShell variables
             highlighted += span('variable', esc(token));
           } else if (/^(Get|Set|New|Remove|Write|Read|Test|Import|Export|Invoke|Start|Stop|Add|Copy|Move)-/i.test(token)) {
-            // Cmdlets PowerShell
+            // PowerShell cmdlets
             highlighted += span('builtin', esc(token));
           } else if (/^git$/i.test(token)) {
             highlighted += span('cmd', esc(token));
           } else if (/^\.\\/i.test(token)) {
-            // Execution locale (.\script.ps1)
+            // Local execution (.\script.ps1)
             highlighted += span('path', esc(token));
           } else {
             highlighted += esc(token);
@@ -196,20 +197,20 @@
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
 
-      // Ligne de commentaire
+      // Comment line
       if (/^\s*#/.test(line)) {
         result.push(span('comment', esc(line)));
         continue;
       }
 
-      // Ligne "---" ou "..."
+      // "---" or "..." lines
       if (/^\s*---\s*$/.test(line) || /^\s*\.\.\.\s*$/.test(line)) {
         result.push(span('comment', esc(line)));
         continue;
       }
 
       var highlighted = '';
-      // Cle: valeur
+      // Key: value
       var kvMatch = line.match(/^(\s*(?:-\s+)?)([^:#\s][^:#]*?)\s*(:)(.*)/);
       if (kvMatch) {
         highlighted += esc(kvMatch[1]);
@@ -217,7 +218,7 @@
         highlighted += esc(kvMatch[3]);
         highlighted += highlightYamlValue(kvMatch[4]);
       } else {
-        // Ligne de liste sans cle (- valeur)
+        // List line without key (- value)
         var listMatch = line.match(/^(\s*-\s+)(.*)/);
         if (listMatch) {
           highlighted += esc(listMatch[1]);
@@ -237,7 +238,7 @@
     if (!val) return '';
     var trimmed = val.trim();
 
-    // Commentaire en fin de ligne
+    // End-of-line comment
     var commentIdx = -1;
     var inStr = false;
     var strChar = '';
@@ -281,7 +282,7 @@
     var i = 0;
 
     while (i < code.length) {
-      // Chaines
+      // Strings
       if (code[i] === '"') {
         var end = i + 1;
         while (end < code.length && code[end] !== '"') {
@@ -289,7 +290,7 @@
           end++;
         }
         var str = code.substring(i, end + 1);
-        // Verifier si c'est une cle (suivie de ":")
+        // Check if it's a key (followed by ":")
         var after = code.substring(end + 1).match(/^\s*:/);
         if (after) {
           result += span('key', esc(str));
@@ -300,7 +301,7 @@
         continue;
       }
 
-      // Nombres
+      // Numbers
       var numMatch = code.substring(i).match(/^-?\d+(\.\d+)?([eE][+-]?\d+)?/);
       if (numMatch && (i === 0 || /[\s:,\[\{]/.test(code[i - 1]))) {
         result += span('number', esc(numMatch[0]));
@@ -308,7 +309,7 @@
         continue;
       }
 
-      // Booleens et null
+      // Booleans and null
       var boolMatch = code.substring(i).match(/^(true|false|null)\b/);
       if (boolMatch) {
         result += span('boolean', esc(boolMatch[0]));
@@ -316,7 +317,7 @@
         continue;
       }
 
-      // Commentaires (non standard mais courant dans les exemples)
+      // Comments (non-standard but common in examples)
       if (code[i] === '/' && code[i + 1] === '/') {
         var eol = code.indexOf('\n', i);
         if (eol === -1) eol = code.length;
@@ -340,7 +341,7 @@
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
 
-      // Ligne de commentaire
+      // Comment line
       if (/^\s*#/.test(line)) {
         result.push(span('comment', esc(line)));
         continue;
@@ -350,7 +351,7 @@
       var j = 0;
 
       while (j < line.length) {
-        // Chaines triples
+        // Triple-quoted strings
         if ((line.substring(j, j + 3) === '"""' || line.substring(j, j + 3) === "'''")) {
           var delim = line.substring(j, j + 3);
           var end = line.indexOf(delim, j + 3);
@@ -360,7 +361,7 @@
           continue;
         }
 
-        // Chaines simples/doubles
+        // Single/double-quoted strings
         if (line[j] === '"' || line[j] === "'") {
           var q = line[j];
           var end2 = line.indexOf(q, j + 1);
@@ -370,14 +371,14 @@
           continue;
         }
 
-        // Commentaire
+        // Comment
         if (line[j] === '#') {
           highlighted += span('comment', esc(line.substring(j)));
           j = line.length;
           continue;
         }
 
-        // Decorateurs
+        // Decorators
         if (line[j] === '@' && /^\w/.test(line[j + 1] || '')) {
           var decMatch = line.substring(j).match(/^@[\w.]+/);
           if (decMatch) {
@@ -387,7 +388,7 @@
           }
         }
 
-        // Mots / tokens
+        // Words / tokens
         var match = line.substring(j).match(/^[a-zA-Z_]\w*/);
         if (match) {
           var token = match[0];
@@ -408,7 +409,7 @@
           continue;
         }
 
-        // Nombres
+        // Numbers
         var numMatch = line.substring(j).match(/^\d+(\.\d+)?/);
         if (numMatch) {
           highlighted += span('number', esc(numMatch[0]));
@@ -434,7 +435,7 @@
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
 
-      // Commentaire ligne
+      // Line comment
       if (/^\s*\/\//.test(line)) {
         result.push(span('comment', esc(line)));
         continue;
@@ -444,7 +445,7 @@
       var j = 0;
 
       while (j < line.length) {
-        // Commentaire
+        // Comment
         if (line[j] === '/' && line[j + 1] === '/') {
           highlighted += span('comment', esc(line.substring(j)));
           j = line.length;
@@ -460,7 +461,7 @@
           continue;
         }
 
-        // Chaines
+        // Strings
         if (line[j] === '"' || line[j] === "'") {
           var q = line[j];
           var end2 = line.indexOf(q, j + 1);
@@ -470,7 +471,7 @@
           continue;
         }
 
-        // Mots
+        // Words
         var match = line.substring(j).match(/^[a-zA-Z_$]\w*/);
         if (match) {
           var token = match[0];
@@ -491,7 +492,7 @@
           continue;
         }
 
-        // Nombres
+        // Numbers
         var numMatch = line.substring(j).match(/^\d+(\.\d+)?/);
         if (numMatch) {
           highlighted += span('number', esc(numMatch[0]));
@@ -517,20 +518,20 @@
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
 
-      // Commentaire
+      // Comment
       if (/^\s*[#;]/.test(line)) {
         result.push(span('comment', esc(line)));
         continue;
       }
 
-      // Section [nom]
+      // Section [name]
       var sectMatch = line.match(/^(\s*)(\[.+?\])(.*)/);
       if (sectMatch) {
         result.push(esc(sectMatch[1]) + span('key', esc(sectMatch[2])) + esc(sectMatch[3]));
         continue;
       }
 
-      // Cle = valeur
+      // Key = value
       var kvMatch = line.match(/^(\s*)([^=\s]+)(\s*=\s*)(.*)/);
       if (kvMatch) {
         var val = kvMatch[4];
@@ -562,17 +563,17 @@
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
 
-      // Commentaire
+      // Comment
       if (/^\s*#/.test(line)) {
         result.push(span('comment', esc(line)));
         continue;
       }
 
-      // Instruction Docker
+      // Docker instruction
       var instrMatch = line.match(/^(\s*)(FROM|RUN|CMD|ENTRYPOINT|COPY|ADD|WORKDIR|ENV|EXPOSE|VOLUME|USER|ARG|LABEL|STOPSIGNAL|HEALTHCHECK|SHELL|ONBUILD|MAINTAINER)\b(.*)/i);
       if (instrMatch) {
         var rest = instrMatch[3];
-        // Colorer les chaines dans le reste
+        // Highlight strings in the rest
         rest = rest.replace(/"([^"]*)"/g, function (m) { return span('string', esc(m)); });
         result.push(esc(instrMatch[1]) + span('keyword', esc(instrMatch[2])) + rest);
         continue;
@@ -592,19 +593,19 @@
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
 
-      // Commentaire
+      // Comment
       if (/^\s*#/.test(line)) {
         result.push(span('comment', esc(line)));
         continue;
       }
 
-      // Pattern + attributs
+      // Pattern + attributes
       var attrMatch = line.match(/^(\S+)(.*)/);
       if (attrMatch) {
         var pattern = attrMatch[1];
         var attrs = attrMatch[2];
         var highlighted = span('string', esc(pattern));
-        // Colorer les attributs
+        // Highlight attributes
         highlighted += attrs.replace(/(\S+=\S+|\S+)/g, function (m) {
           if (/=/.test(m)) {
             return span('flag', esc(m));
@@ -624,8 +625,8 @@
     return result.join('\n');
   }
 
-  // --- Resultat de commande (pas de data-lang) ---
-  // Pas de coloration, on laisse tel quel
+  // --- Command output (no data-lang) ---
+  // No highlighting, leave as-is
 
   // --- Application ---
   function applyHighlighting() {
@@ -658,7 +659,7 @@
     }
   }
 
-  // Lancer au chargement
+  // Run on page load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', applyHighlighting);
   } else {

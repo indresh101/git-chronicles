@@ -1,44 +1,47 @@
+# SPDX-License-Identifier: MIT
 # =============================================================================
-# Quête 20 - Les Chemins Libres - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 20 - Les Chemins Libres - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-. "$ScriptDir\..\..\lib\verifier-common.ps1"
+. "$ScriptDir\..\..\lib\common.ps1"
+_Parse-LangFlag $args
+_Load-ThemeMessages
 
-$script:QueteTitre = "Quête 20 - Les Chemins Libres"
-Afficher-Banniere $script:QueteTitre
+$script:QuestTitle = "Quête 20 - Les Chemins Libres"
+Show-Banner $script:QuestTitle
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-Verifier-Etape 1 "Tu es dans un dépôt Git" {
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+Check-Step 1 "Tu es dans un dépôt Git" {
     $result = & git rev-parse --is-inside-work-tree 2>&1
     $LASTEXITCODE -eq 0
 }
 
-# ---- Étape 2 : Le fichier mon-parcours.txt existe ----
-Verifier-Etape 2 "Le fichier mon-parcours.txt existe" {
+# ---- Step 2 : Le fichier mon-parcours.txt existe ----
+Check-Step 2 "Le fichier mon-parcours.txt existe" {
     Test-Path "mon-parcours.txt"
 }
 
-# ---- Étape 3 : Le fichier est suivi par Git ----
-Verifier-Etape 3 "Le fichier mon-parcours.txt est suivi par Git" {
+# ---- Step 3 : Le fichier est suivi par Git ----
+Check-Step 3 "Le fichier mon-parcours.txt est suivi par Git" {
     $result = & git ls-files --error-unmatch "mon-parcours.txt" 2>&1
     $LASTEXITCODE -eq 0
 }
 
-# ---- Étape 4 : Au moins un commit a été créé ----
-Verifier-Etape 4 "Au moins un commit a été créé" {
+# ---- Step 4 : Au moins un commit a été créé ----
+Check-Step 4 "Au moins un commit a été créé" {
     $result = & git log --oneline -1 2>&1
     $LASTEXITCODE -eq 0
 }
 
-# ---- Étape 5 : Au moins un tag existe ----
-Verifier-Etape 5 "Au moins un tag existe" {
+# ---- Step 5 : Au moins un tag existe ----
+Check-Step 5 "Au moins un tag existe" {
     $tags = & git tag -l 2>&1
     $LASTEXITCODE -eq 0 -and $null -ne $tags -and ($tags | Measure-Object).Count -ge 1
 }
 
-Afficher-Score
+Show-Score
 
 # Message spécial si toutes les étapes sont validées
 if ($script:Score -eq $script:Total -and $script:Total -gt 0) {

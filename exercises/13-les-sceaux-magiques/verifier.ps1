@@ -1,29 +1,32 @@
+# SPDX-License-Identifier: MIT
 # =============================================================================
-# Quête 13 - Les Sceaux Magiques - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 13 - Les Sceaux Magiques - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-. "$ScriptDir\..\..\lib\verifier-common.ps1"
+. "$ScriptDir\..\..\lib\common.ps1"
+_Parse-LangFlag $args
+_Load-ThemeMessages
 
-$script:QueteTitre = "Quête 13 - Les Sceaux Magiques"
-Afficher-Banniere $script:QueteTitre
+$script:QuestTitle = "Quête 13 - Les Sceaux Magiques"
+Show-Banner $script:QuestTitle
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-Verifier-Etape 1 "Tu es dans un dépôt Git" {
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+Check-Step 1 "Tu es dans un dépôt Git" {
     $result = & git rev-parse --is-inside-work-tree 2>&1
     $LASTEXITCODE -eq 0
 }
 
-# ---- Étape 2 : Au moins 2 tags existent ----
-Verifier-Etape 2 "Au moins 2 tags existent" {
+# ---- Step 2 : Au moins 2 tags existent ----
+Check-Step 2 "Au moins 2 tags existent" {
     $tags = & git tag 2>&1
     if ($LASTEXITCODE -ne 0) { return $false }
     ($tags | Measure-Object).Count -ge 2
 }
 
-# ---- Étape 3 : Au moins un tag annoté existe ----
-Verifier-Etape 3 "Au moins un tag annoté existe" {
+# ---- Step 3 : Au moins un tag annoté existe ----
+Check-Step 3 "Au moins un tag annoté existe" {
     $tags = & git tag 2>&1
     if ($LASTEXITCODE -ne 0) { return $false }
     $found = $false
@@ -37,8 +40,8 @@ Verifier-Etape 3 "Au moins un tag annoté existe" {
     $found
 }
 
-# ---- Étape 4 : Les tags suivent le format de versionnage (v*) ----
-Verifier-Etape 4 "Les tags suivent le format de versionnage (v*)" {
+# ---- Step 4 : Les tags suivent le format de versionnage (v*) ----
+Check-Step 4 "Les tags suivent le format de versionnage (v*)" {
     $tags = & git tag 2>&1
     if ($LASTEXITCODE -ne 0) { return $false }
     $found = $false
@@ -51,4 +54,4 @@ Verifier-Etape 4 "Les tags suivent le format de versionnage (v*)" {
     $found
 }
 
-Afficher-Score
+Show-Score

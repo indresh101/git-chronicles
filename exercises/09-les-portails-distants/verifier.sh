@@ -1,31 +1,34 @@
+# SPDX-License-Identifier: MIT
 #!/usr/bin/env bash
 # =============================================================================
-# Quête 09 - Les Portails Distants - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 09 - Les Portails Distants - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../../lib/verifier-common.sh"
+source "$SCRIPT_DIR/../../lib/common.sh"
+_parse_lang_flag "$@"
+_load_theme_messages
 
-QUETE_TITRE="Quête 09 - Les Portails Distants"
-afficher_banniere "$QUETE_TITRE"
+QUEST_TITLE="Quête 09 - Les Portails Distants"
+show_banner "$QUEST_TITLE"
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-verifier_etape 1 "Tu es dans un dépôt Git" \
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+check_step 1 "Tu es dans un dépôt Git" \
     'git rev-parse --is-inside-work-tree'
 
-# ---- Étape 2 : Au moins un remote est configuré ----
-verifier_etape 2 "Au moins un remote est configuré" \
+# ---- Step 2 : Au moins un remote est configuré ----
+check_step 2 "Au moins un remote est configuré" \
     '[ "$(git remote | wc -l)" -ge 1 ]'
 
-# ---- Étape 3 : Un push a été effectué (vérifie les refs de suivi distant) ----
-verifier_etape 3 "Tu as poussé au moins une fois vers un remote" \
+# ---- Step 3 : Un push a été effectué (vérifie les refs de suivi distant) ----
+check_step 3 "Tu as poussé au moins une fois vers un remote" \
     'git for-each-ref refs/remotes --format="%(refname)" 2>/dev/null | grep -q . || \
      git reflog show --all 2>/dev/null | grep -q "push"'
 
-# ---- Étape 4 : Un fetch ou pull a été effectué ----
-verifier_etape 4 "Tu as récupéré des changements depuis un remote" \
+# ---- Step 4 : Un fetch ou pull a été effectué ----
+check_step 4 "Tu as récupéré des changements depuis un remote" \
     '[ "$(git reflog show --all 2>/dev/null | grep -c "fetch\|pull")" -ge 1 ] || \
      [ "$(git log --all --oneline 2>/dev/null | wc -l)" -gt "$(git log --oneline 2>/dev/null | wc -l)" ]'
 
-afficher_score
+show_score

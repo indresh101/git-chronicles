@@ -1,27 +1,26 @@
-#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
 # =============================================================================
-# messages.sh - Messages thématisés : Heroic Fantasy
-# Projet  : Les Chroniques du Versionneur
-# Thème   : Heroic Fantasy - Cours Git gamifié
-# Auteur  : Infrastructure pédagogique
-# Version : 1.0.0
+# messages_fr.ps1 - Themed messages: Heroic Fantasy (French)
+# Project : Git Chronicles (Les Chroniques du Versionneur)
+# Theme   : Heroic Fantasy - Gamified Git course
+# Version : 2.0.0
 #
-# Ce fichier est sourcé automatiquement par verifier-common.sh.
-# Il définit les variables de thème qui surclassent les messages par défaut.
+# This file is sourced automatically by common.ps1 via dot-sourcing.
+# It defines theme variables that override the default messages.
 #
-# Compatibilité : bash 3.2+ (macOS), bash 4+ (Linux)
-# Encodage       : UTF-8
+# Compatibility : PowerShell 5.1+ (Windows native) and PowerShell 7+ (cross-platform)
+# Encoding      : UTF-8
 # =============================================================================
 
-# Nom du thème actif (utile pour le débogage)
-THEME_NOM="fantasy"
+# Active theme name (useful for debugging)
+$script:ThemeName = "fantasy"
 
 # -----------------------------------------------------------------------------
-# Messages de succès
-# Chaque vérification réussie pioche un message aléatoire dans ce tableau
-# pour varier l'expérience d'apprentissage et maintenir l'immersion.
+# Success messages
+# Each successful check picks a random message from this array
+# to vary the learning experience and maintain immersion.
 # -----------------------------------------------------------------------------
-MESSAGES_SUCCES=(
+$script:MessagesSuccess = @(
     "Le parchemin est scellé !"
     "L'archiviste approuve !"
     "Le scribe valide ton travail !"
@@ -35,15 +34,15 @@ MESSAGES_SUCCES=(
 )
 
 # -----------------------------------------------------------------------------
-# Messages d'échec
-# Chaque vérification échouée pioche un message aléatoire dans ce tableau.
-# Les messages restent encourageants même en cas d'erreur.
+# Failure messages
+# Each failed check picks a random message from this array.
+# Messages remain encouraging even on error.
 # -----------------------------------------------------------------------------
-MESSAGES_ECHEC=(
+$script:MessagesFailure = @(
     "Le scribe refuse ce parchemin."
     "L'archive rejette cette entrée."
     "Le gardien bloque le passage."
-    "La rune reste éteinte… quelque chose cloche."
+    "La rune reste éteinte... quelque chose cloche."
     "L'Oracle secoue la tête : ce n'est pas la bonne voie."
     "La Guilde ne reconnaît pas ce geste."
     "Le parchemin se consume avant d'être scellé."
@@ -53,11 +52,11 @@ MESSAGES_ECHEC=(
 )
 
 # -----------------------------------------------------------------------------
-# Messages globaux de fin de quête
+# End-of-quest global messages
 # -----------------------------------------------------------------------------
 
-# Affiché quand toutes les étapes sont réussies
-MSG_FELICITATIONS="🎉 FÉLICITATIONS ! Tu as complété cette quête !"
+# Displayed when all steps are successful
+$script:MsgCongratulations = "Félicitations ! Tu as complété cette quête !"
 
-# Affiché quand au moins une étape a échoué
-MSG_ENCOURAGEMENT="Courage, apprenti ! Relis les consignes et réessaie."
+# Displayed when at least one step has failed
+$script:MsgEncouragement = "Courage, apprenti ! Relis les consignes et réessaie."

@@ -1,11 +1,13 @@
+/* SPDX-License-Identifier: MIT */
+
 /* ============================================================
-   Les Chroniques du Versionneur - Feuille de style principale
-   Theme : Heroic Fantasy / Parchemin & Or
+   Les Chroniques du Versionneur - Main Stylesheet
+   Theme: Heroic Fantasy / Parchment & Gold
    ============================================================ */
 
 /* --- Custom Properties (Design Tokens) --- */
 :root {
-  /* Palette principale */
+  /* Main palette */
   --color-parchment:        #f4e4c1;
   --color-parchment-light:  #faf3e3;
   --color-parchment-dark:   #e8d5a8;
@@ -30,14 +32,14 @@
   --color-code-border:      #444;
   --color-inline-code-bg:   #ede3d0;
 
-  /* Typographie */
+  /* Typography */
   --font-body: "Segoe UI", "Liberation Sans", "Noto Sans", Roboto, Helvetica, Arial, sans-serif;
   --font-heading: Georgia, "Noto Serif", "Liberation Serif", "Times New Roman", serif;
   --font-mono: "Cascadia Code", "Fira Code", "JetBrains Mono", "Source Code Pro", Consolas, "Liberation Mono", "Courier New", monospace;
   --font-size-base: 1rem;
   --line-height-base: 1.7;
 
-  /* Espacement */
+  /* Spacing */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -45,12 +47,12 @@
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
 
-  /* Rayons */
+  /* Border radii */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
 
-  /* Ombres */
+  /* Shadows */
   --shadow-sm: 0 1px 3px rgba(59, 42, 26, 0.12);
   --shadow-md: 0 4px 12px rgba(59, 42, 26, 0.15);
   --shadow-lg: 0 8px 24px rgba(59, 42, 26, 0.18);
@@ -214,7 +216,7 @@ li::marker {
 }
 
 
-/* --- Header / Navigation sticky --- */
+/* --- Header / Sticky Navigation --- */
 .site-header {
   position: sticky;
   top: 0;
@@ -328,7 +330,7 @@ li::marker {
 }
 
 
-/* --- Mobile nav toggle --- */
+/* --- Mobile Nav Toggle --- */
 .nav-toggle {
   display: none;
   background: none;
@@ -382,7 +384,7 @@ pre code {
   font-size: 0.9rem;
 }
 
-/* Label pour les blocs de code (optionnel) */
+/* Label for code blocks (optional) */
 pre[data-lang]::before {
   content: attr(data-lang);
   position: absolute;
@@ -415,7 +417,7 @@ pre[data-lang]::before {
 .hl-type     { color: #81d4fa; }
 
 
-/* --- Utility Classes: Encadres --- */
+/* --- Utility Classes: Callout Boxes --- */
 .tip,
 .warning,
 .quest-objective,
@@ -492,7 +494,7 @@ pre[data-lang]::before {
   margin-bottom: 0;
 }
 
-/* Command inline */
+/* Inline command */
 .command {
   font-family: var(--font-mono);
   background: var(--color-inline-code-bg);
@@ -507,13 +509,13 @@ pre[data-lang]::before {
 
 /* --- Text Styling Utilities --- */
 
-/* Mot-clé important - texte doré gras */
+/* Important keyword - bold gold text */
 .keyword {
   color: var(--color-gold-dark);
   font-weight: 700;
 }
 
-/* Concept git - monospace doré sur fond léger */
+/* Git concept - gold monospace on light background */
 .git-cmd {
   font-family: var(--font-mono);
   font-weight: 700;
@@ -526,25 +528,25 @@ pre[data-lang]::before {
   white-space: nowrap;
 }
 
-/* Texte surligné - pour les passages vraiment importants */
+/* Highlighted text - for truly important passages */
 .highlight {
   background: linear-gradient(180deg, transparent 55%, rgba(200, 169, 81, 0.3) 55%);
   font-weight: 600;
 }
 
-/* Texte surligné vert - pour les bonnes pratiques */
+/* Green highlighted text - for best practices */
 .highlight-green {
   background: linear-gradient(180deg, transparent 55%, rgba(45, 80, 22, 0.15) 55%);
   font-weight: 600;
 }
 
-/* Texte surligné rouge - pour les erreurs / mauvaises pratiques */
+/* Red highlighted text - for errors / bad practices */
 .highlight-red {
   background: linear-gradient(180deg, transparent 55%, rgba(139, 26, 26, 0.15) 55%);
   font-weight: 600;
 }
 
-/* Message clé - la chose la plus importante à retenir */
+/* Key message - the most important takeaway */
 .key-message {
   background: linear-gradient(135deg, var(--color-gold-bg), rgba(200, 169, 81, 0.15));
   border: 2px solid var(--color-gold);
@@ -566,7 +568,7 @@ pre[data-lang]::before {
   margin-bottom: var(--spacing-sm);
 }
 
-/* Comparaison bon/mauvais - deux colonnes */
+/* Good/bad comparison - two columns */
 .comparison {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -621,7 +623,7 @@ pre[data-lang]::before {
   }
 }
 
-/* Étapes numérotées stylisées */
+/* Styled numbered steps */
 .steps {
   counter-reset: step-counter;
   list-style: none;
@@ -655,7 +657,7 @@ pre[data-lang]::before {
   box-shadow: var(--shadow-sm);
 }
 
-/* Blockquotes améliorés (paroles de PNJ) */
+/* Enhanced blockquotes (NPC dialogue) */
 blockquote {
   background: var(--color-parchment-dark);
   border-left: 4px solid var(--color-gold);
@@ -688,7 +690,7 @@ blockquote p:last-child {
   margin-bottom: 0;
 }
 
-/* Badge / étiquette */
+/* Badge / label */
 .badge {
   display: inline-block;
   padding: 0.15em 0.6em;
@@ -714,7 +716,7 @@ blockquote p:last-child {
   color: white;
 }
 
-/* Séparateur décoratif */
+/* Decorative separator */
 .fancy-separator {
   text-align: center;
   margin: var(--spacing-2xl) 0;
@@ -727,13 +729,13 @@ blockquote p:last-child {
   content: "\2726  \2726  \2726";
 }
 
-/* Strong amélioré - plus visible */
+/* Enhanced strong - more visible */
 strong {
   color: var(--color-brown-dark);
   font-weight: 700;
 }
 
-/* Strong dans les listes - un peu plus mis en valeur */
+/* Strong in lists - slightly more emphasized */
 li > strong:first-child {
   color: var(--color-gold-dark);
 }
@@ -778,7 +780,7 @@ tbody tr:hover {
 }
 
 
-/* --- Quest Card (page d'accueil) --- */
+/* --- Quest Card (home page) --- */
 .quest-map {
   margin-top: var(--spacing-xl);
 }
@@ -1010,7 +1012,7 @@ tbody tr:hover {
 }
 
 
-/* --- Hero Section (page d'accueil) --- */
+/* --- Hero Section (home page) --- */
 .hero {
   text-align: center;
   padding: var(--spacing-2xl) var(--spacing-lg);
@@ -1067,7 +1069,7 @@ tbody tr:hover {
     transform: translateX(0);
   }
 
-  /* Overlay quand la sidebar est ouverte */
+  /* Overlay when sidebar is open */
   .sidebar-overlay {
     display: none;
     position: fixed;

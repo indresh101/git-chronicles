@@ -1,32 +1,35 @@
+# SPDX-License-Identifier: MIT
 #!/usr/bin/env bash
 # =============================================================================
-# Quête 03 - Le Premier Parchemin - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 03 - Le Premier Parchemin - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 #
-# Usage   : Lancer DEPUIS le dossier mon-archive/
+# Usage   : Run FROM the directory mon-archive/
 #           bash ../verifier.sh
 # =============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../../lib/verifier-common.sh"
+source "$SCRIPT_DIR/../../lib/common.sh"
+_parse_lang_flag "$@"
+_load_theme_messages
 
-QUETE_TITRE="Quête 03 - Le Premier Parchemin"
-afficher_banniere "$QUETE_TITRE"
+QUEST_TITLE="Quête 03 - Le Premier Parchemin"
+show_banner "$QUEST_TITLE"
 
-# --- Étape 1 : On est dans un dépôt git ---
-verifier_etape 1 "Tu es dans un dépôt Git" \
-    'verifier_dans_repo'
+# --- Step 1 : On est dans un dépôt git ---
+check_step 1 "Tu es dans un dépôt Git" \
+    'check_in_repo'
 
-# --- Étape 2 : Au moins 2 commits ---
-verifier_etape 2 "Tu as au moins 2 commits" \
+# --- Step 2 : Au moins 2 commits ---
+check_step 2 "Tu as au moins 2 commits" \
     '[ "$(git rev-list --count HEAD 2>/dev/null)" -ge 2 ]'
 
-# --- Étape 3 : mission.txt est tracké ---
-verifier_etape 3 "Le fichier mission.txt est suivi par Git" \
+# --- Step 3 : mission.txt est tracké ---
+check_step 3 "Le fichier mission.txt est suivi par Git" \
     'git ls-files --error-unmatch mission.txt'
 
-# --- Étape 4 : Le premier message de commit n'est pas générique ---
-verifier_etape 4 "Ton premier commit a un message personnalisé" \
+# --- Step 4 : Le premier message de commit n'est pas générique ---
+check_step 4 "Ton premier commit a un message personnalisé" \
     '
     premier_msg="$(git log --reverse --format=%s | head -n1)"
     [ -n "$premier_msg" ] \
@@ -36,4 +39,4 @@ verifier_etape 4 "Ton premier commit a un message personnalisé" \
         && [ "$premier_msg" != "init" ]
     '
 
-afficher_score
+show_score

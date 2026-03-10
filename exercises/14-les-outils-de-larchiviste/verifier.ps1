@@ -1,36 +1,39 @@
+# SPDX-License-Identifier: MIT
 # =============================================================================
-# Quête 14 - Les Outils de l'Archiviste - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 14 - Les Outils de l'Archiviste - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-. "$ScriptDir\..\..\lib\verifier-common.ps1"
+. "$ScriptDir\..\..\lib\common.ps1"
+_Parse-LangFlag $args
+_Load-ThemeMessages
 
-$script:QueteTitre = "Quête 14 - Les Outils de l'Archiviste"
-Afficher-Banniere $script:QueteTitre
+$script:QuestTitle = "Quête 14 - Les Outils de l'Archiviste"
+Show-Banner $script:QuestTitle
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-Verifier-Etape 1 "Tu es dans un dépôt Git" {
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+Check-Step 1 "Tu es dans un dépôt Git" {
     $result = & git rev-parse --is-inside-work-tree 2>&1
     $LASTEXITCODE -eq 0
 }
 
-# ---- Étape 2 : Au moins un alias est configuré ----
-Verifier-Etape 2 "Au moins un alias Git est configuré" {
+# ---- Step 2 : Au moins un alias est configuré ----
+Check-Step 2 "Au moins un alias Git est configuré" {
     $aliases = & git config --get-regexp alias 2>&1
     $LASTEXITCODE -eq 0 -and ($aliases | Measure-Object).Count -ge 1
 }
 
-# ---- Étape 3 : Le hook pre-commit existe et est exécutable ----
-Verifier-Etape 3 "Le hook pre-commit existe et est exécutable" {
+# ---- Step 3 : Le hook pre-commit existe et est exécutable ----
+Check-Step 3 "Le hook pre-commit existe et est exécutable" {
     $gitDir = & git rev-parse --git-dir 2>&1
     if ($LASTEXITCODE -ne 0) { return $false }
     $hookPath = Join-Path $gitDir "hooks/pre-commit"
     Test-Path $hookPath
 }
 
-# ---- Étape 4 : Le hook pre-commit fonctionne (détecte les TODO) ----
-Verifier-Etape 4 "Le hook pre-commit détecte les TODO dans les fichiers" {
+# ---- Step 4 : Le hook pre-commit fonctionne (détecte les TODO) ----
+Check-Step 4 "Le hook pre-commit détecte les TODO dans les fichiers" {
     $gitDir = & git rev-parse --git-dir 2>&1
     if ($LASTEXITCODE -ne 0) { return $false }
     $hookPath = Join-Path $gitDir "hooks/pre-commit"
@@ -39,12 +42,12 @@ Verifier-Etape 4 "Le hook pre-commit détecte les TODO dans les fichiers" {
     $content -match "TODO"
 }
 
-# ---- Étape 5 : Le hook commit-msg existe et est exécutable ----
-Verifier-Etape 5 "Le hook commit-msg existe et est exécutable" {
+# ---- Step 5 : Le hook commit-msg existe et est exécutable ----
+Check-Step 5 "Le hook commit-msg existe et est exécutable" {
     $gitDir = & git rev-parse --git-dir 2>&1
     if ($LASTEXITCODE -ne 0) { return $false }
     $hookPath = Join-Path $gitDir "hooks/commit-msg"
     Test-Path $hookPath
 }
 
-Afficher-Score
+Show-Score

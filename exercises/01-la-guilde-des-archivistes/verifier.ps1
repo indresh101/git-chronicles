@@ -1,16 +1,19 @@
+# SPDX-License-Identifier: MIT
 # =============================================================================
-# Quête 01 - La Guilde des Archivistes - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 01 - La Guilde des Archivistes - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-. "$ScriptDir\..\..\lib\verifier-common.ps1"
+. "$ScriptDir\..\..\lib\common.ps1"
+_Parse-LangFlag $args
+_Load-ThemeMessages
 
-$script:QueteTitre = "Quête 01 - La Guilde des Archivistes"
-Afficher-Banniere $script:QueteTitre
+$script:QuestTitle = "Quête 01 - La Guilde des Archivistes"
+Show-Banner $script:QuestTitle
 
-Verifier-Etape 1 "Git est installé" { Get-Command git -ErrorAction SilentlyContinue }
-Verifier-Etape 2 "Ton nom est configuré" { (git config --global user.name) -ne $null -and (git config --global user.name) -ne "" }
-Verifier-Etape 3 "Ton email est configuré" { (git config --global user.email) -ne $null -and (git config --global user.email) -ne "" }
+Check-Step 1 "Git est installé" { Get-Command git -ErrorAction SilentlyContinue }
+Check-Step 2 "Ton nom est configuré" { (git config --global user.name) -ne $null -and (git config --global user.name) -ne "" }
+Check-Step 3 "Ton email est configuré" { (git config --global user.email) -ne $null -and (git config --global user.email) -ne "" }
 
-Afficher-Score
+Show-Score

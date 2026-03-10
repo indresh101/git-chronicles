@@ -1,33 +1,36 @@
+# SPDX-License-Identifier: MIT
 #!/usr/bin/env bash
 # =============================================================================
-# Quête 05 - Les Lignes du Temps - Script de vérification
-# Projet  : Les Chroniques du Versionneur
+# Quête 05 - Les Lignes du Temps - Verification script
+# Project : Git Chronicles (Les Chroniques du Versionneur)
 # =============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../../lib/verifier-common.sh"
+source "$SCRIPT_DIR/../../lib/common.sh"
+_parse_lang_flag "$@"
+_load_theme_messages
 
-QUETE_TITRE="Quête 05 - Les Lignes du Temps"
-afficher_banniere "$QUETE_TITRE"
+QUEST_TITLE="Quête 05 - Les Lignes du Temps"
+show_banner "$QUEST_TITLE"
 
-# ---- Étape 1 : Est-on dans un dépôt Git ? ----
-verifier_etape 1 "Tu es dans un dépôt Git" \
+# ---- Step 1 : Est-on dans un dépôt Git ? ----
+check_step 1 "Tu es dans un dépôt Git" \
     'git rev-parse --is-inside-work-tree'
 
-# ---- Étape 2 : Le .gitignore existe ----
-verifier_etape 2 "Le fichier .gitignore existe" \
+# ---- Step 2 : Le .gitignore existe ----
+check_step 2 "Le fichier .gitignore existe" \
     '[ -f .gitignore ]'
 
-# ---- Étape 3 : Le .gitignore contient un pattern pour les .log ----
-verifier_etape 3 "Le .gitignore ignore les fichiers .log" \
+# ---- Step 3 : Le .gitignore contient un pattern pour les .log ----
+check_step 3 "Le .gitignore ignore les fichiers .log" \
     'grep -qE "^\*\.log$|^debug\.log$" .gitignore'
 
-# ---- Étape 4 : debug.log n'est plus tracké ----
-verifier_etape 4 "debug.log n'est plus suivi par Git" \
+# ---- Step 4 : debug.log n'est plus tracké ----
+check_step 4 "debug.log n'est plus suivi par Git" \
     '! git ls-files --error-unmatch debug.log 2>/dev/null'
 
-# ---- Étape 5 : Le dernier commit a un message d'au moins 10 caractères ----
-verifier_etape 5 "Le dernier commit a un message descriptif (≥ 10 caractères)" \
+# ---- Step 5 : Le dernier commit a un message d'au moins 10 caractères ----
+check_step 5 "Le dernier commit a un message descriptif (≥ 10 caractères)" \
     '[ "$(git log -1 --format=%s | wc -c)" -ge 10 ]'
 
-afficher_score
+show_score
