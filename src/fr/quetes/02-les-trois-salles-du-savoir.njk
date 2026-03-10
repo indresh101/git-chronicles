@@ -1,0 +1,296 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_02
+quest_number: "02"
+arc: 1
+title: "Les Trois Salles du Savoir"
+subtitle: "Le 3-tree model de Git"
+quest_slug_fr: "02-les-trois-salles-du-savoir"
+quest_slug_en: "02-the-three-halls-of-knowledge"
+permalink: /fr/quetes/02-les-trois-salles-du-savoir/
+---
+
+      <!-- ── Narratif d'introduction ── -->
+      <div class="narrative">
+        <p>Le Maître Archiviste te regarde d'un air solennel.</p>
+        <p>« Tu as rejoint la Guilde, apprenti. Mais avant de toucher au moindre
+          parchemin, tu dois comprendre <strong>comment fonctionne notre Archive</strong>.
+          Suis-moi… je vais te montrer les <strong>Trois Salles</strong>. »</p>
+        <p>Il ouvre une lourde porte de chêne et te guide dans un long corridor
+          éclairé par des torches. Trois immenses salles s'ouvrent devant toi.</p>
+      </div>
+
+      <!-- ── Objectif ── -->
+      <div class="quest-objective">
+        <p>Comprendre le <span class="keyword">3-tree model</span> de Git : les trois zones
+          par lesquelles passent tes fichiers avant d'être archivés.</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- ── Les Trois Salles ── -->
+      <h2>Les Trois Salles de l'Archive</h2>
+
+      <p>Tout dépôt Git repose sur <strong>trois zones distinctes</strong>. Le
+        Maître Archiviste les appelle les <strong>Trois Salles</strong> :</p>
+
+      <!-- Schéma visuel -->
+      <div class="three-rooms">
+
+        <div class="room-box room-working">
+          <span class="room-icon">🏠</span>
+          <span class="room-name">Salle de Travail</span>
+          <span class="room-git-name"><span class="keyword">Working Directory</span></span>
+          <span class="room-desc">Tu écris, modifies et crées tes fichiers ici.
+            C'est le dossier sur ton disque.</span>
+        </div>
+
+        <div class="room-arrow">
+          <span class="arrow-symbol">→</span>
+          <span class="arrow-label">git add</span>
+        </div>
+
+        <div class="room-box room-staging">
+          <span class="room-icon">📋</span>
+          <span class="room-name">Salle de Préparation</span>
+          <span class="room-git-name"><span class="keyword">Staging Area</span> / Index</span>
+          <span class="room-desc">Tu y déposes les parchemins que tu veux
+            archiver. C'est le « panier » avant l'envoi.</span>
+        </div>
+
+        <div class="room-arrow">
+          <span class="arrow-symbol">→</span>
+          <span class="arrow-label">git commit</span>
+        </div>
+
+        <div class="room-box room-repository">
+          <span class="room-icon">📚</span>
+          <span class="room-name">Grande Archive</span>
+          <span class="room-git-name"><span class="keyword">Repository</span> / .git</span>
+          <span class="room-desc">Les parchemins scellés définitivement.
+            L'historique complet et permanent.</span>
+        </div>
+
+      </div>
+
+      <div class="key-message">
+        <p>Chaque fichier passe par trois zones : <span class="keyword">Working Directory</span> →
+          <span class="keyword">Staging Area</span> → <span class="keyword">Repository</span>.
+          Comprendre ce flux est la clé pour maîtriser Git.</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- ── Pourquoi 3 étapes ? ── -->
+      <h2>Pourquoi trois étapes ?</h2>
+
+      <div class="narrative">
+        <p>« Pourquoi ne pas archiver directement ? » demandes-tu.</p>
+        <p>Le Maître Archiviste sourit. « Imagine que tu aies écrit dix lettres.
+          Voudrais-tu <strong>toutes les poster d'un coup</strong>, sans relire, sans trier ? »</p>
+      </div>
+
+      <h3>Analogie : La lettre</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Étape</th>
+            <th>Action</th>
+            <th>Équivalent Git</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Écrire la lettre</td>
+            <td>Tu rédiges sur ton bureau</td>
+            <td>Modifier dans le <span class="keyword">Working Directory</span></td>
+          </tr>
+          <tr>
+            <td>Mettre dans l'enveloppe</td>
+            <td>Tu choisis quoi envoyer</td>
+            <td><code class="command">git add</code> → <span class="keyword">Staging Area</span></td>
+          </tr>
+          <tr>
+            <td>Poster la lettre</td>
+            <td>C'est envoyé, c'est archivé</td>
+            <td><code class="command">git commit</code> → <span class="keyword">Repository</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Le vrai pouvoir du <span class="keyword">staging</span></h3>
+
+      <p>Le <span class="keyword">staging</span> te permet de <span class="highlight">choisir QUOI archiver</span> - pas
+        tout d'un coup !</p>
+
+      <ul>
+        <li>Tu modifies <strong>10 fichiers</strong></li>
+        <li>Mais seuls <strong>3</strong> sont prêts</li>
+        <li>Tu fais <code class="command">git add</code> uniquement sur ces 3 fichiers</li>
+        <li>Tu fais <code class="command">git commit</code> : seuls ces 3 sont archivés</li>
+        <li>Les 7 autres restent tranquillement dans la Salle de Travail</li>
+      </ul>
+
+      <div class="fancy-separator"></div>
+
+      <!-- ── Commandes clés ── -->
+      <h2>Les commandes clés</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Commande</th>
+            <th>Rôle</th>
+            <th>Transition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="command">git status</code></td>
+            <td>Voir dans quelle salle sont tes fichiers</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><code class="command">git add &lt;fichier&gt;</code></td>
+            <td>Salle de Travail → Salle de Préparation</td>
+            <td><span class="keyword">Working Directory</span> → <span class="keyword">Staging Area</span></td>
+          </tr>
+          <tr>
+            <td><code class="command">git commit</code></td>
+            <td>Salle de Préparation → Grande Archive</td>
+            <td><span class="keyword">Staging Area</span> → <span class="keyword">Repository</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Les couleurs de <code class="command">git status</code></h3>
+
+      <ul>
+        <li><span class="status-red"><span class="highlight-red">Rouge</span></span> = le fichier est dans la
+          <strong>Salle de Travail</strong> (modifié ou non suivi)</li>
+        <li><span class="status-green"><span class="highlight-green">Vert</span></span> = le fichier est dans la
+          <strong>Salle de Préparation</strong> (prêt à être archivé)</li>
+      </ul>
+
+      <div class="tip">
+        <p>Utilise <code class="command">git status</code> souvent !
+          C'est ta boussole dans l'Archive.</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- ── Exercice pratique ── -->
+      <h2>Exercice pratique</h2>
+
+      <p>Il est temps de mettre les mains dans le parchemin ! Suis ces étapes
+        une par une.</p>
+
+      <!-- Étape 1 -->
+      <div class="step">
+        <h3><span class="step-number">1</span> Créer ton atelier</h3>
+        <p>Ouvre un terminal et crée un nouveau dossier, puis initialise un dépôt Git :</p>
+        <pre data-lang="bash"><code>mkdir atelier-archiviste
+cd atelier-archiviste
+git init</code></pre>
+      </div>
+
+      <!-- Étape 2 -->
+      <div class="step">
+        <h3><span class="step-number">2</span> Créer un parchemin</h3>
+        <p>Crée un fichier <code class="command">parchemin.txt</code> avec du contenu :</p>
+        <pre data-lang="bash"><code>echo "Ceci est mon premier parchemin dans l'Archive." > parchemin.txt</code></pre>
+      </div>
+
+      <!-- Étape 3 -->
+      <div class="step">
+        <h3><span class="step-number">3</span> Observer la Salle de Travail</h3>
+        <p>Lance la commande :</p>
+        <pre data-lang="bash"><code>git status</code></pre>
+        <p>Tu devrais voir <code class="command">parchemin.txt</code> en
+          <span class="status-red"><span class="highlight-red">rouge</span></span> sous la mention
+          <em>Untracked files</em>. Le fichier est dans la <strong>Salle de
+          Travail</strong> - Git le voit, mais ne le suit pas encore.</p>
+      </div>
+
+      <!-- Étape 4 -->
+      <div class="step">
+        <h3><span class="step-number">4</span> Préparer le parchemin</h3>
+        <p>Déplace le fichier dans la Salle de Préparation :</p>
+        <pre data-lang="bash"><code>git add parchemin.txt</code></pre>
+      </div>
+
+      <!-- Étape 5 -->
+      <div class="step">
+        <h3><span class="step-number">5</span> Observer la Salle de Préparation</h3>
+        <p>Lance à nouveau :</p>
+        <pre data-lang="bash"><code>git status</code></pre>
+        <p>Cette fois, <code class="command">parchemin.txt</code> apparaît en
+          <span class="status-green"><span class="highlight-green">vert</span></span> sous
+          <em>Changes to be committed</em>. Le parchemin est dans la
+          <strong>Salle de Préparation</strong>, prêt à être scellé.</p>
+      </div>
+
+      <!-- Étape 6 -->
+      <div class="step">
+        <h3><span class="step-number">6</span> Ne PAS commiter !</h3>
+        <div class="warning">
+          <p>Pour cet exercice, <strong>ne fais PAS</strong>
+            <code class="command">git commit</code>. L'objectif est de comprendre
+            le flux entre les deux premières salles. Le commit viendra dans la
+            quête suivante !</p>
+        </div>
+      </div>
+
+      <!-- Étape 7 -->
+      <div class="step">
+        <h3><span class="step-number">7</span> Vérifier ta progression</h3>
+        <p>Lance le script de vérification depuis le dossier
+          <code class="command">atelier-archiviste</code> :</p>
+        <p><strong>Linux / macOS :</strong></p>
+        <pre data-lang="bash"><code>bash chemin/vers/quetes/02-les-trois-salles-du-savoir/verifier.sh</code></pre>
+        <p><strong>Windows (PowerShell) :</strong></p>
+        <pre data-lang="powershell"><code>& chemin\vers\quetes\02-les-trois-salles-du-savoir\verifier.ps1</code></pre>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- ── Résumé ── -->
+      <h2>Résumé</h2>
+
+      <div class="three-rooms" style="margin-bottom: var(--spacing-lg);">
+        <div class="room-box room-working">
+          <span class="room-icon">🏠</span>
+          <span class="room-name">Salle de Travail</span>
+          <span class="room-git-name">tu modifies</span>
+          <span class="room-desc"><span class="status-red"><span class="highlight-red">rouge</span></span> dans git status</span>
+        </div>
+        <div class="room-arrow">
+          <span class="arrow-symbol">→</span>
+          <span class="arrow-label">git add</span>
+        </div>
+        <div class="room-box room-staging">
+          <span class="room-icon">📋</span>
+          <span class="room-name">Salle de Préparation</span>
+          <span class="room-git-name">git add</span>
+          <span class="room-desc"><span class="status-green"><span class="highlight-green">vert</span></span> dans git status</span>
+        </div>
+        <div class="room-arrow">
+          <span class="arrow-symbol">→</span>
+          <span class="arrow-label">git commit</span>
+        </div>
+        <div class="room-box room-repository">
+          <span class="room-icon">📚</span>
+          <span class="room-name">Grande Archive</span>
+          <span class="room-git-name">git commit</span>
+          <span class="room-desc">historique permanent</span>
+        </div>
+      </div>
+
+      <div class="narrative">
+        <p>Le Maître Archiviste hoche la tête avec satisfaction.</p>
+        <p>« Tu comprends maintenant <strong>le chemin du parchemin</strong>. Dans la prochaine
+          quête, tu apprendras à <strong>sceller ton premier envoi</strong> dans la Grande
+          Archive. »</p>
+      </div>

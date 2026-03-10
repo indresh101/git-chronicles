@@ -1,0 +1,586 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_10
+quest_number: "10"
+arc: 2
+title: "Le Protocole des Guildes"
+subtitle: "Pull Requests, revue de code et workflows"
+quest_slug_fr: "10-le-protocole-des-guildes"
+quest_slug_en: "10-the-guild-protocol"
+permalink: /fr/quetes/10-le-protocole-des-guildes/
+---
+
+    <style>
+    /* --- Schéma du workflow PR --- */
+    .workflow-schema {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0;
+      margin: var(--spacing-xl) 0;
+      flex-wrap: wrap;
+    }
+
+    .workflow-step {
+      border: 2px solid var(--color-gold);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      text-align: center;
+      min-width: 130px;
+      max-width: 170px;
+      background: var(--color-parchment-light);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .workflow-step .step-number {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: var(--color-gold-dark);
+      display: block;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .workflow-step .step-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--color-brown-dark);
+      display: block;
+    }
+
+    .workflow-step .step-cmd {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--color-brown-medium);
+      margin-top: var(--spacing-xs);
+      display: block;
+    }
+
+    .workflow-arrow {
+      font-size: 1.8rem;
+      color: var(--color-gold-dark);
+      padding: 0 var(--spacing-xs);
+      flex-shrink: 0;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    @media (max-width: 800px) {
+      .workflow-schema {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+      .workflow-arrow {
+        transform: rotate(90deg);
+        padding: var(--spacing-xs) 0;
+      }
+    }
+
+    /* --- Stratégies de branchement --- */
+    .strategy-card {
+      border: 2px solid var(--color-gold);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      background: var(--color-parchment-light);
+    }
+
+    .strategy-card h4 {
+      margin-top: 0;
+      color: var(--color-brown-dark);
+    }
+
+    .strategy-card.recommended {
+      border-color: #4a7c59;
+      background: linear-gradient(135deg, var(--color-parchment-light), #f0f5e8);
+    }
+
+    .strategy-card .badge-recommended {
+      display: inline-block;
+      background: #4a7c59;
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 2px 10px;
+      border-radius: 10px;
+      margin-left: var(--spacing-sm);
+      vertical-align: middle;
+    }
+    </style>
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste te conduit dans la Grande Salle du Conseil. Autour d'une table ronde en obsidienne, des sièges vides portent les blasons de différentes guildes. Au centre, un immense registre est enchaîné à la table - le Registre Central des Chroniques. Personne ne peut y écrire directement.</p>
+      <p>« Archiviste, tu maîtrises désormais les branches, les fusions, la réécriture et les portails distants. Mais il te reste à comprendre <strong>le Protocole</strong> - les règles sacrées qui permettent aux guildes de travailler ensemble sans chaos. <strong>Aucun Archiviste n'écrit directement dans le Registre Central.</strong> Chacun propose ses modifications, et le <strong>Grand Conseil</strong> les examine avant de les accepter. C'est le fondement de toute collaboration. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Pourquoi pas main -->
+    <h2>Pourquoi ne pas écrire directement sur <span class="keyword"><code>main</code></span> ?</h2>
+
+    <p>Imagine : dix Archivistes poussent simultanément leurs modifications sur <span class="keyword"><code>main</code></span>. L'un casse le code, l'autre introduit un bug, un troisième écrase le travail du quatrième.</p>
+
+    <p><span class="highlight-red">C'est le chaos.</span> Et c'est exactement ce qui arrive dans les projets réels quand tout le monde fait <span class="git-cmd">git push</span> directement sur la branche principale.</p>
+
+    <div class="warning">
+      <p><strong>Les risques du push direct sur <code>main</code> :</strong></p>
+      <ul>
+        <li><strong>Code cassé</strong> : quelqu'un pousse du code non testé, tout le monde est bloqué</li>
+        <li><strong>Conflits en cascade</strong> : les merges deviennent un cauchemar</li>
+        <li><strong>Pas de revue</strong> : personne ne vérifie la qualité avant l'intégration</li>
+        <li><strong>Pas de traçabilité</strong> : impossible de savoir pourquoi un changement a été fait</li>
+        <li><strong>Rollback difficile</strong> : si le problème est détecté tard, revenir en arrière est pénible</li>
+      </ul>
+    </div>
+
+    <div class="key-message">
+      <p>Dans les guildes les plus disciplinées, <strong>la branche <code>main</code> est sacrée</strong>. Personne n'y touche directement. Tout passe par le <span class="keyword">Protocole</span>.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Feature Branch Workflow -->
+    <h2>Le workflow <span class="keyword">Feature Branch</span></h2>
+
+    <p>C'est le flux de travail le plus courant dans le monde professionnel. Le principe est simple :</p>
+
+    <div class="workflow-schema">
+      <div class="workflow-step">
+        <span class="step-number">1</span>
+        <span class="step-title">Créer une branche</span>
+        <span class="step-cmd">git switch -c</span>
+      </div>
+      <div class="workflow-arrow">&#10145;</div>
+      <div class="workflow-step">
+        <span class="step-number">2</span>
+        <span class="step-title">Travailler</span>
+        <span class="step-cmd">commits</span>
+      </div>
+      <div class="workflow-arrow">&#10145;</div>
+      <div class="workflow-step">
+        <span class="step-number">3</span>
+        <span class="step-title">Pousser</span>
+        <span class="step-cmd">git push</span>
+      </div>
+      <div class="workflow-arrow">&#10145;</div>
+      <div class="workflow-step">
+        <span class="step-number">4</span>
+        <span class="step-title">Pull Request</span>
+        <span class="step-cmd">plateforme</span>
+      </div>
+      <div class="workflow-arrow">&#10145;</div>
+      <div class="workflow-step">
+        <span class="step-number">5</span>
+        <span class="step-title">Revue + Merge</span>
+        <span class="step-cmd">git merge</span>
+      </div>
+    </div>
+
+    <pre data-lang="bash"><code>main:     A---B-----------F (merge)
+               \         /
+feature:        C---D---E</code></pre>
+
+    <p>Chaque étape a son importance. Voyons-les en détail.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Pull Request -->
+    <h2>Qu'est-ce qu'une <span class="keyword">Pull Request</span> ?</h2>
+
+    <p>Une <strong><span class="keyword">Pull Request</span></strong> (PR) - appelée <strong>Merge Request</strong> (MR) sur GitLab et Forgejo - est une <strong>demande formelle de fusion</strong> d'une branche dans une autre.</p>
+
+    <p>C'est l'équivalent numérique d'une <strong>pétition au Grand Conseil</strong> : tu présentes tes modifications, tu expliques pourquoi elles sont nécessaires, et le Conseil examine ton travail avant de l'approuver.</p>
+
+    <h3>Ce que contient une Pull Request</h3>
+
+    <ul>
+      <li><strong>Un titre</strong> clair et descriptif</li>
+      <li><strong>Une description</strong> qui explique le "pourquoi" et le "comment"</li>
+      <li><strong>La liste des commits</strong> inclus</li>
+      <li><strong>Le diff</strong> - les modifications ligne par ligne</li>
+      <li><strong>Des commentaires</strong> et discussions de revue</li>
+      <li><strong>Un statut</strong> : ouverte, approuvée, fusionnée, fermée</li>
+    </ul>
+
+    <div class="tip">
+      <p>Les Pull Requests ne font <strong>pas partie de Git</strong>. C'est une fonctionnalité ajoutée par les plateformes (GitHub, GitLab, Forgejo, Bitbucket). Mais le workflow sous-jacent (branche + merge) est 100% Git.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Bonne PR -->
+    <h2>Anatomie d'une bonne <span class="keyword">Pull Request</span></h2>
+
+    <h3>Le titre</h3>
+
+    <p>Le titre doit être <strong>court, clair et descriptif</strong>. Il doit dire ce que fait la PR, pas comment.</p>
+
+    <div class="comparison">
+      <div class="comparison-good">
+        <h4>Bons exemples</h4>
+        <ul>
+          <li><code>Ajouter la validation des formulaires d'inscription</code></li>
+          <li><code>Corriger le crash au démarrage sur Windows</code></li>
+          <li><code>Mettre à jour les dépendances de sécurité</code></li>
+        </ul>
+      </div>
+      <div class="comparison-bad">
+        <h4>Mauvais exemples</h4>
+        <ul>
+          <li><code>Modifs</code> - trop vague</li>
+          <li><code>fix</code> - ne dit rien</li>
+          <li><code>WIP branche de Jean</code> - pas un titre</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>La description</h3>
+
+    <p>La description est ta chance d'expliquer :</p>
+    <ul>
+      <li><strong>Pourquoi</strong> ce changement est nécessaire</li>
+      <li><strong>Ce qui a changé</strong> (résumé des modifications)</li>
+      <li><strong>Comment tester</strong> (étapes pour vérifier que ça marche)</li>
+      <li><strong>Ce qui n'est pas inclus</strong> (si pertinent)</li>
+    </ul>
+
+    <h3>La taille</h3>
+
+    <div class="key-message">
+      <p>Une bonne PR est <strong>petite et focalisée</strong>. Elle fait <strong>une seule chose</strong>. Vise 50 à 200 lignes de diff - pas 2000.</p>
+    </div>
+
+    <div class="narrative">
+      <p>« Un bon parchemin présente <strong>une idée claire</strong>. Une pétition qui mélange dix sujets différents finit toujours au fond d'une pile, ignorée par le Conseil. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Code Review -->
+    <h2>La <span class="keyword">revue de code</span></h2>
+
+    <p>La revue de code (code review) est le moment où un ou plusieurs collègues examinent tes modifications avant la fusion.</p>
+
+    <h3>Que chercher lors d'une revue ?</h3>
+
+    <ul>
+      <li><strong>Le code fonctionne-t-il ?</strong> - Logique correcte, pas de bugs évidents</li>
+      <li><strong>Le code est-il lisible ?</strong> - Noms clairs, structure compréhensible</li>
+      <li><strong>Le code est-il testé ?</strong> - Y a-t-il des tests pour les nouveaux comportements ?</li>
+      <li><strong>Le code suit-il les conventions ?</strong> - Style, nommage, architecture du projet</li>
+      <li><strong>Le code est-il nécessaire ?</strong> - Pas de code mort, pas de duplication inutile</li>
+    </ul>
+
+    <h3>Donner un bon feedback</h3>
+
+    <div class="comparison">
+      <div class="comparison-good">
+        <h4>Constructif</h4>
+        <ul>
+          <li>"On pourrait simplifier cette boucle avec un <code>map()</code>"</li>
+          <li>"Pourquoi ce choix ? Je suis curieux du contexte"</li>
+          <li><code>nit:</code> pour les détails cosmétiques</li>
+          <li>Propose des solutions, pas juste des critiques</li>
+        </ul>
+      </div>
+      <div class="comparison-bad">
+        <h4>Destructif</h4>
+        <ul>
+          <li>"C'est nul"</li>
+          <li>"C'est faux" (sans expliquer pourquoi)</li>
+          <li>Critiquer sans proposer d'alternative</li>
+          <li>Mélanger l'important et le cosmétique</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Recevoir du feedback</h3>
+
+    <ul>
+      <li><strong>Ne le prends pas personnellement</strong> - la revue porte sur le code, pas sur toi</li>
+      <li><strong>Réponds aux commentaires</strong> - même si c'est pour dire "bonne idée, je corrige"</li>
+      <li><strong>Apprends de chaque revue</strong> - c'est une des meilleures façons de progresser</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« Le Conseil ne juge pas l'Archiviste. Il juge le parchemin. Un bon Archiviste accueille les critiques avec gratitude - elles rendent ses chroniques <strong>meilleures</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Fork Workflow -->
+    <h2>Le workflow <span class="keyword">Fork</span></h2>
+
+    <p>Quand tu veux contribuer à un projet qui ne t'appartient pas (un projet open source par exemple), tu ne peux pas créer de branche directement sur le repo original. Tu utilises alors le <strong>workflow fork</strong> :</p>
+
+    <ol class="steps">
+      <li><strong>Fork</strong> : tu crées une copie du repo sur ton propre compte</li>
+      <li><strong>Clone</strong> : tu clones ton fork en local</li>
+      <li><strong>Branche</strong> : tu crées une branche de travail</li>
+      <li><strong>Commits</strong> : tu fais tes modifications</li>
+      <li><strong>Push</strong> : tu pousses sur ton fork</li>
+      <li><strong>Pull Request</strong> : tu ouvres une PR depuis ton fork vers le repo original</li>
+    </ol>
+
+    <pre data-lang="bash"><code>Repo original (upstream)     Ton fork (origin)       Ton PC (local)
+         |                        |                       |
+         |    fork                |                       |
+         |----------------------->|                       |
+         |                        |    clone              |
+         |                        |---------------------->|
+         |                        |                       | branch + commits
+         |                        |    push               |
+         |                        |<----------------------|
+         |    Pull Request        |                       |
+         |<-----------------------|                       |</code></pre>
+
+    <div class="tip">
+      <p>C'est le flux standard pour contribuer à des projets open source sur GitHub, GitLab ou Forgejo. Le propriétaire du repo original reçoit ta PR et décide s'il l'accepte.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Branching Strategies -->
+    <h2>Stratégies de branchement</h2>
+
+    <p>Comment organiser les branches dans un projet ? Il existe plusieurs stratégies. Voici les trois principales.</p>
+
+    <div class="strategy-card recommended">
+      <h4>GitHub Flow <span class="badge-recommended">Recommandé</span></h4>
+      <p>La stratégie la plus simple et la plus courante :</p>
+      <ul>
+        <li><strong><code>main</code></strong> est toujours déployable</li>
+        <li>Pour chaque travail, tu crées une <strong>branche depuis <code>main</code></strong></li>
+        <li>Tu ouvres une <strong>Pull Request</strong></li>
+        <li>Après revue et approbation, tu <strong>fusionnes dans <code>main</code></strong></li>
+      </ul>
+      <pre data-lang="bash"><code>main:     A---B-------E---F-------I
+               \     /     \     /
+feature-1:      C---D       G---H</code></pre>
+      <p><strong>Idéal pour :</strong> la plupart des projets, déploiement continu.</p>
+    </div>
+
+    <div class="strategy-card">
+      <h4>Git Flow</h4>
+      <p>Une stratégie plus structurée avec plusieurs branches permanentes :</p>
+      <ul>
+        <li><strong><code>main</code></strong> : le code en production</li>
+        <li><strong><code>develop</code></strong> : la branche d'intégration</li>
+        <li><strong><code>feature/*</code></strong> : branches de fonctionnalités (depuis <code>develop</code>)</li>
+        <li><strong><code>release/*</code></strong> : préparation d'une version (depuis <code>develop</code>)</li>
+        <li><strong><code>hotfix/*</code></strong> : corrections urgentes (depuis <code>main</code>)</li>
+      </ul>
+      <p><strong>Idéal pour :</strong> projets avec des versions numérotées (v1.0, v2.0...).</p>
+      <p><span class="highlight-red">Attention :</span> complexe, beaucoup de branches à gérer. Ne l'utilise pas sans bonne raison.</p>
+    </div>
+
+    <div class="strategy-card">
+      <h4>Trunk-Based Development</h4>
+      <p>Les développeurs travaillent directement sur <code>main</code> (le "trunk") avec des branches <strong>très courtes</strong> (quelques heures max). Les fonctionnalités inachevées sont cachées derrière des <span class="keyword">feature flags</span>.</p>
+      <p><strong>Idéal pour :</strong> grandes équipes avec une infrastructure de tests très solide (Google, Facebook).</p>
+    </div>
+
+    <div class="narrative">
+      <p>« Le GitHub Flow est le Protocole que je recommande aux jeunes guildes. Il est <strong>simple, efficace, et suffisant</strong> pour la grande majorité des projets. Tu n'as pas besoin de la complexité de Git Flow avant d'avoir une bonne raison. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Branch Protection -->
+    <h2>Protéger la branche <span class="keyword"><code>main</code></span></h2>
+
+    <p>Sur les plateformes (GitHub, GitLab, Forgejo), tu peux configurer des <strong>règles de protection</strong> pour la branche <code>main</code> :</p>
+
+    <ul>
+      <li><strong>Interdire le push direct</strong> : tout doit passer par une Pull Request</li>
+      <li><strong>Exiger une revue</strong> : au moins N personnes doivent approuver</li>
+      <li><strong>Exiger des tests verts</strong> : les tests automatiques doivent passer</li>
+      <li><strong>Interdire le force push</strong> : empêcher la réécriture de l'historique</li>
+      <li><strong>Exiger un historique linéaire</strong> : forcer le rebase avant merge</li>
+    </ul>
+
+    <div class="tip">
+      <p>Ces règles sont configurées dans les paramètres du repo sur la plateforme, pas dans Git lui-même. C'est une couche de sécurité supplémentaire au-dessus du Protocole.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 9 : PR Template -->
+    <h2>Template de Pull Request</h2>
+
+    <p>Tu peux créer un fichier <code>.github/PULL_REQUEST_TEMPLATE.md</code> (sur GitHub/Forgejo) à la racine de ton projet. Quand quelqu'un ouvre une Pull Request, ce template pré-remplit la description.</p>
+
+    <pre data-lang="bash"><code>## Description
+&lt;!-- Décris ce que fait cette PR et pourquoi --&gt;
+
+## Type de changement
+- [ ] Nouvelle fonctionnalité
+- [ ] Correction de bug
+- [ ] Refactoring
+- [ ] Documentation
+
+## Comment tester
+&lt;!-- Étapes pour vérifier que ça marche --&gt;
+
+## Checklist
+- [ ] Le code compile sans erreur
+- [ ] Les tests passent
+- [ ] La documentation est à jour</code></pre>
+
+    <div class="tip">
+      <p>C'est un excellent moyen de standardiser la qualité des PR dans une équipe. Tout le monde sait quoi remplir, et les revues sont plus efficaces.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - Simuler le Protocole</h2>
+
+    <div class="quest-objective">
+      <p>Simule le workflow complet d'une Pull Request en local :</p>
+      <ol>
+        <li>Crée un repo avec un premier commit sur <code>main</code></li>
+        <li>Crée une branche <code>proposition/ameliorer-defenses</code></li>
+        <li>Fais 2 commits sur cette branche</li>
+        <li>Examine les changements depuis <code>main</code> (simule la revue)</li>
+        <li>Fusionne avec <span class="git-cmd">--no-ff</span> pour créer un commit de merge</li>
+        <li>Supprime la branche fusionnée</li>
+        <li>Lance le script de vérification</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer le dépôt et le premier commit</h3>
+
+    <pre data-lang="bash"><code>mkdir protocole-des-guildes
+cd protocole-des-guildes
+git init
+echo "# Defenses du Royaume" > defenses.txt
+echo "" >> defenses.txt
+echo "Les defenses actuelles protegent la cite." >> defenses.txt
+git add defenses.txt
+git commit -m "Creer le registre des defenses du royaume"</code></pre>
+
+    <h3>Étape 2 - Créer la branche de proposition</h3>
+
+    <pre data-lang="bash"><code>git switch -c proposition/ameliorer-defenses</code></pre>
+
+    <h3>Étape 3 - Faire des commits sur la branche</h3>
+
+    <p>Premier commit - ajouter des fortifications :</p>
+
+    <pre data-lang="bash"><code>echo "" >> defenses.txt
+echo "## Fortifications" >> defenses.txt
+echo "- Renforcer les murailles nord avec de la pierre enchantee" >> defenses.txt
+echo "- Ajouter des tours de guet aux quatre coins" >> defenses.txt
+git add defenses.txt
+git commit -m "Ajouter les propositions de fortifications"</code></pre>
+
+    <p>Deuxième commit - ajouter des formations :</p>
+
+    <pre data-lang="bash"><code>echo "" >> defenses.txt
+echo "## Formations" >> defenses.txt
+echo "- Former les gardes au combat magique" >> defenses.txt
+echo "- Etablir des rondes nocturnes doublees" >> defenses.txt
+git add defenses.txt
+git commit -m "Ajouter les propositions de formations"</code></pre>
+
+    <h3>Étape 4 - Examiner les modifications (simuler la revue)</h3>
+
+    <pre data-lang="bash"><code># Revenir sur main
+git switch main
+
+# Voir la liste des commits de la proposition
+git log main..proposition/ameliorer-defenses --oneline
+
+# Voir le détail des modifications
+git diff main..proposition/ameliorer-defenses</code></pre>
+
+    <div class="tip">
+      <p>C'est exactement ce que fait une plateforme quand elle affiche le diff d'une Pull Request. Tu fais la même chose en ligne de commande.</p>
+    </div>
+
+    <h3>Étape 5 - Fusionner avec <span class="git-cmd">--no-ff</span></h3>
+
+    <p>L'option <span class="git-cmd">--no-ff</span> (no fast-forward) force la création d'un <strong>commit de merge</strong>, même si un fast-forward serait possible. C'est important car :</p>
+    <ul>
+      <li>Ça crée un <strong>point de repère</strong> dans l'historique</li>
+      <li>On voit clairement <strong>où la branche a été intégrée</strong></li>
+      <li>Ça correspond à ce que font les plateformes quand elles fusionnent une PR</li>
+    </ul>
+
+    <pre data-lang="bash"><code>git merge --no-ff proposition/ameliorer-defenses -m "Fusionner la proposition d'amelioration des defenses"</code></pre>
+
+    <h3>Étape 6 - Supprimer la branche fusionnée</h3>
+
+    <pre data-lang="bash"><code>git branch -d proposition/ameliorer-defenses</code></pre>
+
+    <h3>Étape 7 - Vérifier l'historique</h3>
+
+    <pre data-lang="bash"><code>git log --oneline --graph</code></pre>
+
+    <p>Tu devrais voir quelque chose comme :</p>
+
+    <pre data-lang="bash"><code>*   abc1234 Fusionner la proposition d'amelioration des defenses
+|\
+| * def5678 Ajouter les propositions de formations
+| * ghi9012 Ajouter les propositions de fortifications
+|/
+* jkl3456 Creer le registre des defenses du royaume</code></pre>
+
+    <h3>Étape 8 - Lancer la vérification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git switch -c branche</code></td>
+          <td>Créer une branche de travail</td>
+        </tr>
+        <tr>
+          <td><code>git log main..branche</code></td>
+          <td>Voir les commits d'une branche</td>
+        </tr>
+        <tr>
+          <td><code>git diff main..branche</code></td>
+          <td>Voir le diff d'une branche</td>
+        </tr>
+        <tr>
+          <td><code>git merge --no-ff branche</code></td>
+          <td>Fusionner avec commit de merge</td>
+        </tr>
+        <tr>
+          <td><code>git branch -d branche</code></td>
+          <td>Supprimer une branche fusionnée</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste se lève et te fait face. Pour la première fois, il ne te regarde plus comme un apprenti.</p>
+      <p>« Tu as maîtrisé le Protocole des Guildes. Tu sais proposer des modifications, les examiner, les fusionner proprement. Tu comprends pourquoi <strong>personne n'écrit directement dans le Registre Central</strong>, et tu connais les stratégies qui permettent aux guildes de collaborer à grande échelle. »</p>
+      <p>Il pose la main sur ton épaule.</p>
+      <p>« L'Arc des Branches du Destin est achevé. Tu es désormais un <strong>Archiviste à part entière</strong> - capable de travailler seul ou en équipe, de gérer des branches et des fusions, de contribuer à n'importe quel projet. Mais ton voyage ne fait que commencer. »</p>
+      <p>Il te conduit vers une porte que tu n'avais jamais remarquée. Derrière, un escalier descend dans les profondeurs de la Citadelle.</p>
+      <p>« Au-delà de cette porte se trouvent les <strong>Arts Anciens</strong> - les techniques avancées que seuls les Maîtres utilisent. Tu y apprendras à <strong>mettre de côté ton travail en cours</strong>, à <strong>cueillir un commit précis dans une autre branche</strong>, à <strong>traquer un bug dans l'historique</strong>, et bien d'autres secrets. Mais ça, c'est pour le prochain chapitre de ton histoire. »</p>
+    </div>

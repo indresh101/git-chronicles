@@ -1,0 +1,694 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_16
+quest_number: "16"
+arc: 4
+title: "Les Actions du Royaume"
+subtitle: "GitHub Actions, workflows YAML et automatisation"
+quest_slug_fr: "16-les-actions-du-royaume"
+quest_slug_en: "16-the-kingdoms-actions"
+permalink: /fr/quetes/16-les-actions-du-royaume/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste te guide dans les profondeurs de la Grande Forge. Autour de toi, d'immenses machines tournent sans relâche, alimentées par des flux de magie bleue. Des parchemins descendent sur des tapis roulants, passent sous des tampons automatiques, puis sont triés et rangés dans des alcôves lumineuses. Pas un seul forgeron en vue - tout fonctionne seul.</p>
+      <p>« Lors de ta dernière quête, tu as découvert les Forges Éternelles et compris les principes de l'intégration et du déploiement continus. Aujourd'hui, tu vas apprendre à <strong>programmer les Forges toi-même</strong>. Chaque Forge obéit à des <strong>Actions</strong> - des parchemins d'instructions enchantés qui lui disent exactement quoi faire quand de nouvelles chroniques arrivent. Tu vas écrire ta première Action. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Qu'est-ce qu'une GitHub Action ? -->
+    <h2>Qu'est-ce qu'une <span class="keyword">GitHub Action</span> ?</h2>
+
+    <p>Une <strong>GitHub Action</strong> est un workflow automatisé qui s'exécute directement sur les serveurs de GitHub. Tu n'as rien à installer, rien à configurer sur ta machine - GitHub s'occupe de tout.</p>
+
+    <p>Le principe est simple : tu décris dans un fichier <strong>ce que tu veux qu'il se passe</strong> et <strong>quand tu veux que ça se passe</strong>. GitHub exécute ces instructions automatiquement.</p>
+
+    <p>Par exemple :</p>
+    <ul>
+      <li>À chaque <code>push</code>, lancer les tests</li>
+      <li>À chaque <code>pull request</code>, vérifier le style du code</li>
+      <li>Chaque nuit à minuit, générer un rapport</li>
+      <li>Quand une version est taguée, déployer l'application</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« Imagine un scribe infatigable qui attend dans la Forge, jour et nuit. Dès qu'un nouveau parchemin arrive, il <strong>lit les instructions que tu as écrites</strong> et les exécute à la lettre. C'est exactement ce que font les Actions. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Les concepts clés -->
+    <h2>Les concepts clés</h2>
+
+    <p>Avant d'écrire ta première Action, tu dois comprendre le vocabulaire. GitHub Actions utilise cinq concepts fondamentaux :</p>
+
+    <h3><span class="keyword">Workflow</span> - le parchemin d'instructions</h3>
+
+    <p>Un <strong>workflow</strong> est un fichier YAML qui décrit un processus automatisé complet. C'est le parchemin que tu écris pour la Forge. Un dépôt peut contenir plusieurs workflows.</p>
+
+    <h3><span class="keyword">Job</span> - la tâche</h3>
+
+    <p>Un <strong>job</strong> est un ensemble d'étapes qui s'exécutent sur la même machine. Un workflow peut contenir plusieurs jobs. Par défaut, les jobs s'exécutent <strong>en parallèle</strong> (en même temps).</p>
+
+    <h3><span class="keyword">Step</span> - l'étape</h3>
+
+    <p>Un <strong>step</strong> est une action individuelle à l'intérieur d'un job. Chaque step est soit une commande shell (<code>run:</code>), soit une action réutilisable (<code>uses:</code>).</p>
+
+    <h3><span class="keyword">Action</span> - le composant réutilisable</h3>
+
+    <p>Une <strong>action</strong> (avec un "a" minuscule) est un composant préfabriqué que tu peux utiliser dans tes steps. Il en existe des milliers sur le marketplace de GitHub. La plus courante est <code>actions/checkout@v4</code> qui récupère ton code.</p>
+
+    <h3><span class="keyword">Runner</span> - la machine d'exécution</h3>
+
+    <p>Un <strong>runner</strong> est la machine virtuelle sur laquelle ton job s'exécute. GitHub propose des runners gratuits sous Ubuntu, Windows et macOS.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Analogie de la Forge</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Workflow</strong></td>
+          <td>Le parchemin d'instructions</td>
+          <td>Fichier YAML décrivant le processus complet</td>
+        </tr>
+        <tr>
+          <td><strong>Job</strong></td>
+          <td>Une tâche dans la Forge</td>
+          <td>Ensemble d'étapes sur une même machine</td>
+        </tr>
+        <tr>
+          <td><strong>Step</strong></td>
+          <td>Un geste du forgeron</td>
+          <td>Une action individuelle (commande ou action)</td>
+        </tr>
+        <tr>
+          <td><strong>Action</strong></td>
+          <td>Un outil préfabriqué</td>
+          <td>Composant réutilisable du marketplace</td>
+        </tr>
+        <tr>
+          <td><strong>Runner</strong></td>
+          <td>L'enclume de la Forge</td>
+          <td>Machine virtuelle qui exécute le job</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="narrative">
+      <p>« Un parchemin d'instructions (workflow) contient une ou plusieurs tâches (jobs). Chaque tâche est une série de gestes (steps). Certains gestes utilisent des <strong>outils préfabriqués</strong> (actions) forgés par d'autres Maîtres. Et le tout s'exécute sur une enclume magique (runner) que GitHub te prête gratuitement. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Où placer les workflows -->
+    <h2>Où placer les workflows ?</h2>
+
+    <p>GitHub cherche les workflows dans un dossier bien précis :</p>
+
+    <pre data-lang="bash"><code>ton-depot/
+  .github/
+    workflows/
+      mon-workflow.yml
+      autre-workflow.yml</code></pre>
+
+    <p>Le chemin est <strong>toujours</strong> <code>.github/workflows/</code>. Si tu places ton fichier ailleurs, GitHub l'ignorera.</p>
+
+    <div class="warning">
+      <p><strong>Important :</strong> Le dossier <code>.github</code> commence par un point - c'est un dossier caché. Sur Linux/macOS, utilise <code>ls -a</code> pour le voir. Sur Windows, active l'affichage des fichiers cachés.</p>
+    </div>
+
+    <p>Les fichiers doivent avoir l'extension <code>.yml</code> ou <code>.yaml</code>.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Les bases du YAML -->
+    <h2>Les bases du <span class="keyword">YAML</span></h2>
+
+    <p>Les workflows GitHub Actions sont écrits en <strong>YAML</strong> (YAML Ain't Markup Language). C'est un format de données lisible par les humains. Voici les règles essentielles :</p>
+
+    <h3>L'indentation est cruciale</h3>
+
+    <p>En YAML, <strong>l'indentation définit la structure</strong>. On utilise des <strong>espaces</strong> (jamais des tabulations !). Chaque niveau d'imbrication ajoute 2 espaces.</p>
+
+    <pre data-lang="yaml"><code># Correct
+parent:
+  enfant:
+    petit-enfant: valeur
+
+# INCORRECT - mélange d'indentation
+parent:
+  enfant:
+      petit-enfant: valeur   # 6 espaces au lieu de 4 !</code></pre>
+
+    <div class="highlight-red">
+      <p><strong>Attention :</strong> N'utilise <strong>jamais</strong> de tabulations en YAML ! Uniquement des espaces. C'est l'erreur la plus fréquente chez les débutants.</p>
+    </div>
+
+    <h3>Les paires clé-valeur</h3>
+
+    <pre data-lang="yaml"><code>nom: Tests
+version: 1.0
+actif: true</code></pre>
+
+    <h3>Les listes</h3>
+
+    <p>Les éléments de liste commencent par un tiret suivi d'un espace :</p>
+
+    <pre data-lang="yaml"><code>fruits:
+  - pomme
+  - banane
+  - cerise</code></pre>
+
+    <h3>Les textes sur plusieurs lignes</h3>
+
+    <p>Le caractère <code>|</code> permet d'écrire du texte sur plusieurs lignes :</p>
+
+    <pre data-lang="yaml"><code>script: |
+  echo "Première ligne"
+  echo "Deuxième ligne"
+  echo "Troisième ligne"</code></pre>
+
+    <div class="narrative">
+      <p>« Le YAML est comme la calligraphie des parchemins enchantés. Chaque espace compte, chaque retrait a un sens. Un espace de trop ou de moins, et <strong>l'enchantement échoue</strong>. La rigueur est la clé. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Premier workflow -->
+    <h2>Ton premier workflow</h2>
+
+    <p>Voici le workflow le plus simple possible. Il s'exécute à chaque push et affiche un message :</p>
+
+    <pre data-lang="yaml"><code>name: Tests
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Les tests passent !"</code></pre>
+
+    <p>Décortiquons chaque ligne :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ligne</th>
+          <th>Signification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>name: Tests</code></td>
+          <td>Le nom du workflow (affiché dans GitHub)</td>
+        </tr>
+        <tr>
+          <td><code>on: push</code></td>
+          <td>Déclencheur : s'exécute à chaque push</td>
+        </tr>
+        <tr>
+          <td><code>jobs:</code></td>
+          <td>Début de la liste des tâches</td>
+        </tr>
+        <tr>
+          <td><code>test:</code></td>
+          <td>Nom du job (tu choisis le nom)</td>
+        </tr>
+        <tr>
+          <td><code>runs-on: ubuntu-latest</code></td>
+          <td>Machine virtuelle Ubuntu</td>
+        </tr>
+        <tr>
+          <td><code>steps:</code></td>
+          <td>Début de la liste des étapes</td>
+        </tr>
+        <tr>
+          <td><code>- uses: actions/checkout@v4</code></td>
+          <td>Étape 1 : récupérer le code du dépôt</td>
+        </tr>
+        <tr>
+          <td><code>- run: echo "..."</code></td>
+          <td>Étape 2 : exécuter une commande shell</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <p>L'action <code>actions/checkout@v4</code> est presque toujours la première étape. Sans elle, ton code n'est pas disponible sur le runner - le job s'exécute sur une machine vierge !</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Les déclencheurs -->
+    <h2>Les déclencheurs (<span class="keyword">triggers</span>)</h2>
+
+    <p>Le mot-clé <code>on:</code> définit <strong>quand</strong> le workflow se lance. Voici les déclencheurs les plus courants :</p>
+
+    <h3>À chaque push</h3>
+
+    <pre data-lang="yaml"><code>on: push</code></pre>
+
+    <h3>À chaque pull request</h3>
+
+    <pre data-lang="yaml"><code>on: pull_request</code></pre>
+
+    <h3>Sur plusieurs événements</h3>
+
+    <pre data-lang="yaml"><code>on: [push, pull_request]</code></pre>
+
+    <h3>Sur des branches spécifiques</h3>
+
+    <pre data-lang="yaml"><code>on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]</code></pre>
+
+    <p>Ce workflow ne se déclenche que pour les pushs sur <code>main</code> ou <code>develop</code>, et pour les pull requests vers <code>main</code>.</p>
+
+    <h3>Sur un planning (cron)</h3>
+
+    <pre data-lang="yaml"><code>on:
+  schedule:
+    - cron: '0 0 * * *'   # Tous les jours à minuit UTC</code></pre>
+
+    <h3>Manuellement</h3>
+
+    <pre data-lang="yaml"><code>on: workflow_dispatch</code></pre>
+
+    <p>Ce déclencheur ajoute un bouton "Run workflow" dans l'interface GitHub. Très pratique pour les déploiements manuels.</p>
+
+    <div class="narrative">
+      <p>« Les déclencheurs sont les <strong>sentinelles de la Forge</strong>. Elles veillent en permanence et réveillent les machines au bon moment. Un push ? Les tests se lancent. Une pull request ? La revue automatique démarre. Minuit ? Le rapport se génère. Tout est orchestré. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Workflow complet -->
+    <h2>Un workflow plus complet</h2>
+
+    <p>Voici un workflow réaliste pour un projet avec des tests :</p>
+
+    <pre data-lang="yaml"><code>name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer les dépendances
+        run: npm install
+
+      - name: Lancer les tests
+        run: npm test
+
+      - name: Vérifier le style
+        run: npm run lint</code></pre>
+
+    <div class="tip">
+      <p>Chaque step peut avoir un <code>name</code> qui apparaît dans les logs. C'est optionnel mais très recommandé pour la lisibilité.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Jobs multiples -->
+    <h2>Jobs multiples et dépendances</h2>
+
+    <p>Par défaut, les jobs s'exécutent <strong>en parallèle</strong>. Pour créer des dépendances entre jobs, utilise le mot-clé <span class="keyword"><code>needs:</code></span>.</p>
+
+    <pre data-lang="yaml"><code>jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Déploiement en cours..."</code></pre>
+
+    <p>Dans cet exemple :</p>
+    <ul>
+      <li><code>test</code> s'exécute en premier</li>
+      <li><code>build</code> attend que <code>test</code> soit terminé avec succès</li>
+      <li><code>deploy</code> attend que <code>build</code> soit terminé avec succès</li>
+    </ul>
+
+    <p>Si <code>test</code> échoue, ni <code>build</code> ni <code>deploy</code> ne s'exécuteront. C'est exactement le comportement voulu - pas de déploiement si les tests échouent !</p>
+
+    <p>Un job peut aussi dépendre de plusieurs jobs :</p>
+
+    <pre data-lang="yaml"><code>  deploy:
+    needs: [test, build, lint]</code></pre>
+
+    <div class="narrative">
+      <p>« Dans la Forge, certaines opérations doivent se faire <strong>dans l'ordre</strong>. On ne trempe pas l'épée avant de l'avoir forgée, et on ne la polit pas avant de l'avoir trempée. Le mot-clé <code>needs</code> impose cet <strong>ordre sacré</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 9 : Le marketplace -->
+    <h2>Le marketplace - <span class="keyword">Les outils des autres Maîtres</span></h2>
+
+    <p>GitHub dispose d'un <strong>marketplace</strong> avec des milliers d'actions préfabriquées. Au lieu de tout écrire toi-même, tu peux réutiliser le travail des autres.</p>
+
+    <p>Quelques actions populaires :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Utilisation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>actions/checkout@v4</code></td>
+          <td>Récupérer le code du dépôt</td>
+        </tr>
+        <tr>
+          <td><code>actions/setup-node@v4</code></td>
+          <td>Installer Node.js</td>
+        </tr>
+        <tr>
+          <td><code>actions/setup-python@v5</code></td>
+          <td>Installer Python</td>
+        </tr>
+        <tr>
+          <td><code>actions/upload-artifact@v4</code></td>
+          <td>Sauvegarder des fichiers produits</td>
+        </tr>
+        <tr>
+          <td><code>actions/cache@v4</code></td>
+          <td>Mettre en cache les dépendances</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Exemple avec Node.js :</p>
+
+    <pre data-lang="yaml"><code>steps:
+  - uses: actions/checkout@v4
+
+  - uses: actions/setup-node@v4
+    with:
+      node-version: '20'
+
+  - run: npm install
+  - run: npm test</code></pre>
+
+    <p>Le mot-clé <code>with:</code> permet de passer des paramètres à une action. Ici, on demande Node.js version 20.</p>
+
+    <div class="narrative">
+      <p>« Le marketplace est la <strong>grande bibliothèque des Forges</strong>. Des milliers de Maîtres Forgerons y ont déposé leurs outils pour que d'autres puissent les utiliser. Pourquoi réinventer l'enclume quand un autre l'a déjà parfaitement forgée ? »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 10 : Secrets -->
+    <h2>Secrets et variables d'environnement</h2>
+
+    <p>Certaines informations ne doivent <strong>jamais</strong> apparaître dans ton code : mots de passe, clés API, tokens d'accès. GitHub permet de les stocker en tant que <span class="keyword">secrets</span>.</p>
+
+    <h3>Utiliser un secret dans un workflow</h3>
+
+    {% raw %}<pre data-lang="yaml"><code>steps:
+  - name: Déployer
+    run: ./deploy.sh
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}</code></pre>{% endraw %}
+
+    <p>Les secrets sont configurés dans les <strong>Settings</strong> du dépôt GitHub, sous "Secrets and variables" > "Actions".</p>
+
+    <h3>Variables d'environnement simples</h3>
+
+    <p>Pour les valeurs non sensibles, tu peux définir des variables d'environnement directement :</p>
+
+    <pre data-lang="yaml"><code>env:
+  NODE_ENV: production
+  APP_NAME: mon-application
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Application : $APP_NAME"</code></pre>
+
+    <p>Les variables définies au niveau racine sont disponibles dans tous les jobs. Tu peux aussi les définir au niveau d'un job ou d'un step.</p>
+
+    <div class="narrative">
+      <p>« Les secrets sont comme les <strong>formules protégées</strong> des Maîtres Forgerons. On ne les écrit jamais sur un parchemin ordinaire - on les enferme dans un coffre magique et on y fait référence par leur nom. Même si quelqu'un vole le parchemin, <strong>il ne verra que le nom, jamais la formule</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 11 : Consulter les résultats -->
+    <h2>Consulter les résultats</h2>
+
+    <p>Quand un workflow s'exécute, tu peux suivre sa progression dans l'onglet <strong>Actions</strong> de ton dépôt GitHub.</p>
+
+    <h3>Les logs</h3>
+
+    <p>Chaque step produit des logs que tu peux consulter en cliquant dessus. C'est là que tu verras les messages d'erreur si quelque chose échoue.</p>
+
+    <h3>Les statuts</h3>
+
+    <p>Chaque exécution a un statut :</p>
+    <ul>
+      <li><strong>Vert (succès)</strong> : tous les jobs ont réussi</li>
+      <li><strong>Rouge (échec)</strong> : au moins un job a échoué</li>
+      <li><strong>Jaune (en cours)</strong> : le workflow est en train de s'exécuter</li>
+      <li><strong>Gris (annulé)</strong> : le workflow a été annulé</li>
+    </ul>
+
+    <h3>Les badges de statut</h3>
+
+    <p>Tu peux ajouter un badge dans ton README qui affiche le statut du dernier workflow :</p>
+
+    <pre data-lang="bash"><code>![CI](https://github.com/UTILISATEUR/DEPOT/actions/workflows/NOM_DU_FICHIER.yml/badge.svg)</code></pre>
+
+    <p>Ce badge se met à jour automatiquement. Vert si les tests passent, rouge sinon. C'est un signal de confiance pour tous ceux qui visitent ton dépôt.</p>
+
+    <div class="narrative">
+      <p>« Les badges sont les <strong>blasons de la Forge</strong>. Ils montrent à tous que ton code est testé, vérifié, approuvé par les machines. Un dépôt sans badge, c'est un château sans drapeau - on ne sait pas s'il est habité ou abandonné. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - Écrire ta première Action</h2>
+
+    <div class="quest-objective">
+      <p>Écris ton premier parchemin d'instructions pour la Forge :</p>
+      <ol>
+        <li>Crée un dépôt <code>forge-actions</code></li>
+        <li>Crée le dossier <code>.github/workflows/</code></li>
+        <li>Crée un script de test <code>test.sh</code></li>
+        <li>Crée un <code>README.md</code></li>
+        <li>Écris un workflow <code>verification.yml</code> qui se déclenche sur push, récupère le code et lance les tests</li>
+        <li>Commite le tout</li>
+        <li>Lance le script de vérification</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer le dépôt</h3>
+
+    <pre data-lang="bash"><code>mkdir forge-actions
+cd forge-actions
+git init</code></pre>
+
+    <h3>Étape 2 - Créer la structure des workflows</h3>
+
+    <pre data-lang="bash"><code>mkdir -p .github/workflows</code></pre>
+
+    <p>C'est le dossier magique que GitHub surveille. Tout fichier <code>.yml</code> placé ici sera traité comme un workflow.</p>
+
+    <h3>Étape 3 - Créer un script de test</h3>
+
+    <p>Avant d'écrire le workflow, crée un petit script que le workflow pourra exécuter :</p>
+
+    <pre data-lang="bash"><code>cat > test.sh &lt;&lt; 'EOF'
+#!/bin/bash
+echo "=== Vérification des chroniques ==="
+echo "Test 1 : Le fichier README existe..."
+if [ -f "README.md" ]; then
+    echo "  SUCCÈS"
+else
+    echo "  ÉCHEC"
+    exit 1
+fi
+echo "Test 2 : Le README n'est pas vide..."
+if [ -s "README.md" ]; then
+    echo "  SUCCÈS"
+else
+    echo "  ÉCHEC"
+    exit 1
+fi
+echo "=== Tous les tests passent ==="
+EOF</code></pre>
+
+    <pre data-lang="bash"><code>chmod +x test.sh</code></pre>
+
+    <h3>Étape 4 - Créer le README</h3>
+
+    <pre data-lang="bash"><code>cat > README.md &lt;&lt; 'EOF'
+# Forge Actions
+
+Mon premier dépôt avec GitHub Actions.
+
+![Tests](https://github.com/UTILISATEUR/DEPOT/actions/workflows/verification.yml/badge.svg)
+EOF</code></pre>
+
+    <h3>Étape 5 - Écrire le workflow</h3>
+
+    <p>C'est le moment crucial. Crée le fichier <code>.github/workflows/verification.yml</code> :</p>
+
+    <pre data-lang="yaml"><code>name: Vérification des chroniques
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Rendre le script exécutable
+        run: chmod +x test.sh
+
+      - name: Lancer les tests
+        run: ./test.sh</code></pre>
+
+    <p>Vérifie que le fichier est correct :</p>
+
+    <pre data-lang="bash"><code>cat .github/workflows/verification.yml</code></pre>
+
+    <h3>Étape 6 - Commiter le tout</h3>
+
+    <pre data-lang="bash"><code>git add .
+git commit -m "Ajouter le workflow de vérification des chroniques"</code></pre>
+
+    <h3>Étape 7 - Lancer la vérification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des concepts</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Workflow</strong></td>
+          <td>Fichier YAML décrivant un processus automatisé</td>
+        </tr>
+        <tr>
+          <td><strong>Job</strong></td>
+          <td>Ensemble d'étapes exécutées sur une même machine</td>
+        </tr>
+        <tr>
+          <td><strong>Step</strong></td>
+          <td>Action individuelle dans un job</td>
+        </tr>
+        <tr>
+          <td><strong>Action</strong></td>
+          <td>Composant réutilisable du marketplace</td>
+        </tr>
+        <tr>
+          <td><strong>Runner</strong></td>
+          <td>Machine virtuelle qui exécute les jobs</td>
+        </tr>
+        <tr>
+          <td><code>name:</code></td>
+          <td>Nom du workflow</td>
+        </tr>
+        <tr>
+          <td><code>on:</code></td>
+          <td>Déclencheur(s) du workflow</td>
+        </tr>
+        <tr>
+          <td><code>jobs:</code></td>
+          <td>Liste des tâches à exécuter</td>
+        </tr>
+        <tr>
+          <td><code>runs-on:</code></td>
+          <td>Type de machine virtuelle</td>
+        </tr>
+        <tr>
+          <td><code>steps:</code></td>
+          <td>Liste des étapes d'un job</td>
+        </tr>
+        <tr>
+          <td><code>uses:</code></td>
+          <td>Utiliser une action préfabriquée</td>
+        </tr>
+        <tr>
+          <td><code>run:</code></td>
+          <td>Exécuter une commande shell</td>
+        </tr>
+        <tr>
+          <td><code>needs:</code></td>
+          <td>Dépendance entre jobs</td>
+        </tr>
+        <tr>
+          <td><code>with:</code></td>
+          <td>Paramètres passés à une action</td>
+        </tr>
+        <tr>
+          <td><code>env:</code></td>
+          <td>Variables d'environnement</td>
+        </tr>
+        <tr>
+          <td><code>secrets.*</code></td>
+          <td>Accès aux secrets du dépôt</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste observe le parchemin d'instructions que tu viens d'écrire. Il le tient à la lumière, parcourt chaque ligne du regard, puis hoche lentement la tête.</p>
+      <p>« Ton premier parchemin pour la Forge est impeccable. Les déclencheurs sont bien définis, les étapes sont claires, et la structure respecte les règles du YAML. Quand tu pousseras ces instructions vers une Forge distante, <strong>elles s'exécuteront automatiquement</strong>, sans que tu aies à lever le petit doigt. »</p>
+      <p>Il range soigneusement le parchemin dans un étui de cuir marqué du sceau des Forges.</p>
+      <p>« Tu sais maintenant programmer les Forges. Mais une seule Action ne suffit pas pour un véritable Maître. Dans ta prochaine quête, tu apprendras à <strong>créer des pipelines complexes</strong> - des chaînes d'Actions qui testent, construisent et déploient ton code en un seul mouvement fluide. Les Forges n'auront bientôt plus aucun secret pour toi. »</p>
+    </div>

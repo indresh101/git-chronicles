@@ -1,0 +1,405 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_13
+quest_number: "13"
+arc: 3
+title: "Les Sceaux Magiques"
+subtitle: "Tags et versionnage sémantique"
+quest_slug_fr: "13-les-sceaux-magiques"
+quest_slug_en: "13-the-magic-seals"
+permalink: /fr/quetes/13-les-sceaux-magiques/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste te conduit dans la Salle des Sceaux, une chambre circulaire dont les murs sont couverts de parchemins anciens. Chacun porte un sceau de cire à un endroit précis - certains dorés, d'autres écarlates. Tu remarques que ces sceaux ne sont pas placés au hasard : ils marquent les moments les plus importants de l'Histoire du royaume.</p>
+      <p>« Archiviste, tu sais désormais mettre de côté ton travail, traquer les bugs dans l'Histoire, et cueillir des commits d'une branche à l'autre. Mais il te manque un art essentiel : <strong>poser des Sceaux Magiques sur les moments clés de tes chroniques</strong>. Un sceau est une marque permanente, un signet que l'on pose sur un instant précis pour pouvoir le retrouver à jamais. <strong>La fondation d'une guilde, une grande victoire, la réparation après un siège</strong> - chaque événement majeur mérite son sceau. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Qu'est-ce qu'un tag ? -->
+    <h2>Qu'est-ce qu'un <span class="keyword">tag</span> ?</h2>
+
+    <p>Un <strong>tag</strong> dans Git, c'est comme un <strong>sceau de cire</strong> posé sur un parchemin important. Contrairement aux branches qui bougent à chaque nouveau commit, un tag est <span class="highlight">fixe</span> - il pointe toujours vers le même commit.</p>
+
+    <p>Les tags servent à marquer des <strong>moments importants</strong> dans l'historique d'un projet :</p>
+
+    <ul>
+      <li>La sortie d'une <strong>version stable</strong> (v1.0.0, v2.0.0)</li>
+      <li>Un <strong>jalon</strong> important du projet (MVP, beta)</li>
+      <li>Un point de <strong>référence</strong> pour revenir facilement à un état connu</li>
+    </ul>
+
+    <div class="key-message">
+      <p>Une branche est un chemin vivant qui grandit à chaque pas. Un sceau, lui, est <strong>gravé dans la pierre</strong>. Il ne bouge pas. Il dit : ici, quelque chose d'important s'est passé.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Léger vs Annoté -->
+    <h2>Tags légers vs tags annotés</h2>
+
+    <p>Git propose deux types de tags, comme deux types de sceaux.</p>
+
+    <h3>Tag léger (<span class="keyword">lightweight</span>)</h3>
+
+    <p>Un tag léger est simplement un <strong>pointeur</strong> vers un commit. Pas de métadonnées supplémentaires - juste un nom associé à un commit.</p>
+
+    <pre data-lang="bash"><code>git tag v0.1.0</code></pre>
+
+    <p>C'est comme écrire un numéro au crayon dans la marge d'un parchemin. C'est rapide, mais il n'y a pas d'information supplémentaire.</p>
+
+    <h3>Tag annoté (<span class="keyword">annotated</span>)</h3>
+
+    <p>Un tag annoté contient <strong>beaucoup plus d'informations</strong> :</p>
+
+    <ul>
+      <li>Le <strong>nom</strong> du tag</li>
+      <li>La <strong>date</strong> de création</li>
+      <li>Le <strong>nom de l'auteur</strong></li>
+      <li>Un <strong>message</strong> explicatif</li>
+    </ul>
+
+    <pre data-lang="bash"><code>git tag -a v1.0.0 -m "Première version stable du royaume"</code></pre>
+
+    <p>C'est un vrai sceau de cire officiel : il porte la marque de l'Archiviste, la date, et une description de pourquoi ce moment est important.</p>
+
+    <div class="narrative">
+      <p>« Les Sceaux légers sont utiles pour un usage personnel, temporaire. Mais pour tout ce qui compte - les versions officielles, les jalons partagés - utilise toujours un <strong>Sceau Annoté</strong>. C'est la différence entre une note griffonnée et un décret royal. »</p>
+    </div>
+
+    <div class="tip">
+      <p><strong>Recommandation :</strong> En pratique, utilise <strong>toujours des tags annotés</strong> pour les versions et jalons. Les tags légers sont réservés aux marque-pages temporaires.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Créer un tag -->
+    <h2>Créer un tag</h2>
+
+    <h3>Tag léger</h3>
+
+    <pre data-lang="bash"><code># Taguer le commit actuel (HEAD)
+git tag v0.1.0</code></pre>
+
+    <h3>Tag annoté (recommandé)</h3>
+
+    <pre data-lang="bash"><code># Taguer le commit actuel avec un message
+git tag -a v1.0.0 -m "Première version stable"</code></pre>
+
+    <p>L'option <span class="git-cmd">-a</span> signifie "annotated" et <span class="git-cmd">-m</span> permet d'ajouter un message, exactement comme pour <span class="git-cmd">git commit -m</span>.</p>
+
+    <h3>Taguer un commit passé</h3>
+
+    <p>Tu peux aussi poser un sceau sur un commit ancien. Il suffit de préciser le hash du commit :</p>
+
+    <pre data-lang="bash"><code># Retrouver le hash du commit à taguer
+git log --oneline
+
+# Taguer ce commit
+git tag -a v0.1.0 abc1234 -m "Fondation de la guilde"</code></pre>
+
+    <p>C'est comme retourner dans les archives pour apposer un sceau sur un événement passé que personne n'avait pensé à marquer à l'époque.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Explorer les tags -->
+    <h2>Explorer les tags</h2>
+
+    <h3>Lister tous les tags</h3>
+
+    <pre data-lang="bash"><code>git tag</code></pre>
+
+    <p>Affiche la liste de tous les tags, triés par ordre alphabétique.</p>
+
+    <h3>Filtrer les tags par motif</h3>
+
+    <pre data-lang="bash"><code># Tous les tags qui commencent par "v1."
+git tag -l "v1.*"
+
+# Tous les tags qui commencent par "v"
+git tag -l "v*"</code></pre>
+
+    <p>L'option <span class="git-cmd">-l</span> (list) accepte un motif avec des caractères joker (<code>*</code>).</p>
+
+    <h3>Voir les détails d'un tag</h3>
+
+    <pre data-lang="bash"><code>git show v1.0.0</code></pre>
+
+    <p>Pour un tag <strong>annoté</strong>, <span class="git-cmd">git show</span> affiche :</p>
+
+    <ul>
+      <li>L'auteur du tag et la date</li>
+      <li>Le message du tag</li>
+      <li>Les détails du commit associé (auteur, date, message, diff)</li>
+    </ul>
+
+    <p>Pour un tag <strong>léger</strong>, <span class="git-cmd">git show</span> affiche uniquement les détails du commit (pas d'information supplémentaire sur le tag lui-même).</p>
+
+    <div class="narrative">
+      <p>« C'est ainsi que l'on distingue un vrai Sceau d'un simple coup de crayon. Le Sceau Annoté porte <strong>la signature de son créateur</strong> et la raison de son apposition. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Partager les tags -->
+    <h2>Partager les tags</h2>
+
+    <p>Par défaut, <span class="git-cmd">git push</span> <span class="highlight-red">ne pousse pas les tags</span>. Il faut les envoyer explicitement.</p>
+
+    <h3>Pousser un tag spécifique</h3>
+
+    <pre data-lang="bash"><code>git push origin v1.0.0</code></pre>
+
+    <h3>Pousser tous les tags</h3>
+
+    <pre data-lang="bash"><code>git push origin --tags</code></pre>
+
+    <div class="warning">
+      <p><span class="git-cmd">--tags</span> pousse <strong>tous</strong> les tags locaux. Si tu as des tags temporaires que tu ne veux pas partager, pousse-les un par un.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Supprimer un tag -->
+    <h2>Supprimer un tag</h2>
+
+    <h3>Supprimer un tag local</h3>
+
+    <pre data-lang="bash"><code>git tag -d v0.1.0</code></pre>
+
+    <p>Le tag est supprimé localement. Si tu l'avais déjà poussé vers un dépôt distant, il faut aussi le supprimer là-bas :</p>
+
+    <pre data-lang="bash"><code>git push origin --delete v0.1.0</code></pre>
+
+    <div class="narrative">
+      <p>« On ne brise un Sceau qu'avec une bonne raison. Un Sceau posé par erreur peut être retiré, mais un Sceau partagé avec d'autres guildes nécessite <strong>plus de travail</strong> pour être effacé. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Semantic Versioning -->
+    <h2>Le <span class="keyword">versionnage sémantique</span></h2>
+
+    <p>Les tags suivent souvent une convention appelée <strong>Semantic Versioning</strong> (SemVer). Le format est :</p>
+
+    <pre data-lang="bash"><code>vMAJEUR.MINEUR.CORRECTIF</code></pre>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Partie</th>
+          <th>Quand l'incrémenter</th>
+          <th>Exemple</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MAJEUR</strong></td>
+          <td>Changement incompatible (breaking change)</td>
+          <td>v1.0.0 vers v2.0.0</td>
+        </tr>
+        <tr>
+          <td><strong>MINEUR</strong></td>
+          <td>Nouvelle fonctionnalité rétrocompatible</td>
+          <td>v1.0.0 vers v1.1.0</td>
+        </tr>
+        <tr>
+          <td><strong>CORRECTIF</strong></td>
+          <td>Correction de bug rétrocompatible</td>
+          <td>v1.0.0 vers v1.0.1</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Exemples concrets</h3>
+
+    <ul>
+      <li><code>v0.1.0</code> - première version de développement, pas encore stable</li>
+      <li><code>v1.0.0</code> - première version stable, prête pour la production</li>
+      <li><code>v1.0.1</code> - correction d'un bug dans la v1.0.0</li>
+      <li><code>v1.1.0</code> - ajout d'une fonctionnalité à la v1.0</li>
+      <li><code>v2.0.0</code> - refonte majeure, pas rétrocompatible</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« Le versionnage sémantique, c'est le <strong>langage commun</strong> des guildes. Quand un Archiviste voit passer <code>v2.0.0</code>, il sait que des changements majeurs ont eu lieu. Quand il voit <code>v1.0.1</code>, il sait que c'est une simple réparation. <strong>Les chiffres parlent d'eux-mêmes.</strong> »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Quand taguer -->
+    <h2>Quand poser un sceau ?</h2>
+
+    <p>Voici les moments où tu devrais taguer :</p>
+
+    <ul>
+      <li><strong>Release</strong> : chaque version livrée aux utilisateurs (v1.0.0, v1.1.0)</li>
+      <li><strong>Jalon</strong> : chaque étape importante du projet (v0.1.0 pour le MVP)</li>
+      <li><strong>Version stable</strong> : un point de référence fiable pour les autres développeurs</li>
+      <li><strong>Avant un changement risqué</strong> : pour pouvoir revenir facilement en cas de problème</li>
+    </ul>
+
+    <div class="tip">
+      <p>Ne tague pas tout. Un tag doit marquer un <strong>moment significatif</strong>. Si tu tagues chaque commit, les tags perdent leur valeur - comme un sceau qu'on poserait sur chaque page d'un livre.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - Sceller les Chroniques du Royaume</h2>
+
+    <div class="quest-objective">
+      <p>Crée les chroniques du royaume et marque les trois moments les plus importants de son histoire :</p>
+      <ol>
+        <li>Crée un dépôt avec un premier commit et tague-le <code>v0.1.0</code> (tag léger)</li>
+        <li>Ajoute des commits pour développer le royaume</li>
+        <li>Marque la première grande victoire avec un tag annoté <code>v1.0.0</code></li>
+        <li>Ajoute des commits de réparation après un siège</li>
+        <li>Marque la réparation avec un tag annoté <code>v1.0.1</code></li>
+        <li>Explore et inspecte tes tags</li>
+        <li>Lance le script de vérification</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer le dépôt et la fondation de la guilde</h3>
+
+    <pre data-lang="bash"><code>mkdir sceaux-magiques
+cd sceaux-magiques
+git init</code></pre>
+
+    <p>Crée le premier parchemin et fais le premier commit :</p>
+
+    <pre data-lang="bash"><code>echo "# Chroniques du Royaume" > chroniques.txt
+echo "" >> chroniques.txt
+echo "An 1 - La guilde des Archivistes est fondee." >> chroniques.txt
+git add chroniques.txt
+git commit -m "Fonder la guilde des Archivistes"</code></pre>
+
+    <p>Pose un <strong>tag léger</strong> sur ce moment fondateur :</p>
+
+    <pre data-lang="bash"><code>git tag v0.1.0</code></pre>
+
+    <h3>Étape 2 - Développer le royaume</h3>
+
+    <pre data-lang="bash"><code>echo "An 2 - Les premiers apprentis rejoignent la guilde." >> chroniques.txt
+git add chroniques.txt
+git commit -m "Accueillir les premiers apprentis"
+
+echo "An 3 - La guilde explore les terres du Nord." >> chroniques.txt
+git add chroniques.txt
+git commit -m "Explorer les terres du Nord"</code></pre>
+
+    <h3>Étape 3 - La première grande victoire</h3>
+
+    <pre data-lang="bash"><code>echo "An 4 - La guilde remporte la bataille de Fort-Givre." >> chroniques.txt
+git add chroniques.txt
+git commit -m "Remporter la bataille de Fort-Givre"</code></pre>
+
+    <p>Pose un <strong>tag annoté</strong> pour marquer cette victoire majeure :</p>
+
+    <pre data-lang="bash"><code>git tag -a v1.0.0 -m "Premiere grande victoire - Bataille de Fort-Givre"</code></pre>
+
+    <h3>Étape 4 - La réparation après le siège</h3>
+
+    <pre data-lang="bash"><code>echo "An 5 - Le siege de la Citadelle cause de lourds degats." >> chroniques.txt
+git add chroniques.txt
+git commit -m "Subir le siege de la Citadelle"
+
+echo "An 6 - Les murailles sont reconstruites plus solides." >> chroniques.txt
+git add chroniques.txt
+git commit -m "Reconstruire les murailles de la Citadelle"</code></pre>
+
+    <p>Pose un <strong>tag annoté</strong> pour marquer la réparation :</p>
+
+    <pre data-lang="bash"><code>git tag -a v1.0.1 -m "Reparation apres le siege - Murailles reconstruites"</code></pre>
+
+    <h3>Étape 5 - Explorer tes sceaux</h3>
+
+    <p>Liste tous les tags :</p>
+
+    <pre data-lang="bash"><code>git tag</code></pre>
+
+    <p>Filtre les tags de la version 1 :</p>
+
+    <pre data-lang="bash"><code>git tag -l "v1.*"</code></pre>
+
+    <p>Inspecte un tag annoté :</p>
+
+    <pre data-lang="bash"><code>git show v1.0.0</code></pre>
+
+    <p>Compare avec un tag léger :</p>
+
+    <pre data-lang="bash"><code>git show v0.1.0</code></pre>
+
+    <p>Observe la différence : le tag annoté affiche l'auteur, la date et le message du tag, alors que le tag léger montre directement le commit.</p>
+
+    <h3>Étape 6 - Lancer la vérification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git tag &lt;nom&gt;</code></td>
+          <td>Créer un tag léger</td>
+        </tr>
+        <tr>
+          <td><code>git tag -a &lt;nom&gt; -m "msg"</code></td>
+          <td>Créer un tag annoté (recommandé)</td>
+        </tr>
+        <tr>
+          <td><code>git tag</code></td>
+          <td>Lister tous les tags</td>
+        </tr>
+        <tr>
+          <td><code>git tag -l "v1.*"</code></td>
+          <td>Filtrer les tags par motif</td>
+        </tr>
+        <tr>
+          <td><code>git show &lt;tag&gt;</code></td>
+          <td>Voir les détails d'un tag</td>
+        </tr>
+        <tr>
+          <td><code>git tag &lt;nom&gt; &lt;commit&gt;</code></td>
+          <td>Taguer un commit passé</td>
+        </tr>
+        <tr>
+          <td><code>git push origin &lt;tag&gt;</code></td>
+          <td>Pousser un tag spécifique</td>
+        </tr>
+        <tr>
+          <td><code>git push origin --tags</code></td>
+          <td>Pousser tous les tags</td>
+        </tr>
+        <tr>
+          <td><code>git tag -d &lt;nom&gt;</code></td>
+          <td>Supprimer un tag local</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste contemple les sceaux que tu as posés sur les chroniques. Il hoche la tête avec satisfaction.</p>
+      <p>« Tu maîtrises désormais l'art des Sceaux Magiques. Tu sais marquer les moments importants de l'Histoire, distinguer un sceau rapide d'un sceau officiel, et retrouver n'importe quel jalon en un instant. <strong>C'est un pouvoir que les meilleurs Archivistes utilisent avec discernement</strong> - chaque sceau doit avoir une raison d'être. »</p>
+      <p>Il désigne un dernier tag doré, accroché au mur au-dessus de la porte de sortie.</p>
+      <p>« Souviens-toi : <strong>un bon sceau raconte une histoire à lui seul</strong>. Son nom, son message, son emplacement - tout doit être choisi avec soin. Les Archivistes qui viendront après toi te remercieront. »</p>
+    </div>

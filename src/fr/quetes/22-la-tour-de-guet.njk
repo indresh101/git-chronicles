@@ -1,0 +1,581 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_22
+quest_number: "22"
+arc: 5
+title: "La Tour de Guet"
+subtitle: "Seed nodes, configuration, systemd et monitoring"
+quest_slug_fr: "22-la-tour-de-guet"
+quest_slug_en: "22-the-watchtower"
+permalink: /fr/quetes/22-la-tour-de-guet/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Le sentier grimpe à travers une forêt de chênes centenaires. À mesure que tu montes, les arbres s'espacent et le vent forcit. Au sommet de la colline se dresse une tour de pierre grise, massive et solitaire. Pas de drapeau, pas d'enseigne. Juste une lanterne qui brûle à son sommet, visible à des lieues à la ronde.</p>
+      <p>Un homme aux cheveux blancs t'accueille à la porte. Ses yeux sont fatigués mais vifs - les yeux de quelqu'un qui ne dort jamais vraiment.</p>
+      <p>« Je suis le <strong>Guetteur</strong>. Ma tour veille sur le réseau jour et nuit. Quand un voyageur publie ses chroniques, c'est moi qui les garde accessibles pour ceux qui les cherchent. Sans les tours de guet, les chroniques libres seraient comme des messages dans des bouteilles - lâchés dans l'océan, espérant que quelqu'un les trouve. »</p>
+      <p>Il te mène à l'intérieur, où des dizaines de cristaux lumineux flottent en cercle, chacun pulsant doucement.</p>
+      <p>« Chaque cristal est un projet que je surveille. Aujourd'hui, tu vas apprendre à <strong>construire ta propre tour</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Architecture seed node -->
+    <h2>Architecture d'un <span class="keyword">seed node</span></h2>
+
+    <p>Dans le réseau Radicle, tous les participants ne sont pas égaux en termes de <strong>disponibilité</strong>. Quand tu éteins ton ordinateur portable, tes projets ne sont plus accessibles aux autres. C'est là qu'interviennent les <strong>seed nodes</strong>.</p>
+
+    <h3>Le rôle d'un seed dans le réseau P2P</h3>
+
+    <p>Un <span class="keyword">seed node</span> (noeud graine) est un ordinateur qui reste <strong>connecté en permanence</strong> au réseau Radicle. Son rôle :</p>
+
+    <ul>
+      <li><strong>Disponibilité</strong> : il garde une copie des projets qu'il suit, même quand les auteurs sont hors ligne</li>
+      <li><strong>Découverte</strong> : il aide les nouveaux pairs à trouver des projets et d'autres pairs</li>
+      <li><strong>Relais</strong> : il transmet les mises à jour entre pairs qui ne sont pas directement connectés</li>
+    </ul>
+
+    <pre data-lang="bash"><code># Sans seed node :
+Alice (en ligne) &lt;--&gt; Bob (en ligne)     OK !
+Alice (hors ligne) &lt;--&gt; Bob (en ligne)   Bob ne peut pas accéder au projet d'Alice
+
+# Avec seed node :
+Alice (hors ligne)
+    |
+    v (Alice a publié avant de se déconnecter)
+  Seed Node (toujours en ligne) &lt;--&gt; Bob (en ligne)   Bob accède au projet !</code></pre>
+
+    <h3>Peer vs Seed - quelle différence ?</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Caractéristique</th>
+          <th>Peer (pair ordinaire)</th>
+          <th>Seed (noeud graine)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Connectivité</strong></td>
+          <td>Intermittente (laptop, desktop)</td>
+          <td>Permanente (serveur 24/7)</td>
+        </tr>
+        <tr>
+          <td><strong>Adresse IP</strong></td>
+          <td>Souvent dynamique, derrière un NAT</td>
+          <td>Fixe, accessible publiquement</td>
+        </tr>
+        <tr>
+          <td><strong>Rôle</strong></td>
+          <td>Travaille sur ses projets</td>
+          <td>Réplique et sert les projets des autres</td>
+        </tr>
+        <tr>
+          <td><strong>Ressources</strong></td>
+          <td>Utilise ce qu'il a</td>
+          <td>Dédié, stockage et bande passante suffisants</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="key-message">
+      <p>Un seed node est <strong>optionnel</strong> mais fortement recommandé pour tout projet sérieux. C'est comme un phare pour les navigateurs - le réseau fonctionne sans, mais c'est beaucoup plus fiable avec.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Prérequis serveur -->
+    <h2>Prérequis pour un <span class="keyword">seed node</span></h2>
+
+    <p>Pour monter un seed node, tu as besoin d'une machine connectée en permanence. Voici les options :</p>
+
+    <h3>Le serveur</h3>
+
+    <ul>
+      <li><strong>VPS</strong> (<em>Virtual Private Server</em>) : la solution la plus courante. Des fournisseurs comme Hetzner, OVH, Scaleway ou DigitalOcean proposent des VPS à partir de 3-5 euros par mois</li>
+      <li><strong>Raspberry Pi</strong> : un petit ordinateur chez toi, connecté à ta box. Économique mais nécessite un IP fixe ou du DNS dynamique</li>
+      <li><strong>Serveur dédié</strong> : pour les projets ambitieux avec beaucoup de trafic</li>
+    </ul>
+
+    <h3>Configuration minimale</h3>
+
+    <ul>
+      <li><strong>OS</strong> : Linux (Debian, Ubuntu, Fedora) - recommandé</li>
+      <li><strong>RAM</strong> : 512 Mo minimum, 1 Go recommandé</li>
+      <li><strong>Disque</strong> : 10 Go minimum (dépend du nombre de projets suivis)</li>
+      <li><strong>Réseau</strong> : IP publique, port <strong>8776</strong> accessible</li>
+    </ul>
+
+    <div class="tip">
+      <p><strong>Astuce :</strong> Pour cet exercice, tu n'as pas besoin d'un vrai serveur. On va tout faire en local sur ta machine pour comprendre les mécanismes.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Installation -->
+    <h2>Installer <span class="keyword">radicle-node</span></h2>
+
+    <p>Le noeud Radicle est inclus dans l'installation de <code>rad</code> que tu as faite dans la quête précédente. Le composant qui fait tourner le noeud s'appelle <span class="git-cmd">radicle-node</span>.</p>
+
+    <pre data-lang="bash"><code># Si rad est déjà installé, le nœud est disponible
+rad node --help
+
+# Sinon, installe Radicle (cf. Quête 21)
+curl -sSf https://radicle.xyz/install | sh</code></pre>
+
+    <h3>Vérifier les composants</h3>
+
+    <pre data-lang="bash"><code># Vérifie que tous les composants sont présents
+rad --version
+rad node --version
+
+# Les binaires se trouvent dans :
+ls ~/.radicle/bin/
+# radicle-node  rad  ...
+</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Configuration -->
+    <h2><span class="keyword">Configuration</span> du noeud</h2>
+
+    <p>Le fichier de configuration de ton noeud Radicle se trouve dans <code>~/.radicle/config.json</code>. C'est là que tu définis le comportement de ta tour de guet.</p>
+
+    <h3>Le fichier de configuration</h3>
+
+    <pre data-lang="bash"><code># Afficher la configuration actuelle
+rad config
+
+# Le fichier se trouve ici :
+cat ~/.radicle/config.json</code></pre>
+
+    <p>Voici les paramètres importants :</p>
+
+    <pre data-lang="json"><code>{
+  "node": {
+    "alias": "ma-tour-de-guet",
+    "listen": ["0.0.0.0:8776"],
+    "peers": {
+      "type": "dynamic"
+    },
+    "connect": [],
+    "externalAddresses": ["mon-serveur.example.com:8776"],
+    "policy": "allow",
+    "scope": "all"
+  }
+}</code></pre>
+
+    <h3>Détail des paramètres</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Paramètre</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>alias</code></td>
+          <td>Un nom lisible pour ton noeud (visible par les pairs)</td>
+        </tr>
+        <tr>
+          <td><code>listen</code></td>
+          <td>Adresse et port d'écoute. <code>0.0.0.0:8776</code> écoute sur toutes les interfaces</td>
+        </tr>
+        <tr>
+          <td><code>externalAddresses</code></td>
+          <td>L'adresse publique de ton noeud (IP ou domaine)</td>
+        </tr>
+        <tr>
+          <td><code>policy</code></td>
+          <td><code>allow</code> (accepte les connexions) ou <code>block</code> (refuse par défaut)</td>
+        </tr>
+        <tr>
+          <td><code>scope</code></td>
+          <td><code>all</code> (réplique tout) ou <code>followed</code> (seulement les projets suivis)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Policies : track et block</h3>
+
+    <p>Les <span class="keyword">policies</span> contrôlent quels projets ton noeud accepte de répliquer :</p>
+
+    <pre data-lang="bash"><code># Suivre un projet spécifique (le répliquer sur ton nœud)
+rad track rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA
+
+# Ne plus suivre un projet
+rad untrack rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA</code></pre>
+
+    <div class="tip">
+      <p><strong>Note :</strong> Il n'existe pas de commande <code>rad block</code>. Le blocage de projets se configure via la <strong>policy</strong> dans le fichier <code>~/.radicle/config.json</code>. Utilise <code>"policy": "block"</code> pour refuser par défaut, puis autorise explicitement les projets que tu veux suivre avec <code>rad track</code>.</p>
+    </div>
+
+    <div class="tip">
+      <p><strong>Conseil :</strong> Pour un seed node personnel, utilise <code>scope: "followed"</code> et ne suis que les projets qui t'intéressent. Un seed public peut utiliser <code>scope: "all"</code>, mais attention à l'espace disque.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Firewall -->
+    <h2>Ouvrir le <span class="keyword">pare-feu</span></h2>
+
+    <p>Pour que d'autres pairs puissent se connecter à ton noeud, le port <strong>8776</strong> (TCP) doit être accessible depuis l'extérieur.</p>
+
+    <h3>Avec UFW (Ubuntu / Debian)</h3>
+
+    <pre data-lang="bash"><code># Ouvrir le port 8776
+sudo ufw allow 8776/tcp
+
+# Vérifier les règles
+sudo ufw status</code></pre>
+
+    <h3>Avec firewalld (Fedora / RHEL)</h3>
+
+    <pre data-lang="bash"><code># Ouvrir le port 8776
+sudo firewall-cmd --add-port=8776/tcp --permanent
+sudo firewall-cmd --reload
+
+# Vérifier
+sudo firewall-cmd --list-ports</code></pre>
+
+    <h3>Avec iptables (avancé)</h3>
+
+    <pre data-lang="bash"><code># Ouvrir le port 8776
+sudo iptables -A INPUT -p tcp --dport 8776 -j ACCEPT</code></pre>
+
+    <div class="key-message">
+      <p>Le port <strong>8776</strong> est le port par défaut du protocole Radicle. C'est l'équivalent du port 22 pour SSH ou du port 443 pour HTTPS. Si ton noeud est derrière un routeur (Raspberry Pi chez toi), pense aussi à configurer la redirection de port sur ta box.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Démarrage -->
+    <h2>Démarrer et <span class="keyword">surveiller</span> le noeud</h2>
+
+    <h3>Démarrer le noeud</h3>
+
+    <pre data-lang="bash"><code># Démarrer le nœud Radicle
+rad node start
+
+# Le nœud démarre et se connecte au réseau
+# Tu verras des messages de connexion aux pairs</code></pre>
+
+    <h3>Vérifier le statut</h3>
+
+    <pre data-lang="bash"><code># État du nœud
+rad node status
+
+# Affiche :
+# Node is running
+# Listening on 0.0.0.0:8776
+# Connected peers: 3
+# Tracked repos: 5</code></pre>
+
+    <h3>Arrêter le noeud</h3>
+
+    <pre data-lang="bash"><code># Arrêter proprement
+rad node stop</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Tracking -->
+    <h2><span class="keyword">Suivre</span> des projets</h2>
+
+    <p>Un seed node n'est utile que s'il réplique des projets. Voici comment gérer les projets suivis :</p>
+
+    <pre data-lang="bash"><code># Suivre un projet par son identifiant
+rad track rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA
+
+# Lister les projets suivis / connus du noeud
+rad inspect
+
+# Arrêter de suivre un projet
+rad untrack rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA</code></pre>
+
+    <p>Quand tu suis un projet, ton noeud :</p>
+
+    <ol>
+      <li>Télécharge toutes les données du projet (code, patches, issues)</li>
+      <li>Se synchronise automatiquement quand des mises à jour arrivent</li>
+      <li>Sert ces données aux autres pairs qui les demandent</li>
+    </ol>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Monitoring -->
+    <h2><span class="keyword">Monitoring</span> et diagnostic</h2>
+
+    <h3>Les logs du noeud</h3>
+
+    <pre data-lang="bash"><code># Voir les logs en temps réel
+rad node logs
+
+# Filtrer les logs par niveau
+rad node logs --level info
+rad node logs --level debug</code></pre>
+
+    <div class="tip">
+      <p><strong>Astuce :</strong> Les logs sont aussi disponibles directement dans le fichier <code>~/.radicle/node.log</code>. Tu peux les consulter avec <code>tail -f ~/.radicle/node.log</code> sans passer par <code>rad</code>.</p>
+    </div>
+
+    <h3>Diagnostic courant</h3>
+
+    <pre data-lang="bash"><code># Vérifier la connectivité
+rad node status
+
+# Voir les pairs connectés
+rad node peers
+
+# Tester la connexion à un pair spécifique
+rad node connect &lt;node-id&gt;@&lt;adresse&gt;:8776</code></pre>
+
+    <h3>Problèmes fréquents</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Symptôme</th>
+          <th>Cause probable</th>
+          <th>Solution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0 pairs connectés</td>
+          <td>Pare-feu bloqué ou port fermé</td>
+          <td>Vérifier UFW/firewalld, redirection de port</td>
+        </tr>
+        <tr>
+          <td>Le noeud ne démarre pas</td>
+          <td>Pas d'identité créée</td>
+          <td>Exécuter <code>rad auth</code> d'abord</td>
+        </tr>
+        <tr>
+          <td>Synchronisation lente</td>
+          <td>Peu de pairs sur le réseau</td>
+          <td>Ajouter des seeds connus dans <code>connect</code></td>
+        </tr>
+        <tr>
+          <td>Espace disque plein</td>
+          <td>Trop de projets suivis</td>
+          <td>Utiliser <code>rad untrack</code> sur les projets inutiles</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 9 : Systemd -->
+    <h2>Service <span class="keyword">systemd</span> - un seed persistant</h2>
+
+    <p>Pour qu'un seed node tourne en permanence (même après un redémarrage du serveur), il faut le configurer comme un service systemd.</p>
+
+    <h3>Créer le fichier de service</h3>
+
+    <pre data-lang="bash"><code># Créer le fichier de service systemd
+sudo nano /etc/systemd/system/radicle-node.service</code></pre>
+
+    <p>Contenu du fichier :</p>
+
+    <pre data-lang="ini"><code>[Unit]
+Description=Radicle Node
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=radicle
+ExecStart=/home/radicle/.radicle/bin/radicle-node
+Restart=on-failure
+RestartSec=5
+Environment=RADICLE_HOME=/home/radicle/.radicle
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+    <h3>Activer et démarrer le service</h3>
+
+    <pre data-lang="bash"><code># Recharger la configuration systemd
+sudo systemctl daemon-reload
+
+# Activer le service au démarrage
+sudo systemctl enable radicle-node
+
+# Démarrer le service
+sudo systemctl start radicle-node
+
+# Vérifier le statut
+sudo systemctl status radicle-node</code></pre>
+
+    <h3>Gérer le service</h3>
+
+    <pre data-lang="bash"><code># Voir les logs du service
+sudo journalctl -u radicle-node -f
+
+# Redémarrer le service
+sudo systemctl restart radicle-node
+
+# Arrêter le service
+sudo systemctl stop radicle-node</code></pre>
+
+    <div class="tip">
+      <p><strong>Bonne pratique :</strong> Crée un utilisateur dédié <code>radicle</code> pour le service, plutôt que de le faire tourner sous <code>root</code>. C'est un principe de sécurité de base : chaque service a son propre utilisateur avec des permissions minimales.</p>
+    </div>
+
+    <pre data-lang="bash"><code># Créer un utilisateur dédié
+sudo useradd -m -s /bin/bash radicle
+
+# Se connecter en tant que radicle pour initialiser
+sudo -u radicle bash
+curl -sSf https://radicle.xyz/install | sh
+rad auth
+exit</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - <span class="keyword">Lancer un noeud local</span></h2>
+
+    <div class="quest-objective">
+      <p>Dans cet exercice, tu vas configurer et lancer un noeud Radicle sur ta propre machine. Pas besoin de VPS - on simule le fonctionnement d'un seed en local.</p>
+    </div>
+
+    <div class="steps">
+      <h3>Étape 1 - Vérifier les prérequis</h3>
+
+      <pre data-lang="bash"><code># Vérifie que rad est installé et que tu as une identité
+rad --version
+rad self
+
+# Si tu n'as pas d'identité, crée-en une
+rad auth</code></pre>
+
+      <h3>Étape 2 - Examiner la configuration</h3>
+
+      <pre data-lang="bash"><code># Affiche ta configuration actuelle
+rad config
+
+# Note les paramètres : listen, policy, scope</code></pre>
+
+      <h3>Étape 3 - Démarrer le noeud</h3>
+
+      <pre data-lang="bash"><code># Lance le nœud
+rad node start
+
+# Vérifie qu'il tourne
+rad node status</code></pre>
+
+      <h3>Étape 4 - Suivre un projet</h3>
+
+      <pre data-lang="bash"><code># Si tu as créé un projet dans la quête 21, note son RID
+# Sinon, crée-en un rapidement :
+mkdir test-seed && cd test-seed
+git init
+echo "test" > fichier.txt
+git add fichier.txt
+git commit -m "test"
+rad init
+
+# Note le RID affiché
+
+# Dans un autre terminal, suis ce projet
+rad track rad:&lt;le-rid-de-ton-projet&gt;</code></pre>
+
+      <h3>Étape 5 - Observer les logs</h3>
+
+      <pre data-lang="bash"><code># Observe ce que fait le nœud
+rad node logs
+
+# Tu devrais voir des messages de connexion et de réplication</code></pre>
+
+      <h3>Étape 6 - Arrêter proprement</h3>
+
+      <pre data-lang="bash"><code># Arrête le nœud
+rad node stop
+
+# Vérifie qu'il est arrêté
+rad node status</code></pre>
+    </div>
+
+    <div class="tip">
+      <p><strong>Pour aller plus loin :</strong> Si tu as accès à un VPS, tu peux reproduire cet exercice sur un vrai serveur et créer le service systemd. Ton seed sera alors accessible 24h/24 par tous les pairs du réseau Radicle.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>rad node start</code></td>
+          <td>Démarrer le noeud Radicle</td>
+        </tr>
+        <tr>
+          <td><code>rad node stop</code></td>
+          <td>Arrêter le noeud</td>
+        </tr>
+        <tr>
+          <td><code>rad node status</code></td>
+          <td>Afficher l'état du noeud (pairs, projets)</td>
+        </tr>
+        <tr>
+          <td><code>rad node logs</code></td>
+          <td>Voir les logs du noeud en temps réel</td>
+        </tr>
+        <tr>
+          <td><code>rad node peers</code></td>
+          <td>Lister les pairs connectés</td>
+        </tr>
+        <tr>
+          <td><code>rad node connect</code></td>
+          <td>Se connecter manuellement à un pair</td>
+        </tr>
+        <tr>
+          <td><code>rad track</code></td>
+          <td>Suivre (répliquer) un projet</td>
+        </tr>
+        <tr>
+          <td><code>rad untrack</code></td>
+          <td>Arrêter de suivre un projet</td>
+        </tr>
+        <tr>
+          <td><code>rad config</code></td>
+          <td>Afficher la configuration du noeud</td>
+        </tr>
+        <tr>
+          <td><code>systemctl start radicle-node</code></td>
+          <td>Démarrer le service systemd</td>
+        </tr>
+        <tr>
+          <td><code>systemctl status radicle-node</code></td>
+          <td>Vérifier le statut du service</td>
+        </tr>
+        <tr>
+          <td><code>journalctl -u radicle-node</code></td>
+          <td>Lire les logs du service</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Guetteur s'approche de la fenêtre de sa tour. De là-haut, le réseau de chemins qui relie les villages libres est clairement visible - des lignes sinueuses tracées par des générations de voyageurs.</p>
+      <p>« Ta tour est prête. Peut-être qu'elle ne veillera que sur tes propres projets pour l'instant. Mais un jour, d'autres voyageurs la trouveront, et ils seront reconnaissants qu'elle soit là. »</p>
+      <p>Il te tend une carte ancienne, couverte de symboles représentant d'autres tours, d'autres noeuds, d'autres pairs disséminés à travers le royaume.</p>
+      <p>« Tu as les outils et tu as ta tour. Il te reste une dernière chose à apprendre : comment <strong>tisser des liens</strong> avec les autres voyageurs. Car une tour seule dans la brume ne sert à rien - c'est le <strong>réseau</strong> qui fait la force. »</p>
+    </div>

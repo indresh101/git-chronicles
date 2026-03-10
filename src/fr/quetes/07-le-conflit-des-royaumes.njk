@@ -1,0 +1,318 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_07
+quest_number: "07"
+arc: 2
+title: "Le Conflit des Royaumes"
+subtitle: "Merge, conflits et résolution"
+quest_slug_fr: "07-le-conflit-des-royaumes"
+quest_slug_en: "07-the-conflict-of-kingdoms"
+permalink: /fr/quetes/07-le-conflit-des-royaumes/
+---
+
+    <!-- Introduction narrative -->
+    <section>
+      <h2>Introduction</h2>
+
+      <div class="narrative">
+        <p>La salle des archives tremble légèrement. Sur la grande table de chêne, deux parchemins sont déroulés côte à côte - deux chroniques du même événement, mais avec des récits contradictoires. Le Maître Archiviste pose une main sur chaque parchemin, le regard grave.</p>
+      </div>
+
+      <blockquote>
+        <p>« Apprenti, tu as appris à ouvrir des <strong>lignes temporelles parallèles</strong> - les branches. Mais que se passe-t-il quand ces lignes doivent <strong><span class="highlight">converger</span></strong> ? Quand deux royaumes racontent la même bataille, mais avec des versions différentes ? C'est là qu'intervient le <strong><span class="keyword">merge</span></strong> - la fusion des chroniques. Parfois, la fusion se fait naturellement. Parfois, les récits se <strong><span class="highlight-red">contredisent</span></strong>, et il faut un Archiviste pour <strong>réconcilier les versions</strong>. C'est ta mission aujourd'hui. »</p>
+      </blockquote>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Qu'est-ce qu'un merge ? -->
+    <section>
+      <h2>Qu'est-ce qu'un merge ?</h2>
+
+      <p>Un <span class="keyword">merge</span> (fusion) est l'opération qui <span class="highlight">réunit deux branches en une seule</span>. C'est comme rassembler les chroniques de deux archivistes qui ont travaillé en parallèle sur des sujets différents - ou parfois sur le même sujet.</p>
+
+      <p>Imagine deux chroniqueurs envoyés dans des royaumes différents :</p>
+      <ul>
+        <li>L'un part à l'Est et consigne l'histoire du Royaume de l'Aurore.</li>
+        <li>L'autre part à l'Ouest et consigne l'histoire du Royaume du Couchant.</li>
+      </ul>
+
+      <p>Quand ils reviennent, il faut <strong>fusionner</strong> leurs chroniques en un seul grand registre. Si chacun a écrit sur des sujets différents, c'est simple. Mais s'ils ont écrit sur <strong>la même bataille</strong> avec des versions contradictoires... il y a <span class="highlight-red">conflit</span>.</p>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Fusionner une branche -->
+    <section>
+      <h2>Fusionner une branche : <span class="git-cmd">git merge</span></h2>
+
+      <p>Pour fusionner une branche dans la branche courante :</p>
+
+      <pre data-lang="bash"><code>git merge &lt;branche&gt;</code></pre>
+
+      <div class="key-message">
+        <p><strong>Important :</strong> tu dois d'abord te placer sur la branche <strong>qui reçoit</strong> les modifications. En général, on se met sur <code>main</code> avant de fusionner une branche de travail :</p>
+      </div>
+
+      <pre data-lang="bash"><code>git switch main
+git merge ma-branche</code></pre>
+
+      <p>Cela prend les commits de <code>ma-branche</code> et les intègre dans <code>main</code>.</p>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Les types de merge -->
+    <section>
+      <h2>Les types de merge</h2>
+
+      <h3>Le <span class="keyword">fast-forward</span> - La fusion simple</h3>
+
+      <p>Quand la branche cible (<code>main</code>) n'a reçu <strong>aucun nouveau commit</strong> depuis la création de la branche de travail, Git peut simplement "avancer" le pointeur <code>main</code> jusqu'au dernier commit de la branche. C'est le <span class="keyword">fast-forward</span>.</p>
+
+      <pre><code>Avant :
+main:        A --- B
+                    \
+ma-branche:          C --- D
+
+Après git merge ma-branche (depuis main) :
+main:        A --- B --- C --- D</code></pre>
+
+      <p>Pas de commit de merge créé - Git se contente de déplacer <code>main</code> en avant. C'est le cas le plus simple.</p>
+
+      <h3>Le <span class="keyword">merge à trois voies</span> (three-way merge)</h3>
+
+      <p>Quand les <strong>deux branches ont évolué</strong> depuis leur point de divergence, Git ne peut pas simplement avancer un pointeur. Il doit <strong>combiner</strong> les modifications des deux côtés. Si les modifications touchent <strong>des fichiers ou des lignes différentes</strong>, Git s'en sort tout seul et crée un <span class="keyword">commit de merge</span> :</p>
+
+      <pre><code>Avant :
+main:        A --- B --- E
+                    \
+ma-branche:          C --- D
+
+Après git merge ma-branche (depuis main) :
+main:        A --- B --- E --- M
+                    \         /
+ma-branche:          C --- D</code></pre>
+
+      <p>Le commit <code>M</code> est un <span class="keyword">commit de merge</span> - il a <strong>deux parents</strong> (E et D). Git l'a créé automatiquement parce que les modifications ne se chevauchaient pas.</p>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Les conflits de merge -->
+    <section>
+      <h2>Les <span class="keyword">conflits</span> de merge</h2>
+
+      <p>Quand deux branches ont modifié <span class="highlight-red">les mêmes lignes du même fichier</span>, Git ne peut pas décider tout seul quelle version garder. Il s'arrête et te demande de trancher. C'est un <span class="keyword">conflit de merge</span>.</p>
+
+      <h3>Anatomie d'un conflit</h3>
+
+      <p>Quand un conflit survient, Git modifie le fichier concerné en y insérant des <span class="highlight-red">marqueurs de conflit</span> :</p>
+
+      <pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Le roi Aldric a remporté la bataille grâce à sa cavalerie.
+=======
+Le roi Aldric a perdu la bataille face aux archers ennemis.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; chroniques-est</code></pre>
+
+      <p>Voici ce que signifient ces marqueurs :</p>
+
+      <ul>
+        <li><span class="highlight-red"><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code></span> : début de <strong>ta version</strong> (la branche courante)</li>
+        <li><span class="highlight-red"><code>=======</code></span> : séparateur entre les deux versions</li>
+        <li><span class="highlight-red"><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; chroniques-est</code></span> : fin de la version de <strong>l'autre branche</strong></li>
+      </ul>
+
+      <div class="warning">
+        <p>Les marqueurs de conflit doivent <strong>tous</strong> être supprimés avant de pouvoir commiter. Si tu en laisses un seul, ton fichier sera corrompu et Git ne considèrera pas le conflit comme résolu.</p>
+      </div>
+
+      <h3>Résoudre un conflit</h3>
+
+      <p>Pour résoudre un conflit, suis ces étapes :</p>
+
+      <ol class="steps">
+        <li><strong>Ouvre le fichier</strong> contenant le conflit dans ton éditeur</li>
+        <li><strong>Choisis</strong> quelle version garder, ou <strong>combine</strong> les deux versions en un récit cohérent</li>
+        <li><strong>Supprime tous les marqueurs</strong> de conflit (<span class="highlight-red"><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code></span>, <span class="highlight-red"><code>=======</code></span>, <span class="highlight-red"><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code></span>)</li>
+        <li><strong>Sauvegarde</strong> le fichier</li>
+        <li><strong>Marque le conflit comme résolu</strong> avec <span class="git-cmd">git add</span></li>
+        <li><strong>Crée le commit de merge</strong> avec <span class="git-cmd">git commit</span></li>
+      </ol>
+
+      <pre data-lang="bash"><code># Après avoir édité le fichier manuellement :
+git add chroniques.txt
+git commit -m "Fusionner chroniques-est : réconcilier les récits de la bataille"</code></pre>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Annuler un merge -->
+    <section>
+      <h2>Annuler un merge en cours</h2>
+
+      <p>Si tu te retrouves dépassé par un conflit et que tu veux revenir en arrière :</p>
+
+      <pre data-lang="bash"><code>git merge --abort</code></pre>
+
+      <p>Cela annule le merge et remet tout dans l'état d'avant. Tu peux recommencer plus tard quand tu seras prêt.</p>
+
+      <div class="tip">
+        <p><span class="git-cmd">git merge --abort</span> est ton filet de sécurité. N'hésite pas à l'utiliser si tu t'es emmêlé les pinceaux dans la résolution d'un conflit - mieux vaut recommencer proprement que de commiter un fichier mal résolu.</p>
+      </div>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conseils pour éviter les conflits -->
+    <section>
+      <h2>Conseils pour éviter les conflits</h2>
+
+      <div class="tip">
+        <ol>
+          <li><strong>Fais des merges fréquents</strong> : plus tu attends, plus les branches divergent, plus les conflits sont nombreux et complexes.</li>
+          <li><strong>Communique avec ton équipe</strong> : si quelqu'un travaille sur le même fichier que toi, coordonnez-vous.</li>
+          <li><strong>Découpe bien tes fichiers</strong> : un fichier de 1000 lignes crée plus de conflits qu'une dizaine de fichiers bien organisés.</li>
+          <li><strong>Garde tes branches courtes</strong> : une branche qui vit 2 jours crée moins de conflits qu'une branche qui vit 2 mois.</li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <section>
+      <h2>Exercice pratique - Le Conflit des Royaumes</h2>
+
+      <div class="quest-objective">
+        <p>Deux chroniqueurs ont été envoyés aux frontières du royaume. <strong>Elowen</strong> est partie à l'Est, au Royaume de l'Aurore. <strong>Gareth</strong> est parti à l'Ouest, au Royaume du Couchant. Chacun a consigné sa version de la Bataille du Pont de Pierre. Malheureusement, leurs récits se contredisent. Tu dois <strong>réconcilier leurs chroniques</strong>.</p>
+      </div>
+
+      <h3>Étape 1 - Récupérer l'archive</h3>
+
+      <pre data-lang="bash"><code>git clone archive.bundle le-conflit-des-royaumes
+cd le-conflit-des-royaumes</code></pre>
+
+      <h3>Étape 2 - Explorer les branches</h3>
+
+      <pre data-lang="bash"><code>git branch -a
+git log --oneline --all --graph</code></pre>
+
+      <p>Tu devrais voir la branche <code>main</code> et les branches distantes <code>origin/chroniques-est</code> et <code>origin/chroniques-ouest</code>. Comme le dépôt a été cloné depuis un bundle, les branches des chroniqueurs sont des branches distantes - on les référence avec le préfixe <code>origin/</code>.</p>
+
+      <h3>Étape 3 - Premier merge (sans conflit)</h3>
+
+      <p>Fusionne d'abord la branche <code>origin/chroniques-ouest</code> dans <code>main</code> :</p>
+
+      <pre data-lang="bash"><code>git switch main
+git merge origin/chroniques-ouest</code></pre>
+
+      <p>Ce merge devrait se passer sans problème - Gareth a ajouté son rapport et écrit sa version de la bataille. Comme <code>main</code> a aussi évolué de son côté, Git va créer un <span class="keyword">commit de merge</span> automatiquement.</p>
+
+      <div class="tip">
+        <p>Vérifie le résultat avec <span class="git-cmd">git log --oneline --graph</span>. Tu devrais voir les deux branches se rejoindre dans un commit de merge.</p>
+      </div>
+
+      <h3>Étape 4 - Deuxième merge (avec conflit !)</h3>
+
+      <p>Maintenant, fusionne la branche <code>origin/chroniques-est</code> :</p>
+
+      <pre data-lang="bash"><code>git merge origin/chroniques-est</code></pre>
+
+      <p>Cette fois, Git s'arrête avec un message de <span class="highlight-red">conflit</span> ! Elowen et Gareth ont écrit des versions différentes de la même section dans <code>chroniques.txt</code>. Git ne peut pas choisir tout seul.</p>
+
+      <div class="warning">
+        <p>Pas de panique ! C'est normal et c'est exactement ce qu'on va apprendre à gérer. Le fichier <code>rapport-est.txt</code> a été fusionné sans problème (pas de conflit dessus), seul <code>chroniques.txt</code> pose problème.</p>
+      </div>
+
+      <h3>Étape 5 - Résoudre le conflit</h3>
+
+      <ol class="steps">
+        <li>Ouvre <code>chroniques.txt</code> dans ton éditeur de texte</li>
+        <li>Cherche les marqueurs <span class="highlight-red"><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code></span>, <span class="highlight-red"><code>=======</code></span> et <span class="highlight-red"><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code></span></li>
+        <li>Lis les deux versions du récit de la bataille</li>
+        <li>Écris un récit qui <strong>combine les deux perspectives</strong> en une version cohérente et équilibrée - en bon Archiviste, tu ne prends pas parti !</li>
+        <li>Supprime <strong>tous</strong> les marqueurs de conflit</li>
+        <li>Sauvegarde le fichier</li>
+      </ol>
+
+      <div class="tip">
+        <p>Il n'y a pas qu'une seule bonne réponse ! L'important est que le résultat soit cohérent, que les <strong>deux perspectives</strong> soient représentées, et qu'il ne reste <strong>aucun marqueur de conflit</strong> dans le fichier.</p>
+      </div>
+
+      <h3>Étape 6 - Finaliser le merge</h3>
+
+      <pre data-lang="bash"><code>git add chroniques.txt
+git commit -m "Fusionner chroniques-est : réconcilier les récits de la bataille"</code></pre>
+
+      <h3>Étape 7 - Vérifier</h3>
+
+      <p>Lance le script de vérification pour valider ta quête :</p>
+
+      <p><strong>Bash</strong> (Linux / macOS / Git Bash sur Windows) :</p>
+
+      <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+      <p><strong>PowerShell</strong> (Windows) :</p>
+
+      <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+      <p>Le script vérifie :</p>
+
+      <ol class="steps">
+        <li>Tu es dans un dépôt Git</li>
+        <li>Un merge a été effectué (commit de merge présent)</li>
+        <li>Aucun marqueur de conflit ne reste dans les fichiers</li>
+        <li>Aucun merge n'est en cours (pas de conflit non résolu)</li>
+        <li>Le commit de merge a un message descriptif (au moins 10 caractères)</li>
+      </ol>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <section>
+      <h2>Récapitulatif des commandes</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Commande</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>git merge &lt;branche&gt;</code></td>
+            <td>Fusionne la branche indiquée dans la branche courante</td>
+          </tr>
+          <tr>
+            <td><code>git merge --abort</code></td>
+            <td>Annule un merge en cours et revient à l'état d'avant</td>
+          </tr>
+          <tr>
+            <td><code>git log --oneline --graph</code></td>
+            <td>Visualise l'historique avec les branches et les merges</td>
+          </tr>
+          <tr>
+            <td><code>git add &lt;fichier&gt;</code></td>
+            <td>Marque un fichier en conflit comme résolu</td>
+          </tr>
+          <tr>
+            <td><code>git commit</code></td>
+            <td>Finalise le commit de merge après résolution des conflits</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste examine le registre unifié, où les deux versions de la bataille coexistent enfin en un récit cohérent.</p>
+      <div class="key-message">
+        <p>« Tu as accompli quelque chose de remarquable, apprenti. <strong>Réconcilier des versions contradictoires</strong> est l'une des tâches les plus délicates d'un Archiviste. Dans le monde réel, les conflits sont inévitables quand plusieurs personnes travaillent ensemble. Ce qui compte, c'est de savoir <strong>les résoudre avec soin et discernement</strong>. Tu maîtrises maintenant l'art de la fusion. »</p>
+      </div>
+    </div>

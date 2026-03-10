@@ -1,0 +1,461 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_14
+quest_number: "14"
+arc: 3
+title: "Les Outils de l'Archiviste"
+subtitle: "Alias, hooks et configuration Git"
+quest_slug_fr: "14-les-outils-de-larchiviste"
+quest_slug_en: "14-the-archivists-tools"
+permalink: /fr/quetes/14-les-outils-de-larchiviste/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste t'invite dans une pièce que tu n'avais jamais vue - son atelier personnel. Les murs sont couverts d'étagères chargées de plumes enchantées, de parchemins auto-correcteurs et d'étranges mécanismes qui semblent travailler seuls. Des encriers se referment d'eux-mêmes, des tampons vérifient automatiquement chaque ligne écrite, et des raccourcis magiques brillent sur un pupitre usé par les années.</p>
+      <p>« Tu as maîtrisé les Arts Anciens - le temps suspendu, la divination, les sceaux de protection. Mais un véritable Maître Archiviste ne se contente pas de connaître les techniques. Il <strong>forge ses propres outils</strong>. Aujourd'hui, je t'ouvre mon atelier. Tu vas créer des <strong>incantations raccourcies</strong> qui accélèrent ton travail, des <strong>plumes gardiennes</strong> qui vérifient automatiquement chaque parchemin, et tu vas <strong>personnaliser ta station de travail</strong> pour qu'elle devienne une extension de toi-même. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Les alias Git -->
+    <h2>Les alias Git - <span class="keyword">Incantations raccourcies</span></h2>
+
+    <p>Certaines commandes Git sont longues à taper et tu les utilises des dizaines de fois par jour. Les <strong>alias</strong> te permettent de créer des raccourcis personnalisés.</p>
+
+    <h3>Créer des alias</h3>
+
+    <p>La syntaxe est simple :</p>
+
+    <pre data-lang="bash"><code>git config --global alias.RACCOURCI "COMMANDE"</code></pre>
+
+    <p>Voici les alias les plus courants :</p>
+
+    <pre data-lang="bash"><code># Status en raccourci
+git config --global alias.st status
+
+# Checkout en raccourci
+git config --global alias.co checkout
+
+# Branch en raccourci
+git config --global alias.br branch
+
+# Commit en raccourci
+git config --global alias.ci commit
+
+# Log avec graphe - le plus utile !
+git config --global alias.lg "log --oneline --graph --all"</code></pre>
+
+    <h3>Utiliser les alias</h3>
+
+    <p>Une fois configurés, tu peux les utiliser immédiatement :</p>
+
+    <pre data-lang="bash"><code># Au lieu de "git status"
+git st
+
+# Au lieu de "git checkout main"
+git co main
+
+# Au lieu de "git branch"
+git br
+
+# Au lieu de "git commit -m 'message'"
+git ci -m "message"
+
+# Au lieu de "git log --oneline --graph --all"
+git lg</code></pre>
+
+    <h3>Vérifier les alias existants</h3>
+
+    <pre data-lang="bash"><code># Voir tous les alias configurés
+git config --get-regexp alias</code></pre>
+
+    <div class="narrative">
+      <p>« Les Maîtres Archivistes ne perdent pas leur temps à écrire des formules entières quand un <strong>mot de pouvoir</strong> suffit. Chaque seconde gagnée est une seconde de plus pour la réflexion. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Les hooks Git -->
+    <h2>Les hooks Git - <span class="keyword">Les plumes gardiennes</span></h2>
+
+    <p>Les <strong>hooks</strong> (crochets) sont des scripts qui s'exécutent <strong>automatiquement</strong> à des moments clés du workflow Git. Ce sont des gardiens silencieux qui vérifient, valident et protègent ton travail.</p>
+
+    <h3>Où vivent les hooks ?</h3>
+
+    <p>Chaque dépôt Git contient un dossier <code>.git/hooks/</code> avec des exemples de hooks :</p>
+
+    <pre data-lang="bash"><code>ls .git/hooks/</code></pre>
+
+    <p>Tu verras des fichiers comme <code>pre-commit.sample</code>, <code>commit-msg.sample</code>, etc. Pour activer un hook, il suffit de <strong>créer un fichier avec le bon nom</strong> (sans <code>.sample</code>) et de le <strong>rendre exécutable</strong>.</p>
+
+    <h3>Les hooks les plus utiles</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Hook</th>
+          <th>Quand il s'exécute</th>
+          <th>Utilisation courante</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>pre-commit</code></td>
+          <td>Avant chaque commit</td>
+          <td>Linting, vérification de style, tests rapides</td>
+        </tr>
+        <tr>
+          <td><code>commit-msg</code></td>
+          <td>Après la saisie du message</td>
+          <td>Valider le format du message de commit</td>
+        </tr>
+        <tr>
+          <td><code>pre-push</code></td>
+          <td>Avant chaque push</td>
+          <td>Tests complets, vérifications de sécurité</td>
+        </tr>
+        <tr>
+          <td><code>post-merge</code></td>
+          <td>Après un merge</td>
+          <td>Installer les dépendances, nettoyer le cache</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Créer un hook <span class="keyword"><code>pre-commit</code></span></h3>
+
+    <p>Un hook est simplement un script. Voici un exemple qui vérifie la présence de "TODO" dans les fichiers stagés :</p>
+
+    <pre data-lang="bash"><code>#!/bin/bash
+# .git/hooks/pre-commit
+# Vérifie qu'aucun fichier stagé ne contient "TODO"
+
+fichiers=$(git diff --cached --name-only)
+
+if [ -z "$fichiers" ]; then
+    exit 0
+fi
+
+if git diff --cached --diff-filter=ACM | grep -q "TODO"; then
+    echo "⚠ ATTENTION : Un ou plusieurs fichiers contiennent 'TODO' !"
+    echo "Fichiers concernés :"
+    git diff --cached --name-only | while read f; do
+        if git show ":$f" 2>/dev/null | grep -q "TODO"; then
+            echo "  - $f"
+        fi
+    done
+    echo ""
+    echo "Le commit est autorisé, mais pense à traiter ces TODO."
+fi
+
+exit 0</code></pre>
+
+    <div class="warning">
+      <p><strong>Important :</strong> Le hook doit être <strong>exécutable</strong> ! Sans ça, Git l'ignorera silencieusement.</p>
+    </div>
+
+    <pre data-lang="bash"><code>chmod +x .git/hooks/pre-commit</code></pre>
+
+    <h3>Créer un hook <span class="keyword"><code>commit-msg</code></span></h3>
+
+    <p>Ce hook vérifie que le message de commit respecte un format minimum :</p>
+
+    {% raw %}<pre data-lang="bash"><code>#!/bin/bash
+# .git/hooks/commit-msg
+# Rejette les messages de commit de moins de 10 caractères
+
+message=$(cat "$1")
+longueur=${#message}
+
+if [ "$longueur" -lt 10 ]; then
+    echo "✗ REJETÉ : Le message de commit est trop court ($longueur caractères)."
+    echo "  Minimum requis : 10 caractères."
+    echo "  Message reçu : \"$message\""
+    exit 1
+fi
+
+exit 0</code></pre>{% endraw %}
+
+    <pre data-lang="bash"><code>chmod +x .git/hooks/commit-msg</code></pre>
+
+    <div class="narrative">
+      <p>« Les plumes gardiennes sont les alliées les plus fidèles de l'Archiviste. Elles ne dorment jamais, ne se fatiguent jamais, et <strong>attrapent les erreurs avant qu'elles ne deviennent des problèmes</strong>. Un atelier sans gardiens est un atelier vulnérable. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Configuration avancée -->
+    <h2>Configuration avancée de Git</h2>
+
+    <p>Au-delà des alias et des hooks, Git offre de nombreuses options de configuration qui améliorent ton confort de travail.</p>
+
+    <h3>L'éditeur par défaut</h3>
+
+    <pre data-lang="bash"><code># Visual Studio Code
+git config --global core.editor "code --wait"
+
+# Vim
+git config --global core.editor "vim"
+
+# Nano (le plus simple)
+git config --global core.editor "nano"</code></pre>
+
+    <div class="tip">
+      <p>L'option <code>--wait</code> pour VS Code est importante : elle dit à Git d'attendre que tu fermes le fichier avant de continuer.</p>
+    </div>
+
+    <h3>La branche par défaut</h3>
+
+    <pre data-lang="bash"><code>git config --global init.defaultBranch main</code></pre>
+
+    <p>Tous tes nouveaux dépôts utiliseront <span class="keyword"><code>main</code></span> au lieu de <code>master</code> comme branche par défaut.</p>
+
+    <h3>Le comportement du pull</h3>
+
+    <pre data-lang="bash"><code># Rebase au lieu de merge lors d'un pull (recommandé)
+git config --global pull.rebase true
+
+# Ou forcer le merge classique
+git config --global pull.rebase false</code></pre>
+
+    <p>Avec <code>pull.rebase true</code>, un <span class="git-cmd">git pull</span> fera automatiquement un rebase au lieu de créer un commit de merge. Ça garde l'historique plus propre.</p>
+
+    <h3>Le style des conflits</h3>
+
+    <pre data-lang="bash"><code>git config --global merge.conflictstyle diff3</code></pre>
+
+    <p>Le style <span class="keyword"><code>diff3</code></span> ajoute une section supplémentaire dans les conflits de merge : en plus de "la version de gauche" et "la version de droite", tu vois aussi <strong>la version commune d'origine</strong>. C'est beaucoup plus facile pour comprendre ce qui a changé de chaque côté.</p>
+
+    <pre data-lang="bash"><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Version de ta branche
+||||||| merged common ancestors
+Version originale (avant les deux modifications)
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature
+Version de l'autre branche</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : .gitconfig -->
+    <h2>Le fichier <span class="keyword"><code>.gitconfig</code></span> - La vue d'ensemble</h2>
+
+    <p>Toutes ces configurations sont stockées dans un fichier <code>~/.gitconfig</code> (sur Linux/macOS) ou <code>C:\Users\TON_NOM\.gitconfig</code> (sur Windows).</p>
+
+    <p>Tu peux le consulter directement :</p>
+
+    <pre data-lang="bash"><code># Voir toute la configuration
+git config --global --list
+
+# Ou ouvrir le fichier dans ton éditeur
+git config --global --edit</code></pre>
+
+    <p>Le fichier ressemble à ça :</p>
+
+    <pre data-lang="bash"><code>[user]
+    name = Ton Nom
+    email = ton@email.com
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    lg = log --oneline --graph --all
+[core]
+    editor = code --wait
+[init]
+    defaultBranch = main
+[pull]
+    rebase = true
+[merge]
+    conflictstyle = diff3</code></pre>
+
+    <div class="key-message">
+      <p>Connais ton grimoire de configuration comme tu connais ta propre main. Un Archiviste qui maîtrise ses outils est <strong>dix fois plus efficace</strong> qu'un Archiviste qui se bat contre eux.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - Forger tes outils</h2>
+
+    <div class="quest-objective">
+      <p>Forge tes propres outils d'Archiviste :</p>
+      <ol>
+        <li>Crée un dépôt <code>outils-archiviste</code></li>
+        <li>Configure les alias <code>st</code>, <code>co</code>, <code>br</code>, <code>ci</code> et <code>lg</code></li>
+        <li>Teste les alias avec <span class="git-cmd">git st</span> et <span class="git-cmd">git lg</span></li>
+        <li>Crée un hook <code>pre-commit</code> qui détecte les "TODO"</li>
+        <li>Teste-le en committant un fichier contenant "TODO"</li>
+        <li>Crée un hook <code>commit-msg</code> qui rejette les messages courts</li>
+        <li>Teste-le avec un mauvais puis un bon message</li>
+        <li>Lance le script de vérification</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer le dépôt</h3>
+
+    <pre data-lang="bash"><code>mkdir outils-archiviste
+cd outils-archiviste
+git init</code></pre>
+
+    <h3>Étape 2 - Configurer les alias</h3>
+
+    <pre data-lang="bash"><code>git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.lg "log --oneline --graph --all"</code></pre>
+
+    <h3>Étape 3 - Tester les alias</h3>
+
+    <pre data-lang="bash"><code># Vérifie que les alias fonctionnent
+git st
+git lg</code></pre>
+
+    <p><span class="git-cmd">git st</span> devrait afficher le status du dépôt et <span class="git-cmd">git lg</span> devrait afficher le graphe (vide pour l'instant).</p>
+
+    <h3>Étape 4 - Créer le hook <code>pre-commit</code></h3>
+
+    <pre data-lang="bash"><code>cat > .git/hooks/pre-commit << 'HOOK'
+#!/bin/bash
+# Hook pre-commit : avertit si des fichiers stagés contiennent "TODO"
+
+fichiers=$(git diff --cached --name-only)
+
+if [ -z "$fichiers" ]; then
+    exit 0
+fi
+
+if git diff --cached --diff-filter=ACM | grep -q "TODO"; then
+    echo "⚠ ATTENTION : Un ou plusieurs fichiers contiennent 'TODO' !"
+    echo "Fichiers concernés :"
+    git diff --cached --name-only | while read f; do
+        if git show ":$f" 2>/dev/null | grep -q "TODO"; then
+            echo "  - $f"
+        fi
+    done
+    echo ""
+    echo "Le commit est autorisé, mais pense à traiter ces TODO."
+fi
+
+exit 0
+HOOK</code></pre>
+
+    <p>Rends-le exécutable :</p>
+
+    <pre data-lang="bash"><code>chmod +x .git/hooks/pre-commit</code></pre>
+
+    <h3>Étape 5 - Tester le hook <code>pre-commit</code></h3>
+
+    <pre data-lang="bash"><code>echo "# Liste des tâches" > taches.txt
+echo "TODO: Ajouter la validation" >> taches.txt
+git add taches.txt
+git commit -m "Ajouter la liste des tâches avec TODO"</code></pre>
+
+    <p>Tu devrais voir l'avertissement du hook avant que le commit ne soit créé.</p>
+
+    <h3>Étape 6 - Créer le hook <code>commit-msg</code></h3>
+
+    {% raw %}<pre data-lang="bash"><code>cat > .git/hooks/commit-msg << 'HOOK'
+#!/bin/bash
+# Hook commit-msg : rejette les messages de moins de 10 caractères
+
+message=$(cat "$1")
+longueur=${#message}
+
+if [ "$longueur" -lt 10 ]; then
+    echo "✗ REJETÉ : Le message de commit est trop court ($longueur caractères)."
+    echo "  Minimum requis : 10 caractères."
+    echo "  Message reçu : \"$message\""
+    exit 1
+fi
+
+exit 0
+HOOK</code></pre>{% endraw %}
+
+    <p>Rends-le exécutable :</p>
+
+    <pre data-lang="bash"><code>chmod +x .git/hooks/commit-msg</code></pre>
+
+    <h3>Étape 7 - Tester le hook <code>commit-msg</code></h3>
+
+    <p>D'abord, teste avec un message trop court (il doit être <span class="highlight-red">rejeté</span>) :</p>
+
+    <pre data-lang="bash"><code>echo "Test du hook commit-msg" > test-hook.txt
+git add test-hook.txt
+git commit -m "test"</code></pre>
+
+    <p>Le commit devrait être <strong>rejeté</strong> car "test" fait moins de 10 caractères.</p>
+
+    <p>Maintenant, refais avec un bon message :</p>
+
+    <pre data-lang="bash"><code>git commit -m "Ajouter le fichier de test pour les hooks"</code></pre>
+
+    <p>Cette fois, le commit devrait passer.</p>
+
+    <h3>Étape 8 - Lancer la vérification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git config --global alias.XX "cmd"</code></td>
+          <td>Créer un alias</td>
+        </tr>
+        <tr>
+          <td><code>git config --get-regexp alias</code></td>
+          <td>Lister les alias</td>
+        </tr>
+        <tr>
+          <td><code>git config --global core.editor "editeur"</code></td>
+          <td>Changer l'éditeur</td>
+        </tr>
+        <tr>
+          <td><code>git config --global init.defaultBranch main</code></td>
+          <td>Branche par défaut</td>
+        </tr>
+        <tr>
+          <td><code>git config --global pull.rebase true</code></td>
+          <td>Pull en mode rebase</td>
+        </tr>
+        <tr>
+          <td><code>git config --global merge.conflictstyle diff3</code></td>
+          <td>Style de conflits enrichi</td>
+        </tr>
+        <tr>
+          <td><code>git config --global --list</code></td>
+          <td>Voir toute la configuration</td>
+        </tr>
+        <tr>
+          <td><code>chmod +x .git/hooks/nom-du-hook</code></td>
+          <td>Rendre un hook exécutable</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste regarde tes outils fraîchement forgés avec un sourire rare - presque imperceptible.</p>
+      <p>« Tu as créé tes propres incantations raccourcies et tes propres plumes gardiennes. Tu as personnalisé ton atelier pour qu'il travaille <strong>avec</strong> toi, pas contre toi. C'est la marque d'un véritable artisan. »</p>
+      <p>Il se lève lentement et décroche un insigne ancien du mur - un parchemin d'or entouré d'engrenages, le symbole des Maîtres Archivistes.</p>
+      <p>« L'Arc des Arts Anciens est achevé. Tu maîtrises désormais le temps suspendu, la divination du code, les sceaux de protection, et la forge d'outils. Tu n'es plus un apprenti ni un compagnon. Tu es un <strong>Maître Archiviste</strong>. »</p>
+      <p>Il épingle l'insigne sur ta cape. Puis il te conduit vers une immense porte de métal, couverte de rouages et de conduits de vapeur. De l'autre côté, tu entends le grondement de machines titanesques.</p>
+      <p>« Mais le monde change, Maître Archiviste. Au-delà de cette porte se trouvent les <strong>Forges Automatiques</strong> - des machines capables de tester, construire et déployer ton code automatiquement, sans intervention humaine. CI/CD, pipelines, GitHub Actions... C'est le prochain chapitre de ton histoire. Et il sera <strong>extraordinaire</strong>. »</p>
+    </div>

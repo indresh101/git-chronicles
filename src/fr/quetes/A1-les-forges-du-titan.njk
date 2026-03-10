@@ -1,0 +1,829 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_A1
+quest_number: "A1"
+arc: 6
+title: "Les Forges du Titan"
+subtitle: "Git LFS, fichiers binaires et jeux vidéo"
+quest_slug_fr: "A1-les-forges-du-titan"
+quest_slug_en: "A1-the-titans-forges"
+permalink: /fr/quetes/A1-les-forges-du-titan/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Au-delà de la Citadelle, dans les montagnes les plus reculées du royaume, se dressent les Forges du Titan - des ateliers gigantesques creusés dans la roche volcanique. Ici, les artisans travaillent des artefacts si massifs qu'aucun parchemin ordinaire ne pourrait les contenir : des armures enchantées, des cartes de mondes entiers, des maquettes de cathédrales en trois dimensions.</p>
+      <p>Le Maître Forgeron t'accueille d'un grognement. Ses mains sont couvertes de suie et de runes.</p>
+      <p>« Les chroniques standards sont faites pour du texte - des mots, des incantations, des formules. Mais ici, on travaille des <strong>artefacts massifs</strong>. Des textures, des modèles 3D, des sons, des animations. Si tu essaies de les archiver comme du texte ordinaire, <strong>tes chroniques exploseront en taille</strong> et deviendront inutilisables. Il te faut un outil spécial. Il te faut <strong>les Forges du Titan</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Pourquoi les binaires cassent Git -->
+    <h2>Pourquoi les fichiers binaires <span class="keyword">cassent Git</span></h2>
+
+    <p>Pour comprendre le problème, il faut d'abord comprendre comment Git stocke les fichiers en interne.</p>
+
+    <h3>La compression delta</h3>
+
+    <p>Quand tu modifies un fichier texte, Git ne stocke pas une copie complète à chaque commit. Il calcule la <span class="keyword">différence</span> (le <em>delta</em>) entre l'ancienne et la nouvelle version. Si tu changes 3 lignes dans un fichier de 1000 lignes, Git ne stocke que ces 3 lignes modifiées.</p>
+
+    <p>Avec un fichier binaire (une image PSD, un modèle 3D, un fichier audio), <strong>tout change</strong> à chaque modification. Même un changement mineur - déplacer un calque de 1 pixel - peut modifier la totalité du fichier binaire. Git ne peut pas calculer un delta efficace. Résultat : <strong>chaque version est stockée en entier</strong>.</p>
+
+    <h3>Les pack files</h3>
+
+    <p>Git regroupe périodiquement les objets dans des <span class="keyword">pack files</span> pour économiser de l'espace. Cette compression fonctionne très bien pour le texte, mais est quasi inutile pour les binaires déjà compressés (PNG, ZIP, PSD, etc.).</p>
+
+    <h3>L'historique qui explose</h3>
+
+    <p>Imaginons un projet de jeu vidéo :</p>
+
+    <ul>
+      <li>Tu as une texture de 50 Mo</li>
+      <li>Tu la modifies 10 fois pendant le développement</li>
+      <li>Git stocke 10 copies quasi-complètes = <strong>500 Mo</strong> pour un seul fichier</li>
+      <li>Multiplie par des centaines de textures, modèles, sons...</li>
+      <li>Ton dépôt fait <strong>plusieurs dizaines de Go</strong> en quelques mois</li>
+    </ul>
+
+    <p>Et le pire : un <span class="git-cmd">git clone</span> télécharge <strong>tout l'historique</strong>. Un nouveau développeur qui rejoint le projet doit télécharger des dizaines de Go avant de pouvoir travailler.</p>
+
+    <div class="key-message">
+      <p>Git est conçu pour le texte. Les fichiers binaires volumineux dans Git = historique qui grossit de manière incontrôlable, clones interminables, et performances dégradées.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Git LFS -->
+    <h2><span class="keyword">Git LFS</span> - Large File Storage</h2>
+
+    <p><strong>Git LFS</strong> (<em>Large File Storage</em>) est une extension officielle de Git qui résout ce problème. Le principe est simple : au lieu de stocker les gros fichiers dans le dépôt Git, LFS les remplace par de petits fichiers <em>pointeurs</em> et stocke les vrais fichiers sur un serveur séparé.</p>
+
+    <pre data-lang="bash"><code># Sans LFS : le fichier binaire est DANS le dépôt Git
+texture.psd (50 Mo) → stocké dans .git/objects/
+
+# Avec LFS : un pointeur léger dans Git, le vrai fichier ailleurs
+texture.psd (134 octets, pointeur) → stocké dans .git/objects/
+texture.psd (50 Mo, vrai fichier) → stocké sur le serveur LFS</code></pre>
+
+    <h3>Installation</h3>
+
+    <p><strong>Bash</strong> (Linux / macOS / Git Bash sur Windows) :</p>
+
+    <pre data-lang="bash"><code># Linux (Debian/Ubuntu)
+sudo apt install git-lfs
+
+# Linux (Fedora)
+sudo dnf install git-lfs
+
+# macOS
+brew install git-lfs
+
+# Initialiser LFS pour ton utilisateur (une seule fois)
+git lfs install</code></pre>
+
+    <p><strong>PowerShell</strong> (Windows) :</p>
+
+    <pre data-lang="powershell"><code># Windows (avec winget)
+winget install GitHub.GitLFS
+
+# Ou télécharger depuis https://git-lfs.com
+
+# Initialiser LFS pour ton utilisateur (une seule fois)
+git lfs install</code></pre>
+
+    <p>La commande <span class="git-cmd">git lfs install</span> configure les hooks Git nécessaires dans ta configuration globale. Tu ne la lances qu'une seule fois par machine.</p>
+
+    <h3>Tracker des fichiers</h3>
+
+    <p>Pour dire à LFS quels fichiers gérer, tu utilises <span class="git-cmd">git lfs track</span> :</p>
+
+    <pre data-lang="bash"><code># Tracker toutes les images PSD
+git lfs track "*.psd"
+
+# Tracker plusieurs types de fichiers
+git lfs track "*.png"
+git lfs track "*.jpg"
+git lfs track "*.wav"
+git lfs track "*.mp3"
+git lfs track "*.fbx"
+git lfs track "*.blend"
+
+# Tracker un fichier spécifique
+git lfs track "assets/huge-map.tga"</code></pre>
+
+    <p>Chaque appel à <span class="git-cmd">git lfs track</span> ajoute une ligne dans le fichier <code>.gitattributes</code> à la racine de ton projet :</p>
+
+    <pre data-lang="gitattributes"><code># Contenu de .gitattributes après les commandes ci-dessus
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.fbx filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+assets/huge-map.tga filter=lfs diff=lfs merge=lfs -text</code></pre>
+
+    <div class="tip">
+      <p><strong>Important :</strong> le fichier <code>.gitattributes</code> doit être commité dans le dépôt ! C'est lui qui dit aux autres développeurs quels fichiers sont gérés par LFS. Commite-le en premier, avant d'ajouter les fichiers binaires.</p>
+    </div>
+
+    <h3>Opérations quotidiennes</h3>
+
+    <p>Une fois LFS configuré, tu utilises Git normalement. Les commandes <span class="git-cmd">git add</span>, <span class="git-cmd">git commit</span>, <span class="git-cmd">git push</span> et <span class="git-cmd">git pull</span> fonctionnent de la même manière - LFS s'occupe de tout en arrière-plan.</p>
+
+    <pre data-lang="bash"><code># Ajouter et commiter un fichier LFS - rien ne change !
+git add assets/texture.psd
+git commit -m "Ajouter la texture du héros"
+git push
+
+# Voir les fichiers gérés par LFS
+git lfs ls-files
+
+# Tirer les fichiers LFS depuis le serveur
+git lfs pull
+
+# Pousser les fichiers LFS vers le serveur
+git lfs push --all origin
+
+# Récupérer les fichiers LFS sans les checkout
+git lfs fetch</code></pre>
+
+    <h3>Vérifier l'état de LFS</h3>
+
+    <pre data-lang="bash"><code># Voir quels patterns sont trackés
+git lfs track
+
+# Voir les fichiers LFS dans le dépôt
+git lfs ls-files
+
+# Voir l'état détaillé
+git lfs status
+
+# Voir les informations d'environnement LFS
+git lfs env</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : File Locking -->
+    <h2><span class="keyword">File Locking</span> - verrouiller les fichiers binaires</h2>
+
+    <p>Avec du code source, si deux développeurs modifient le même fichier, Git peut souvent fusionner les changements automatiquement. Avec un fichier binaire, c'est <strong>impossible</strong>. Tu ne peux pas "merger" deux versions d'un fichier PSD ou d'un modèle 3D.</p>
+
+    <p>La solution : le <span class="keyword">file locking</span>. Avant de modifier un fichier binaire, tu le <strong>verrouilles</strong>. Personne d'autre ne peut le modifier tant que tu ne l'as pas déverrouillé.</p>
+
+    <pre data-lang="bash"><code># Verrouiller un fichier avant de le modifier
+git lfs lock assets/personnage-principal.blend
+
+# Voir les fichiers verrouillés (par toi et les autres)
+git lfs locks
+
+# Déverrouiller quand tu as fini
+git lfs unlock assets/personnage-principal.blend
+
+# Forcer le déverrouillage (si quelqu'un a oublié)
+git lfs unlock assets/personnage-principal.blend --force</code></pre>
+
+    <div class="tip">
+      <p><strong>Bonne pratique :</strong> dans une équipe, établis la règle suivante : <em>on ne modifie jamais un fichier binaire sans le verrouiller d'abord</em>. Cela évite les conflits impossibles à résoudre et les heures de travail perdues.</p>
+    </div>
+
+    <p>Pour rendre le locking obligatoire sur certains fichiers, ajoute l'attribut <code>lockable</code> dans <code>.gitattributes</code> :</p>
+
+    <pre data-lang="gitattributes"><code># Rendre le locking obligatoire pour les fichiers Blender
+*.blend filter=lfs diff=lfs merge=lfs -text lockable</code></pre>
+
+    <p>Avec <code>lockable</code>, les fichiers sont automatiquement en lecture seule tant qu'ils ne sont pas verrouillés. Cela empêche les modifications accidentelles.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Intégration moteurs de jeu -->
+    <h2>Intégration avec les <span class="keyword">moteurs de jeu</span></h2>
+
+    <p>Chaque moteur de jeu a ses spécificités. Voici comment configurer Git + LFS pour les trois moteurs les plus populaires.</p>
+
+    <h3>Unity</h3>
+
+    <p><strong>Configuration essentielle :</strong></p>
+
+    <ol>
+      <li><strong>Asset Serialization</strong> : dans <em>Edit > Project Settings > Editor</em>, mets <em>Asset Serialization Mode</em> sur <strong>Force Text</strong>. Cela permet à Git de faire des diffs sur les fichiers de scènes et prefabs.</li>
+      <li><strong>Meta files</strong> : active <em>Visible Meta Files</em>. Les fichiers <code>.meta</code> doivent être commités - ils contiennent les GUIDs qui lient les assets entre eux. <em>(Note : depuis Unity 2020+, ce paramètre est le comportement par défaut et le setting a été supprimé de l'interface. Les meta files sont toujours visibles.)</em></li>
+    </ol>
+
+    <p><strong>.gitignore pour Unity :</strong></p>
+
+    <pre data-lang="bash"><code># .gitignore Unity
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# IDE
+.vs/
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+
+# Builds
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# Crashlytics
+crashlytics-build.properties</code></pre>
+
+    <p><strong>Patterns LFS recommandés pour Unity :</strong></p>
+
+    <pre data-lang="bash"><code># Textures et images
+git lfs track "*.psd"
+git lfs track "*.png"
+git lfs track "*.jpg"
+git lfs track "*.tga"
+git lfs track "*.tif"
+git lfs track "*.exr"
+git lfs track "*.hdr"
+
+# Audio
+git lfs track "*.wav"
+git lfs track "*.mp3"
+git lfs track "*.ogg"
+
+# Modèles 3D
+git lfs track "*.fbx"
+git lfs track "*.obj"
+git lfs track "*.blend"
+
+# Vidéo
+git lfs track "*.mp4"
+git lfs track "*.mov"
+
+# Polices
+git lfs track "*.ttf"
+git lfs track "*.otf"
+
+# Unity spécifique - fichiers volumineux
+git lfs track "*.unitypackage"
+
+# Note : *.asset est du YAML texte si Force Text est actif.
+# Le LFS est optionnel pour ces fichiers - utile seulement
+# s'ils sont très volumineux malgré le format texte.</code></pre>
+
+    <div class="tip">
+      <p><strong>Attention :</strong> ne mets PAS les fichiers <code>.unity</code> (scènes) ni les <code>.prefab</code> dans LFS si tu as activé Force Text. Ce sont des fichiers YAML lisibles que Git peut différencier et fusionner. Seuls les vrais binaires vont dans LFS.</p>
+    </div>
+
+    <h3>Unreal Engine</h3>
+
+    <p>Unreal utilise des formats binaires propriétaires (<code>.uasset</code>, <code>.umap</code>) pour quasiment tout. C'est un cas où LFS est absolument indispensable.</p>
+
+    <p><strong>.gitignore pour Unreal Engine 5 :</strong></p>
+
+    <pre data-lang="bash"><code># .gitignore Unreal Engine 5
+/Binaries/
+/DerivedDataCache/
+/Intermediate/
+/Saved/
+/.vs/
+/.vscode/
+
+# Build
+/Build/
+
+# Compilés
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.suo
+*.sln.docstates
+
+# Fichiers temporaires
+*.tmp
+*.log</code></pre>
+
+    <p><strong>Patterns LFS pour Unreal :</strong></p>
+
+    <pre data-lang="bash"><code># Assets Unreal (TOUS binaires)
+git lfs track "*.uasset"
+git lfs track "*.umap"
+
+# Textures et médias (même patterns que Unity)
+git lfs track "*.png"
+git lfs track "*.jpg"
+git lfs track "*.psd"
+git lfs track "*.tga"
+git lfs track "*.exr"
+git lfs track "*.hdr"
+git lfs track "*.wav"
+git lfs track "*.mp3"
+git lfs track "*.mp4"
+git lfs track "*.fbx"
+git lfs track "*.blend"</code></pre>
+
+    <div class="key-message">
+      <p>Avec Unreal, <strong>quasiment tout est binaire</strong>. Le file locking est encore plus critique qu'avec Unity. Utilise les <em>Blueprints</em> et les <em>Data Assets</em> avec prudence - chaque modification est un fichier binaire entier.</p>
+    </div>
+
+    <h3>Godot</h3>
+
+    <p>Godot est le moteur le plus <em>Git-friendly</em> des trois. La majorité de ses formats sont en texte :</p>
+
+    <ul>
+      <li><code>.tscn</code> (scènes) : format texte - Git peut différencier et fusionner</li>
+      <li><code>.tres</code> (ressources) : format texte</li>
+      <li><code>.gd</code> (scripts GDScript) : texte pur</li>
+      <li><code>.gdshader</code> (shaders) : texte pur</li>
+    </ul>
+
+    <p>Seuls les assets importés (images, sons, modèles) sont binaires.</p>
+
+    <p><strong>.gitignore pour Godot :</strong></p>
+
+    <pre data-lang="bash"><code># .gitignore Godot
+/.godot/           # Godot 4 (cache, imports, données éditeur)
+/android/
+/export/
+*.translation
+
+# Import cache Godot 3 (régénéré automatiquement)
+# En Godot 4, ce dossier est remplacé par .godot/
+.import/</code></pre>
+
+    <p><strong>Patterns LFS pour Godot :</strong></p>
+
+    <pre data-lang="bash"><code># Seuls les vrais binaires ont besoin de LFS avec Godot
+# PAS de *.tscn ni *.tres : ce sont des formats texte (S-expression)
+# que Git peut différencier et fusionner normalement
+git lfs track "*.png"
+git lfs track "*.jpg"
+git lfs track "*.wav"
+git lfs track "*.ogg"
+git lfs track "*.mp3"
+git lfs track "*.glb"           # glTF binaire - va dans LFS
+# Note : *.gltf est du JSON texte, seul *.glb (version binaire) va dans LFS
+git lfs track "*.fbx"
+git lfs track "*.blend"
+git lfs track "*.ttf"
+git lfs track "*.otf"
+# Note : *.svg est du XML texte, pas besoin de LFS</code></pre>
+
+    <div class="tip">
+      <p><strong>Avantage Godot :</strong> grâce à ses formats texte natifs, tu as beaucoup moins besoin de LFS qu'avec Unity ou Unreal. Les scènes et ressources peuvent être diffées et mergées normalement avec Git. C'est un vrai atout pour le versionnement.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Migration -->
+    <h2><span class="keyword">Migrer</span> un projet existant vers LFS</h2>
+
+    <p>Tu as un projet existant avec des fichiers binaires déjà commités dans l'historique ? Git LFS fournit un outil de migration pour réécrire l'historique et déplacer les fichiers vers LFS rétroactivement.</p>
+
+    <div class="tip">
+      <p><strong>Attention :</strong> la migration réécrit l'historique Git. Cela signifie que tous les membres de l'équipe devront re-cloner le dépôt après la migration. Préviens tout le monde avant de migrer.</p>
+    </div>
+
+    <pre data-lang="bash"><code># Voir quels fichiers bénéficieraient de LFS (analyse de l'historique)
+git lfs migrate info --everything
+
+# Voir les fichiers les plus volumineux
+git lfs migrate info --everything --top=20
+
+# Migrer tous les fichiers PSD de tout l'historique vers LFS
+git lfs migrate import --everything --include="*.psd"
+
+# Migrer plusieurs types de fichiers en une seule commande
+git lfs migrate import --everything --include="*.psd,*.png,*.wav,*.fbx"
+
+# Migrer uniquement la branche courante
+git lfs migrate import --include="*.psd"
+
+# Après la migration, pousser le nouvel historique (force push nécessaire !)
+git push --force-with-lease</code></pre>
+
+    <p>Tu peux aussi faire l'opération inverse - retirer des fichiers de LFS :</p>
+
+    <pre data-lang="bash"><code># Exporter des fichiers de LFS vers le stockage Git normal
+git lfs migrate export --everything --include="*.svg"</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Alternatives -->
+    <h2>Alternatives à <span class="keyword">Git LFS</span></h2>
+
+    <p>Git LFS n'est pas la seule solution pour gérer les gros fichiers. Voici deux alternatives notables :</p>
+
+    <h3>git-annex - stockage flexible</h3>
+
+    <p><strong>git-annex</strong> est un outil plus ancien et plus flexible que Git LFS. Au lieu de stocker les fichiers sur un serveur LFS centralisé, git-annex peut les stocker n'importe où : disque dur externe, serveur SSH, S3, Backblaze, etc.</p>
+
+    <pre data-lang="bash"><code># Initialiser git-annex dans un dépôt
+git annex init "mon-poste"
+
+# Ajouter un fichier à git-annex
+git annex add assets/gros-fichier.blend
+
+# Ajouter un remote de stockage (disque externe)
+git annex initremote disque-externe type=directory directory=/media/backup/annex
+
+# Copier les fichiers vers le remote
+git annex copy --to disque-externe
+
+# Récupérer un fichier
+git annex get assets/gros-fichier.blend</code></pre>
+
+    <p><strong>Avantages :</strong> stockage décentralisé, pas besoin de serveur LFS, contrôle fin sur où chaque fichier est stocké. <strong>Inconvénients :</strong> plus complexe que LFS, moins intégré aux forges (GitHub, GitLab).</p>
+
+    <h3>DVC - Data Version Control</h3>
+
+    <p><strong>DVC</strong> est conçu pour la data science et le machine learning (on en reparlera en détail dans la Quête A2). Il gère les gros fichiers de données et les modèles ML avec un système de pipelines reproductibles.</p>
+
+    <pre data-lang="bash"><code># Ajouter un gros dataset à DVC (au lieu de Git)
+dvc add data/dataset.csv
+
+# Le fichier est remplacé par un pointeur .dvc
+# data/dataset.csv.dvc → commité dans Git
+# data/dataset.csv → stocké par DVC (local ou remote)</code></pre>
+
+    <p><strong>Avantages :</strong> pipelines reproductibles, intégré à l'écosystème ML. <strong>Inconvénients :</strong> pas conçu pour le jeu vidéo ou le design.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Critère</th>
+          <th>Git LFS</th>
+          <th>git-annex</th>
+          <th>DVC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Cas d'usage</strong></td>
+          <td>Jeux vidéo, design, binaires</td>
+          <td>Stockage flexible multi-supports</td>
+          <td>Data science, ML</td>
+        </tr>
+        <tr>
+          <td><strong>Intégration forges</strong></td>
+          <td>Excellente (GitHub, GitLab)</td>
+          <td>Limitée</td>
+          <td>Bonne</td>
+        </tr>
+        <tr>
+          <td><strong>Complexité</strong></td>
+          <td>Faible</td>
+          <td>Moyenne à élevée</td>
+          <td>Moyenne</td>
+        </tr>
+        <tr>
+          <td><strong>File locking</strong></td>
+          <td>Oui</td>
+          <td>Non</td>
+          <td>Non</td>
+        </tr>
+        <tr>
+          <td><strong>Stockage</strong></td>
+          <td>Serveur LFS (forge)</td>
+          <td>N'importe où</td>
+          <td>S3, GCS, local, SSH</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Bonnes pratiques -->
+    <h2>Bonnes pratiques pour un <span class="keyword">repo de jeu vidéo</span></h2>
+
+    <p>Organiser un dépôt de jeu vidéo demande de la rigueur. Voici les règles qui ont fait leurs preuves dans l'industrie :</p>
+
+    <h3>Structure recommandée</h3>
+
+    <pre data-lang="bash"><code>mon-jeu/
+├── .gitignore          # Exclure les fichiers générés
+├── .gitattributes      # Configuration LFS
+├── README.md
+├── Assets/             # Ou le dossier racine du moteur
+│   ├── Art/
+│   │   ├── Textures/   # → LFS
+│   │   ├── Models/     # → LFS
+│   │   ├── Animations/ # → LFS
+│   │   └── UI/         # → LFS (sauf SVG)
+│   ├── Audio/
+│   │   ├── Music/      # → LFS
+│   │   ├── SFX/        # → LFS
+│   │   └── Voice/      # → LFS
+│   ├── Scripts/        # → Git normal (texte)
+│   ├── Scenes/         # → Dépend du moteur
+│   └── Prefabs/        # → Dépend du moteur
+├── Docs/               # Documentation (texte)
+└── Tools/              # Scripts d'outils (texte)</code></pre>
+
+    <h3>Règles d'or</h3>
+
+    <ol>
+      <li><strong>Configure LFS avant le premier commit binaire.</strong> Migrer après coup est possible mais pénible.</li>
+      <li><strong>Commite le <code>.gitattributes</code> en premier.</strong> Avant tout fichier binaire.</li>
+      <li><strong>Verrouille avant de modifier un binaire.</strong> Toujours. Sans exception.</li>
+      <li><strong>Utilise des branches courtes.</strong> Plus une branche vit longtemps, plus les conflits binaires sont probables.</li>
+      <li><strong>Communique avec ton équipe.</strong> "Je travaille sur le modèle du boss" - une simple annonce peut éviter des heures de conflits.</li>
+      <li><strong>Privilégie les formats texte quand c'est possible.</strong> SVG au lieu de PNG pour les icônes, YAML au lieu de binaire pour les configs, etc.</li>
+      <li><strong>Ne commite pas les fichiers générés.</strong> Les builds, les caches, les fichiers temporaires n'ont rien à faire dans le dépôt.</li>
+    </ol>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - <span class="keyword">Configurer un repo de jeu</span></h2>
+
+    <div class="quest-objective">
+      <p>Configure un dépôt Git avec LFS pour un projet de jeu vidéo fictif. Tu vas créer la structure, configurer LFS, et simuler un workflow avec des fichiers binaires.</p>
+    </div>
+
+    <h3>Étape 1 - Créer le dépôt et initialiser LFS</h3>
+
+    <pre data-lang="bash"><code># Créer le projet
+mkdir projet-forges-titan
+cd projet-forges-titan
+git init
+
+# Initialiser LFS
+git lfs install</code></pre>
+
+    <pre data-lang="powershell"><code># Créer le projet
+mkdir projet-forges-titan
+cd projet-forges-titan
+git init
+
+# Initialiser LFS
+git lfs install</code></pre>
+
+    <h3>Étape 2 - Configurer les fichiers à tracker</h3>
+
+    <pre data-lang="bash"><code># Tracker les types de fichiers binaires courants
+git lfs track "*.png"
+git lfs track "*.jpg"
+git lfs track "*.psd"
+git lfs track "*.wav"
+git lfs track "*.mp3"
+git lfs track "*.fbx"
+git lfs track "*.blend"
+
+# Vérifier que .gitattributes est bien créé
+cat .gitattributes</code></pre>
+
+    <pre data-lang="powershell"><code># Tracker les types de fichiers binaires courants
+git lfs track "*.png"
+git lfs track "*.jpg"
+git lfs track "*.psd"
+git lfs track "*.wav"
+git lfs track "*.mp3"
+git lfs track "*.fbx"
+git lfs track "*.blend"
+
+# Vérifier que .gitattributes est bien créé
+Get-Content .gitattributes</code></pre>
+
+    <h3>Étape 3 - Créer la structure du projet</h3>
+
+    <pre data-lang="bash"><code># Créer l'arborescence
+mkdir -p Assets/Art/Textures
+mkdir -p Assets/Art/Models
+mkdir -p Assets/Audio/Music
+mkdir -p Assets/Audio/SFX
+mkdir -p Assets/Scripts
+mkdir -p Docs
+
+# Créer un .gitignore
+cat > .gitignore << 'EOF'
+# Builds
+/Build/
+/Builds/
+
+# IDE
+.vs/
+.vscode/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporaire
+*.tmp
+*.log
+EOF
+
+# Créer un README
+echo "# Mon Projet de Jeu - Les Forges du Titan" > README.md</code></pre>
+
+    <pre data-lang="powershell"><code># Créer l'arborescence
+New-Item -ItemType Directory -Force -Path Assets/Art/Textures
+New-Item -ItemType Directory -Force -Path Assets/Art/Models
+New-Item -ItemType Directory -Force -Path Assets/Audio/Music
+New-Item -ItemType Directory -Force -Path Assets/Audio/SFX
+New-Item -ItemType Directory -Force -Path Assets/Scripts
+New-Item -ItemType Directory -Force -Path Docs
+
+# Créer un .gitignore
+@"
+# Builds
+/Build/
+/Builds/
+
+# IDE
+.vs/
+.vscode/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporaire
+*.tmp
+*.log
+"@ | Set-Content .gitignore
+
+# Créer un README
+"# Mon Projet de Jeu - Les Forges du Titan" | Set-Content README.md</code></pre>
+
+    <h3>Étape 4 - Premier commit (configuration)</h3>
+
+    <pre data-lang="bash"><code># Commiter la configuration en premier
+git add .gitattributes .gitignore README.md
+git commit -m "Initialiser le projet avec LFS et .gitignore"</code></pre>
+
+    <pre data-lang="powershell"><code># Commiter la configuration en premier
+git add .gitattributes .gitignore README.md
+git commit -m "Initialiser le projet avec LFS et .gitignore"</code></pre>
+
+    <h3>Étape 5 - Simuler des fichiers binaires</h3>
+
+    <pre data-lang="bash"><code># Créer des fichiers "binaires" simulés
+dd if=/dev/urandom of=Assets/Art/Textures/hero.png bs=1024 count=100 2>/dev/null
+dd if=/dev/urandom of=Assets/Audio/SFX/sword.wav bs=1024 count=50 2>/dev/null
+
+# Ajouter un script (fichier texte normal, pas LFS)
+cat > Assets/Scripts/player.gd << 'EOF'
+extends CharacterBody2D
+
+var speed = 200.0
+
+func _physics_process(delta):
+    var velocity = Vector2.ZERO
+    if Input.is_action_pressed("ui_right"):
+        velocity.x += 1
+    if Input.is_action_pressed("ui_left"):
+        velocity.x -= 1
+    velocity = velocity.normalized() * speed
+    move_and_slide()
+EOF
+
+# Commiter
+git add .
+git commit -m "Ajouter les premiers assets et le script du joueur"
+
+# Vérifier que LFS gère bien les fichiers binaires
+git lfs ls-files</code></pre>
+
+    <pre data-lang="powershell"><code># Créer des fichiers "binaires" simulés
+$bytes = New-Object byte[] 102400
+(New-Object Random).NextBytes($bytes)
+[IO.File]::WriteAllBytes("Assets/Art/Textures/hero.png", $bytes)
+
+$bytes = New-Object byte[] 51200
+(New-Object Random).NextBytes($bytes)
+[IO.File]::WriteAllBytes("Assets/Audio/SFX/sword.wav", $bytes)
+
+# Ajouter un script (fichier texte normal, pas LFS)
+@"
+extends CharacterBody2D
+
+var speed = 200.0
+
+func _physics_process(delta):
+    var velocity = Vector2.ZERO
+    if Input.is_action_pressed("ui_right"):
+        velocity.x += 1
+    if Input.is_action_pressed("ui_left"):
+        velocity.x -= 1
+    velocity = velocity.normalized() * speed
+    move_and_slide()
+"@ | Set-Content Assets/Scripts/player.gd
+
+# Commiter
+git add .
+git commit -m "Ajouter les premiers assets et le script du joueur"
+
+# Vérifier que LFS gère bien les fichiers binaires
+git lfs ls-files</code></pre>
+
+    <h3>Étape 6 - Vérifier le résultat</h3>
+
+    <pre data-lang="bash"><code># Les fichiers LFS doivent apparaître ici
+git lfs ls-files
+
+# Le script ne doit PAS apparaître (c'est du texte, pas du LFS)
+# Tu devrais voir hero.png et sword.wav
+
+# Voir les patterns trackés
+git lfs track</code></pre>
+
+    <div class="key-message">
+      <p>Si <span class="git-cmd">git lfs ls-files</span> affiche tes fichiers binaires et que ton script texte n'y est pas, bravo ! Tu as correctement configuré un dépôt de jeu avec Git LFS.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="git-cmd">git lfs install</span></td>
+          <td>Initialiser LFS (une fois par machine)</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs track "*.ext"</span></td>
+          <td>Tracker un type de fichier avec LFS</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs untrack "*.ext"</span></td>
+          <td>Arrêter de tracker un type de fichier</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs ls-files</span></td>
+          <td>Lister les fichiers gérés par LFS</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs status</span></td>
+          <td>Voir l'état des fichiers LFS</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs pull</span></td>
+          <td>Télécharger les fichiers LFS</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs push --all origin</span></td>
+          <td>Pousser tous les fichiers LFS</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs fetch</span></td>
+          <td>Récupérer les fichiers LFS sans checkout</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs lock &lt;fichier&gt;</span></td>
+          <td>Verrouiller un fichier binaire</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs unlock &lt;fichier&gt;</span></td>
+          <td>Déverrouiller un fichier binaire</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs locks</span></td>
+          <td>Lister les fichiers verrouillés</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs migrate info</span></td>
+          <td>Analyser le dépôt pour la migration</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs migrate import</span></td>
+          <td>Migrer des fichiers existants vers LFS</td>
+        </tr>
+        <tr>
+          <td><span class="git-cmd">git lfs env</span></td>
+          <td>Voir la configuration LFS</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître Forgeron hoche lentement la tête, satisfait.</p>
+      <p>« Tu vois maintenant pourquoi ces Forges existent. Les artefacts massifs - textures, modèles, sons - ne peuvent pas être traités comme de simples parchemins. Ils ont besoin de leur propre système de stockage, de leur propre discipline. »</p>
+      <p>« LFS est ton marteau de forgeron. Le file locking est ta discipline. Et le <code>.gitattributes</code> est ton plan de forge. Avec ces trois outils, tu peux versionner <strong>n'importe quel projet</strong>, même les plus titanesques. »</p>
+      <p>Il retourne à son enclume, le bruit du marteau résonnant dans les montagnes.</p>
+      <p>« Maintenant, va forger tes propres artefacts. Et n'oublie jamais : <strong>commite le .gitattributes en premier</strong>. Toujours. »</p>
+    </div>

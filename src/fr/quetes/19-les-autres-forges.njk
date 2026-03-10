@@ -1,0 +1,678 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_19
+quest_number: "19"
+arc: 4
+title: "Les Autres Forges"
+subtitle: "GitLab CI, Bitbucket Pipelines, Jenkins et portabilité"
+quest_slug_fr: "19-les-autres-forges"
+quest_slug_en: "19-the-other-forges"
+permalink: /fr/quetes/19-les-autres-forges/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste te conduit au sommet de la plus haute tour de la Forge. De là, tu découvres un panorama vertigineux : au-delà des terres de GitHub, d'autres forges brillent à l'horizon. Des colonnes de fumée et de lumière s'élèvent de cités lointaines, chacune avec ses propres tours, ses propres feux, ses propres philosophies de construction.</p>
+      <p>« Tu croyais que la Forge de GitHub était la seule ? Non, jeune Maître. À travers le royaume, <strong>d'autres forges opèrent avec des philosophies différentes</strong>. GitLab, Bitbucket, Jenkins, et bien d'autres. Un véritable Maître Archiviste les connaît toutes, car <strong>chaque forge possède des forces uniques</strong>. Aujourd'hui, tu vas découvrir ces terres lointaines et apprendre à forger dans chacune d'elles. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Pourquoi plusieurs plateformes -->
+    <h2>Pourquoi connaître <span class="keyword">plusieurs plateformes</span> ?</h2>
+
+    <p>Tu pourrais te demander : "Si je connais GitHub Actions, pourquoi apprendre autre chose ?" Excellente question. Voici la réponse :</p>
+
+    <ul>
+      <li><strong>Le marché du travail</strong> : certaines entreprises utilisent GitLab, d'autres Bitbucket, d'autres encore Jenkins. Connaître plusieurs plateformes te rend beaucoup plus employable.</li>
+      <li><strong>Les besoins varient</strong> : un projet open source ira naturellement sur GitHub, mais une entreprise avec des serveurs internes préférera peut-être GitLab auto-hébergé.</li>
+      <li><strong>La portabilité</strong> : comprendre les concepts communs te permet de passer d'une plateforme à l'autre en quelques heures, pas en quelques semaines.</li>
+      <li><strong>L'esprit critique</strong> : connaître les alternatives te permet de choisir le bon outil plutôt que de subir un choix par défaut.</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« Un forgeron qui ne connaît qu'un seul type de forge est <strong>prisonnier de sa forge</strong>. Celui qui les connaît toutes est <strong>libre de choisir</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : GitLab CI/CD -->
+    <h2><span class="keyword">GitLab CI/CD</span> - La Forge Impériale</h2>
+
+    <p>GitLab est souvent considéré comme le concurrent le plus complet de GitHub. Sa force principale : <strong>tout est intégré</strong>. CI/CD, registre de conteneurs, gestion de projet, sécurité - tout est dans une seule plateforme.</p>
+
+    <h3>Le fichier <code>.gitlab-ci.yml</code></h3>
+
+    <p>Comme GitHub Actions utilise des fichiers dans <code>.github/workflows/</code>, GitLab utilise un <strong>unique fichier</strong> à la racine du dépôt : <span class="keyword"><code>.gitlab-ci.yml</code></span>.</p>
+
+    <pre data-lang="yaml"><code>stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  script:
+    - echo "Tests en cours..."
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Déploiement en cours..."
+  only:
+    - main</code></pre>
+
+    <h3>Les concepts clés de GitLab CI</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Stages</strong></td>
+          <td>Les étapes du pipeline, exécutées dans l'ordre</td>
+        </tr>
+        <tr>
+          <td><strong>Jobs</strong></td>
+          <td>Les tâches individuelles, rattachées à un stage</td>
+        </tr>
+        <tr>
+          <td><strong>Script</strong></td>
+          <td>Les commandes à exécuter dans un job</td>
+        </tr>
+        <tr>
+          <td><strong>Runners</strong></td>
+          <td>Les machines qui exécutent les jobs (partagés ou privés)</td>
+        </tr>
+        <tr>
+          <td><strong>Artifacts</strong></td>
+          <td>Les fichiers produits par un job, transmis aux suivants</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Exemple plus complet</h3>
+
+    <pre data-lang="yaml"><code>stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  APP_NAME: "mon-application"
+
+build:
+  stage: build
+  script:
+    - echo "Construction de $APP_NAME..."
+    - mkdir -p build
+    - cp src/*.py build/
+  artifacts:
+    paths:
+      - build/
+
+test-unitaire:
+  stage: test
+  script:
+    - echo "Tests unitaires..."
+    - python -m pytest tests/
+
+test-lint:
+  stage: test
+  script:
+    - echo "Vérification du style..."
+    - python -m flake8 src/
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Déploiement de $APP_NAME..."
+  only:
+    - main
+  when: manual</code></pre>
+
+    <h3>Les forces de GitLab</h3>
+
+    <ul>
+      <li><strong>Tout-en-un</strong> : CI/CD, registre de conteneurs Docker, gestion de projet, wiki, pages statiques - tout est intégré nativement.</li>
+      <li><strong>Auto-hébergement</strong> : tu peux installer GitLab sur tes propres serveurs. C'est un avantage énorme pour les entreprises qui veulent garder le contrôle de leurs données.</li>
+      <li><strong>Registre de conteneurs intégré</strong> : chaque projet GitLab a son propre registre Docker, prêt à l'emploi.</li>
+      <li><strong>Environnements de déploiement</strong> : GitLab permet de définir des environnements (staging, production) et de visualiser les déploiements directement dans l'interface.</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« La Forge Impériale de GitLab est un <strong>royaume autonome</strong>. Elle n'a besoin d'aucune autre cité pour fonctionner. Tout est sous un même toit. C'est sa plus grande force - et parfois sa faiblesse, car cette puissance peut être <strong>intimidante pour les débutants</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Bitbucket Pipelines -->
+    <h2><span class="keyword">Bitbucket Pipelines</span> - La Forge des Guildes Marchandes</h2>
+
+    <p>Bitbucket est la forge de l'écosystème <strong>Atlassian</strong> - la même famille que Jira (gestion de projet) et Confluence (documentation). Si ton entreprise utilise Jira, Bitbucket s'intègre naturellement.</p>
+
+    <h3>Le fichier <code>bitbucket-pipelines.yml</code></h3>
+
+    <p>Bitbucket utilise aussi un fichier YAML à la racine du dépôt :</p>
+
+    <pre data-lang="yaml"><code>pipelines:
+  default:
+    - step:
+        name: Tests
+        script:
+          - echo "Tests en cours..."
+
+  branches:
+    main:
+      - step:
+          name: Tests
+          script:
+            - echo "Tests en cours..."
+      - step:
+          name: Déploiement
+          script:
+            - echo "Déploiement en cours..."</code></pre>
+
+    <h3>Les concepts clés de Bitbucket Pipelines</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Pipelines</strong></td>
+          <td>Le conteneur global de la configuration</td>
+        </tr>
+        <tr>
+          <td><strong>Steps</strong></td>
+          <td>Les étapes individuelles (équivalent des jobs)</td>
+        </tr>
+        <tr>
+          <td><strong>Script</strong></td>
+          <td>Les commandes à exécuter dans un step</td>
+        </tr>
+        <tr>
+          <td><strong>Pipes</strong></td>
+          <td>Des intégrations pré-construites (déployer sur AWS, Slack, etc.)</td>
+        </tr>
+        <tr>
+          <td><strong>Caches</strong></td>
+          <td>Mise en cache des dépendances entre les exécutions</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Exemple avec Pipes</h3>
+
+    <p>Les <strong>Pipes</strong> sont une spécificité de Bitbucket - ce sont des intégrations prêtes à l'emploi :</p>
+
+    <pre data-lang="yaml"><code>pipelines:
+  default:
+    - step:
+        name: Tests
+        caches:
+          - node
+        script:
+          - npm install
+          - npm test
+    - step:
+        name: Notification Slack
+        script:
+          - pipe: atlassian/slack-notify:2.0.0
+            variables:
+              WEBHOOK_URL: $SLACK_WEBHOOK
+              MESSAGE: "Build terminé avec succès !"</code></pre>
+
+    <h3>Les forces de Bitbucket</h3>
+
+    <ul>
+      <li><strong>Intégration Jira</strong> : les commits et branches sont automatiquement liés aux tickets Jira. Tu crées une branche depuis un ticket, et tout est tracé.</li>
+      <li><strong>Pipes</strong> : des intégrations pré-construites qui simplifient les tâches courantes (déploiement AWS, notifications, etc.).</li>
+      <li><strong>Dépôts privés gratuits</strong> : historiquement, Bitbucket offrait des dépôts privés gratuits avant GitHub.</li>
+      <li><strong>Intégration Confluence</strong> : la documentation est directement liée au code.</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« La Forge des Guildes Marchandes de Bitbucket est <strong>tissée dans un réseau commercial</strong>. Chaque ticket Jira, chaque page Confluence, chaque commit - tout est relié. Pour les grandes guildes organisées, c'est un <strong>avantage considérable</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Autres forges -->
+    <h2>Les autres forges notables</h2>
+
+    <p>Le monde des forges ne se limite pas à ces trois géants. Voici d'autres acteurs importants :</p>
+
+    <h3><span class="keyword">Jenkins</span> - Le Vétéran</h3>
+
+    <p><strong>Jenkins</strong> est l'un des plus anciens outils de CI/CD. Il est entièrement <strong>auto-hébergé</strong> et extrêmement <strong>flexible</strong>.</p>
+
+    <ul>
+      <li><span class="badge-green">Points forts</span> : personnalisation infinie, immense écosystème de plugins (plus de 1800), gratuit et open source.</li>
+      <li><span class="badge-red">Points faibles</span> : interface vieillissante, configuration complexe, maintenance nécessaire.</li>
+      <li><strong>Fichier de config</strong> : <code>Jenkinsfile</code> (syntaxe Groovy)</li>
+    </ul>
+
+    <pre data-lang="bash"><code>pipeline {
+    agent any
+    stages {
+        stage('Test') {
+            steps {
+                sh 'echo "Tests en cours..."'
+            }
+        }
+    }
+}</code></pre>
+
+    <p>Jenkins reste très utilisé dans les grandes entreprises qui ont investi massivement dans leurs infrastructures.</p>
+
+    <h3><span class="keyword">CircleCI</span> - Le Sprinter du Cloud</h3>
+
+    <p><strong>CircleCI</strong> est une plateforme CI/CD cloud-native, reconnue pour sa <strong>rapidité</strong> et son <strong>efficacité</strong>.</p>
+
+    <ul>
+      <li><span class="badge-green">Points forts</span> : très rapide, excellent support Docker, bonne interface.</li>
+      <li><span class="badge-red">Points faibles</span> : coût qui augmente vite avec l'usage, moins de fonctionnalités annexes.</li>
+      <li><strong>Fichier de config</strong> : <code>.circleci/config.yml</code></li>
+    </ul>
+
+    <h3><span class="keyword">Travis CI</span> - Le Pionnier Open Source</h3>
+
+    <p><strong>Travis CI</strong> a été historiquement la plateforme CI/CD favorite des projets open source. Il a popularisé le concept de CI/CD intégrée aux forges.</p>
+
+    <ul>
+      <li><span class="badge-green">Points forts</span> : simple à configurer, pionnier de l'intégration avec GitHub.</li>
+      <li><span class="badge-red">Points faibles</span> : a perdu en popularité après son rachat, offre gratuite réduite.</li>
+      <li><strong>Fichier de config</strong> : <code>.travis.yml</code></li>
+    </ul>
+
+    <h3><span class="keyword">Forgejo/Gitea Actions</span> - L'Alternative Libre</h3>
+
+    <p><strong>Forgejo</strong> et <strong>Gitea</strong> sont des forges auto-hébergées, légères et open source. Leur système d'Actions est <strong>compatible avec GitHub Actions</strong> - tu peux souvent réutiliser tes workflows directement !</p>
+
+    <ul>
+      <li><span class="badge-green">Points forts</span> : léger, auto-hébergé, compatible GitHub Actions, respectueux de la vie privée.</li>
+      <li><span class="badge-red">Points faibles</span> : communauté plus petite, moins d'actions tierces disponibles.</li>
+      <li><strong>Fichier de config</strong> : <code>.forgejo/workflows/</code> ou <code>.gitea/workflows/</code> (même syntaxe que GitHub Actions)</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« Chaque forge a été bâtie par des artisans différents, avec des <strong>philosophies différentes</strong>. Jenkins est le vétéran indestructible, CircleCI le sprinter, Travis le pionnier, et Forgejo la voie libre. <strong>Aucune n'est parfaite, mais chacune excelle dans son domaine</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Tableau comparatif -->
+    <h2>Tableau comparatif</h2>
+
+    <p>Voici un résumé pour t'aider à comprendre les différences :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Critère</th>
+          <th>GitHub Actions</th>
+          <th>GitLab CI</th>
+          <th>Bitbucket Pipelines</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Fichier de config</strong></td>
+          <td><code>.github/workflows/*.yml</code></td>
+          <td><code>.gitlab-ci.yml</code></td>
+          <td><code>bitbucket-pipelines.yml</code></td>
+        </tr>
+        <tr>
+          <td><strong>Auto-hébergement</strong></td>
+          <td>Non (sauf runners)</td>
+          <td>Oui (GitLab CE/EE)</td>
+          <td>Non</td>
+        </tr>
+        <tr>
+          <td><strong>Registre Docker</strong></td>
+          <td>GitHub Packages</td>
+          <td>Intégré nativement</td>
+          <td>Non intégré</td>
+        </tr>
+        <tr>
+          <td><strong>Marketplace/Plugins</strong></td>
+          <td>GitHub Marketplace</td>
+          <td>Catalogue CI/CD</td>
+          <td>Pipes Atlassian</td>
+        </tr>
+        <tr>
+          <td><strong>Intégration projet</strong></td>
+          <td>Issues, Projects</td>
+          <td>Boards, Epics, Milestones</td>
+          <td>Jira, Confluence</td>
+        </tr>
+        <tr>
+          <td><strong>Gratuit (CI)</strong></td>
+          <td>2000 min/mois</td>
+          <td>400 min/mois</td>
+          <td>50 min/mois</td>
+        </tr>
+        <tr>
+          <td><strong>Force principale</strong></td>
+          <td>Communauté, Actions</td>
+          <td>Tout-en-un</td>
+          <td>Écosystème Atlassian</td>
+        </tr>
+        <tr>
+          <td><strong>Idéal pour</strong></td>
+          <td>Open source, startups</td>
+          <td>Entreprises, DevOps</td>
+          <td>Équipes sur Jira</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Comment choisir -->
+    <h2>Comment choisir la bonne plateforme ?</h2>
+
+    <p>Le choix dépend de ton contexte. Voici un guide simple :</p>
+
+    <ul>
+      <li><strong>Tu fais de l'open source ?</strong> - GitHub. La communauté est là, les contributeurs connaissent la plateforme.</li>
+      <li><strong>Ton entreprise veut tout contrôler en interne ?</strong> - GitLab auto-hébergé. Données sur tes serveurs, personnalisation totale.</li>
+      <li><strong>Ton équipe utilise déjà Jira ?</strong> - Bitbucket. L'intégration native avec l'écosystème Atlassian est un gain de temps énorme.</li>
+      <li><strong>Tu veux une solution légère et libre ?</strong> - Forgejo/Gitea. Parfait pour un serveur personnel ou une petite équipe.</li>
+      <li><strong>Tu as un système complexe existant ?</strong> - Jenkins. Sa flexibilité est inégalée pour les cas particuliers.</li>
+    </ul>
+
+    <div class="key-message">
+      <p>Le choix d'une forge n'est pas une question de <strong>meilleur</strong> ou de <strong>pire</strong>. C'est une question de <strong>contexte</strong>. Le meilleur marteau est celui qui convient au clou que tu dois enfoncer.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Portabilité -->
+    <h2>La portabilité - <span class="keyword">L'art de ne pas être prisonnier</span></h2>
+
+    <p>Un piège courant : mettre <strong>toute</strong> ta logique CI/CD dans le fichier YAML de ta plateforme. Si tu changes de forge un jour, tu dois tout réécrire.</p>
+
+    <p>La solution ? <strong>Garder la logique dans des scripts, pas dans le YAML.</strong></p>
+
+    <h3>Mauvaise approche <span class="highlight-red">(tout dans le YAML)</span></h3>
+
+    <pre data-lang="yaml"><code># .github/workflows/ci.yml - Difficile à porter
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -r requirements.txt
+      - run: python -m pytest tests/ --cov=src
+      - run: python -m flake8 src/ --max-line-length=120
+      - run: echo "Tous les tests passent !"</code></pre>
+
+    <h3>Bonne approche <span class="highlight">(logique dans un script)</span></h3>
+
+    <p>D'abord, crée un script <code>scripts/test.sh</code> :</p>
+
+    <pre data-lang="bash"><code>#!/bin/bash
+# scripts/test.sh - La logique est ici, pas dans le YAML
+echo "Installation des dépendances..."
+pip install -r requirements.txt
+
+echo "Lancement des tests..."
+python -m pytest tests/ --cov=src
+
+echo "Vérification du style..."
+python -m flake8 src/ --max-line-length=120
+
+echo "Tous les tests passent !"</code></pre>
+
+    <p>Ensuite, chaque fichier YAML appelle simplement ce script :</p>
+
+    <pre data-lang="yaml"><code># GitHub Actions
+- run: bash scripts/test.sh
+
+# GitLab CI
+script:
+  - bash scripts/test.sh
+
+# Bitbucket Pipelines
+script:
+  - bash scripts/test.sh</code></pre>
+
+    <p>Résultat : si tu changes de plateforme, tu n'as qu'à réécrire le fichier YAML minimal. Toute ta logique reste intacte.</p>
+
+    <div class="tip">
+      <p>Cette approche s'appelle le <strong>"shell-first CI"</strong>. C'est une bonne pratique adoptée par les équipes DevOps expérimentées. En bonus, tu peux tester tes scripts en local avant de les pousser !</p>
+    </div>
+
+    <div class="narrative">
+      <p>« Les Maîtres Archivistes les plus sages <strong>ne s'enchaînent jamais à une seule forge</strong>. Ils écrivent leurs parchemins de manière à pouvoir les emporter n'importe où. C'est la portabilité - et c'est une <strong>compétence qui vaut de l'or</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - Forger sur trois enclumes</h2>
+
+    <div class="quest-objective">
+      <p>Prouve ta maîtrise des Forges en écrivant le même pipeline sur trois plateformes :</p>
+      <ol>
+        <li>Crée un dépôt <code>multi-forge</code> avec un script de test</li>
+        <li>Écris le pipeline <strong>GitHub Actions</strong> dans <code>.github/workflows/ci.yml</code></li>
+        <li>Écris le pipeline <strong>GitLab CI</strong> dans <code>.gitlab-ci.yml</code></li>
+        <li>Écris le pipeline <strong>Bitbucket Pipelines</strong> dans <code>bitbucket-pipelines.yml</code></li>
+        <li>Les trois pipelines doivent appeler le même script de test</li>
+        <li>Commite le tout et lance la vérification</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer le dépôt</h3>
+
+    <pre data-lang="bash"><code>mkdir multi-forge
+cd multi-forge
+git init</code></pre>
+
+    <h3>Étape 2 - Créer le script de test</h3>
+
+    <p>Crée un dossier <code>scripts/</code> et un fichier <code>scripts/test.sh</code> :</p>
+
+    <pre data-lang="bash"><code>mkdir scripts</code></pre>
+
+    <p>Écris le contenu de <code>scripts/test.sh</code> :</p>
+
+    <pre data-lang="bash"><code>#!/bin/bash
+# scripts/test.sh - Script de test portable
+
+echo "=== Lancement des tests ==="
+
+# Test 1 : vérifier que le fichier README existe
+if [ -f "README.md" ]; then
+    echo "PASS : README.md existe"
+else
+    echo "FAIL : README.md manquant"
+    exit 1
+fi
+
+# Test 2 : vérifier que le dossier scripts existe
+if [ -d "scripts" ]; then
+    echo "PASS : dossier scripts/ existe"
+else
+    echo "FAIL : dossier scripts/ manquant"
+    exit 1
+fi
+
+echo "=== Tous les tests passent ==="</code></pre>
+
+    <p>Rends-le exécutable :</p>
+
+    <pre data-lang="bash"><code>chmod +x scripts/test.sh</code></pre>
+
+    <h3>Étape 3 - Créer un README</h3>
+
+    <pre data-lang="bash"><code>echo "# Multi-Forge" > README.md
+echo "Projet de démonstration CI/CD multi-plateforme." >> README.md</code></pre>
+
+    <h3>Étape 4 - Écrire le pipeline GitHub Actions</h3>
+
+    <pre data-lang="bash"><code>mkdir -p .github/workflows</code></pre>
+
+    <p>Contenu de <code>.github/workflows/ci.yml</code> :</p>
+
+    <pre data-lang="yaml"><code>name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lancer les tests
+        run: bash scripts/test.sh</code></pre>
+
+    <h3>Étape 5 - Écrire le pipeline GitLab CI</h3>
+
+    <p>Contenu de <code>.gitlab-ci.yml</code> (à la racine) :</p>
+
+    <pre data-lang="yaml"><code>stages:
+  - test
+
+test:
+  stage: test
+  script:
+    - bash scripts/test.sh</code></pre>
+
+    <h3>Étape 6 - Écrire le pipeline Bitbucket Pipelines</h3>
+
+    <p>Contenu de <code>bitbucket-pipelines.yml</code> (à la racine) :</p>
+
+    <pre data-lang="yaml"><code>pipelines:
+  default:
+    - step:
+        name: Tests
+        script:
+          - bash scripts/test.sh</code></pre>
+
+    <h3>Étape 7 - Tout commiter</h3>
+
+    <pre data-lang="bash"><code>git add .
+git commit -m "Ajouter les pipelines CI pour GitHub, GitLab et Bitbucket"</code></pre>
+
+    <h3>Étape 8 - Lancer la vérification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des concepts</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>GitLab CI/CD</strong></td>
+          <td>Plateforme CI/CD intégrée à GitLab, fichier <code>.gitlab-ci.yml</code></td>
+        </tr>
+        <tr>
+          <td><strong>Bitbucket Pipelines</strong></td>
+          <td>CI/CD intégré à Bitbucket, fichier <code>bitbucket-pipelines.yml</code></td>
+        </tr>
+        <tr>
+          <td><strong>Jenkins</strong></td>
+          <td>Outil CI/CD auto-hébergé, très flexible, fichier <code>Jenkinsfile</code></td>
+        </tr>
+        <tr>
+          <td><strong>CircleCI</strong></td>
+          <td>Plateforme CI/CD cloud-native rapide</td>
+        </tr>
+        <tr>
+          <td><strong>Travis CI</strong></td>
+          <td>Pionnier de la CI/CD pour l'open source</td>
+        </tr>
+        <tr>
+          <td><strong>Forgejo/Gitea</strong></td>
+          <td>Forges auto-hébergées compatibles GitHub Actions</td>
+        </tr>
+        <tr>
+          <td><strong>Portabilité</strong></td>
+          <td>Garder la logique dans des scripts, pas dans le YAML</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Récapitulatif des fichiers de configuration</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Plateforme</th>
+          <th>Fichier</th>
+          <th>Emplacement</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GitHub Actions</td>
+          <td><code>*.yml</code></td>
+          <td><code>.github/workflows/</code></td>
+        </tr>
+        <tr>
+          <td>GitLab CI</td>
+          <td><code>.gitlab-ci.yml</code></td>
+          <td>Racine du dépôt</td>
+        </tr>
+        <tr>
+          <td>Bitbucket Pipelines</td>
+          <td><code>bitbucket-pipelines.yml</code></td>
+          <td>Racine du dépôt</td>
+        </tr>
+        <tr>
+          <td>Jenkins</td>
+          <td><code>Jenkinsfile</code></td>
+          <td>Racine du dépôt</td>
+        </tr>
+        <tr>
+          <td>CircleCI</td>
+          <td><code>config.yml</code></td>
+          <td><code>.circleci/</code></td>
+        </tr>
+        <tr>
+          <td>Travis CI</td>
+          <td><code>.travis.yml</code></td>
+          <td>Racine du dépôt</td>
+        </tr>
+        <tr>
+          <td>Forgejo/Gitea</td>
+          <td><code>*.yml</code></td>
+          <td><code>.forgejo/workflows/</code> ou <code>.gitea/workflows/</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste contemple les trois enclumes devant toi - chacune porte un pipeline différent, mais toutes forgent le même résultat. Il hoche lentement la tête, visiblement satisfait.</p>
+      <p>« Tu as forgé sur trois enclumes différentes avec la même maîtrise. GitHub, GitLab, Bitbucket - tu connais désormais les <strong>philosophies de chaque forge</strong> et tu sais adapter ton travail à chacune. Et surtout, tu as compris le secret le plus important : <strong>la portabilité</strong>. Tes scripts sont libres, ils ne sont enchaînés à aucune forge. »</p>
+      <p>Il frappe trois coups sur la plus grande enclume. Les flammes des Forges Automatiques s'élèvent une dernière fois, projetant des ombres monumentales sur les murs.</p>
+      <p>« L'Arc des Forges Automatiques est achevé. Tu maîtrises désormais les forges éternelles, les actions du royaume, les épreuves automatiques, et les forges alternatives. Tu es un <strong>Forgeron Accompli</strong>. »</p>
+      <p>Le Maître Archiviste te tend un insigne d'or - un marteau croisé avec une plume, le symbole de ceux qui maîtrisent à la fois l'écriture et la forge.</p>
+      <p>« Mais le monde évolue, Forgeron. Au-delà des guildes et des forges que tu connais, de nouvelles voies s'ouvrent. Des archivistes rebelles expérimentent le <strong>versionnement décentralisé</strong> - sans serveur central, sans forge dominante. Radicle, le protocole peer-to-peer pour le code... C'est <strong>l'Arc 5 : Au-delà des Guildes</strong>. Et il changera ta vision de tout ce que tu as appris. »</p>
+    </div>

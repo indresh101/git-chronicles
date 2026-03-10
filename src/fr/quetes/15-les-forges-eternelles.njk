@@ -1,0 +1,558 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_15
+quest_number: "15"
+arc: 4
+title: "Les Forges Éternelles"
+subtitle: "CI/CD, plateformes Git et premiers pas vers l'automatisation"
+quest_slug_fr: "15-les-forges-eternelles"
+quest_slug_en: "15-the-eternal-forges"
+permalink: /fr/quetes/15-les-forges-eternelles/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>La lourde porte de métal s'ouvre dans un grondement de rouages. Une bouffée d'air chaud te frappe le visage, chargée d'odeurs de métal fondu et de magie ancienne. Devant toi s'étend la Vallée des Forges Éternelles - un paysage titanesque de cheminées crachant des flammes bleues, de convoyeurs enchantés transportant des parchemins d'un atelier à l'autre, et de golems de fer qui martèlent, testent et assemblent sans relâche. Chaque forge est reliée aux autres par des conduits lumineux, formant un réseau palpitant d'énergie.</p>
+      <p>Le Maître Archiviste contemple le spectacle avec une admiration non dissimulée.</p>
+      <p>« Bienvenue dans les <strong>Forges Éternelles</strong>, Maître Archiviste. Ici, les parchemins ne sont plus vérifiés à la main. Des <strong>constructs enchantés</strong> les testent automatiquement dès qu'ils arrivent. Si un parchemin contient une erreur, la forge le rejette avant qu'il ne puisse corrompre les Archives. S'il est parfait, la forge le <strong>déploie</strong> directement dans les salles du royaume. Ce système s'appelle <strong>CI/CD</strong> - l'Intégration Continue et le Déploiement Continu. C'est la prochaine étape de ton voyage. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Qu'est-ce que le CI/CD ? -->
+    <h2>Qu'est-ce que le <span class="keyword">CI/CD</span> ?</h2>
+
+    <p>Le <strong>CI/CD</strong> est un ensemble de pratiques qui automatisent la vérification et la livraison du code. Imagine une forge enchantée : dès qu'un Archiviste envoie un parchemin, la forge le prend en charge automatiquement.</p>
+
+    <h3>CI - <span class="keyword">Intégration Continue</span> (Continuous Integration)</h3>
+
+    <p>L'<strong>Intégration Continue</strong> signifie que chaque modification est <strong>intégrée fréquemment</strong> dans le dépôt commun, et qu'à chaque intégration, des <strong>tests automatiques</strong> vérifient que rien n'est cassé.</p>
+
+    <p>Concrètement :</p>
+    <ul>
+      <li>Tu fais un commit et tu le push</li>
+      <li>Un système automatique récupère ton code</li>
+      <li>Il lance les tests</li>
+      <li>Il te dit si tout va bien ou si quelque chose est cassé</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« Dans les Forges Éternelles, chaque parchemin déposé est <strong>immédiatement inspecté</strong> par les golems testeurs. Si un mot est mal formé, si une incantation est incorrecte, <strong>tu le sais en quelques minutes</strong>, pas en quelques semaines. C'est ça, l'Intégration Continue. »</p>
+    </div>
+
+    <h3>CD - <span class="keyword">Livraison/Déploiement Continu</span></h3>
+
+    <p>Le <strong>CD</strong> a deux significations proches :</p>
+    <ul>
+      <li><strong>Continuous Delivery</strong> (Livraison Continue) : le code testé est <strong>prêt à être déployé</strong> à tout moment, mais un humain décide quand</li>
+      <li><strong>Continuous Deployment</strong> (Déploiement Continu) : le code testé est <strong>déployé automatiquement</strong> en production, sans intervention humaine</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« La <strong>Livraison Continue</strong>, c'est quand la forge prépare le parchemin pour l'envoi et attend ton ordre. Le <strong>Déploiement Continu</strong>, c'est quand la forge envoie directement le parchemin aux bibliothèques du royaume dès qu'il passe les tests. Les deux approches ont leur place selon le niveau de confiance que tu as dans tes tests. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Pourquoi le CI/CD est important -->
+    <h2>Pourquoi le CI/CD est important</h2>
+
+    <p>Sans CI/CD, voici ce qui arrive souvent :</p>
+    <ul>
+      <li>Tu travailles des semaines sur une fonctionnalité</li>
+      <li>Tu intègres ton code avec celui des autres</li>
+      <li>Tout est cassé</li>
+      <li>Tu passes des jours à chercher quel changement a causé le problème</li>
+    </ul>
+
+    <p>Avec le CI/CD :</p>
+    <ul>
+      <li>Tu intègres <strong>souvent</strong> (plusieurs fois par jour)</li>
+      <li>Les tests tournent <strong>à chaque push</strong></li>
+      <li>Si quelque chose casse, tu le sais <strong>immédiatement</strong></li>
+      <li>Le coupable est forcément dans les dernières modifications (quelques lignes, pas des milliers)</li>
+    </ul>
+
+    <div class="key-message">
+      <p>Un Archiviste qui attend des semaines pour envoyer ses parchemins aux Forges accumule les erreurs comme la poussière s'accumule sur un vieux grimoire. Un Archiviste qui envoie <strong>chaque jour</strong> détecte les problèmes quand ils sont <strong>encore petits et faciles à corriger</strong>.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Le concept de pipeline -->
+    <h2>Le concept de <span class="keyword">pipeline</span> CI/CD</h2>
+
+    <p>Un <strong>pipeline</strong> est une série d'étapes automatiques que ton code traverse. Pense à une chaîne de forges, chacune spécialisée dans une tâche.</p>
+
+    <h3>Les étapes classiques</h3>
+
+    <pre data-lang="bash"><code>Code --&gt; [Build] --&gt; [Test] --&gt; [Deploy]</code></pre>
+
+    <ol>
+      <li><strong>Build</strong> (Construction) : le code est compilé ou assemblé</li>
+      <li><strong>Test</strong> (Vérification) : les tests automatiques sont exécutés</li>
+      <li><strong>Deploy</strong> (Déploiement) : le code validé est mis en production</li>
+    </ol>
+
+    <p>Chaque étape doit réussir pour que la suivante commence. Si le <strong>Build</strong> échoue, on ne teste pas. Si les <strong>Tests</strong> échouent, on ne déploie pas.</p>
+
+    <h3>Un pipeline plus réaliste</h3>
+
+    <p>Dans la pratique, un pipeline peut avoir plus d'étapes :</p>
+
+    <pre data-lang="bash"><code>Code --&gt; [Lint] --&gt; [Build] --&gt; [Tests unitaires] --&gt; [Tests d'intégration] --&gt; [Staging] --&gt; [Production]</code></pre>
+
+    <ul>
+      <li><strong>Lint</strong> : vérification du style et de la syntaxe du code</li>
+      <li><strong>Tests unitaires</strong> : tests rapides sur des fonctions individuelles</li>
+      <li><strong>Tests d'intégration</strong> : tests qui vérifient que les composants fonctionnent ensemble</li>
+      <li><strong>Staging</strong> : déploiement dans un environnement de pré-production</li>
+      <li><strong>Production</strong> : déploiement final pour les utilisateurs</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« Chaque forge de la Vallée a sa spécialité. La première vérifie la forme des runes. La deuxième teste leur pouvoir. La troisième les assemble. La quatrième les envoie aux bibliothèques. Si <strong>une seule forge rejette</strong> le parchemin, tout s'arrête. C'est la <strong>chaîne de confiance</strong> des Forges Éternelles. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Les plateformes Git -->
+    <h2>Les plateformes Git - Les grandes Forges du royaume</h2>
+
+    <p>Pour utiliser le CI/CD, tu as besoin d'une <strong>plateforme</strong> qui héberge ton code et exécute les pipelines. Ce sont les <strong>grandes Forges</strong> du royaume, chacune avec ses particularités.</p>
+
+    <h3><span class="keyword">GitHub</span> - La Forge du Peuple</h3>
+
+    <p><strong>GitHub</strong> est la plateforme la plus populaire au monde pour héberger du code.</p>
+    <ul>
+      <li><strong>Propriétaire</strong> : Microsoft (depuis 2018)</li>
+      <li><strong>CI/CD</strong> : GitHub Actions (intégré, puissant, gratuit pour les projets open source)</li>
+      <li><strong>Points forts</strong> : communauté immense, marketplace d'actions, GitHub Pages, Copilot</li>
+      <li><strong>Idéal pour</strong> : projets open source, collaboration publique, portfolios de développeurs</li>
+    </ul>
+
+    <div class="tip">
+      <p>C'est la plateforme que nous utiliserons dans les prochaines quêtes.</p>
+    </div>
+
+    <h3><span class="keyword">GitLab</span> - La Forge Autonome</h3>
+
+    <p><strong>GitLab</strong> est une plateforme complète avec un CI/CD intégré très puissant.</p>
+    <ul>
+      <li><strong>CI/CD</strong> : GitLab CI/CD (intégré nativement, très mature)</li>
+      <li><strong>Points forts</strong> : auto-hébergeable (tu peux installer ta propre Forge), tout-en-un (issues, CI/CD, registre Docker, monitoring)</li>
+      <li><strong>Idéal pour</strong> : entreprises qui veulent tout contrôler, projets privés, DevOps complet</li>
+    </ul>
+
+    <h3><span class="keyword">Bitbucket</span> - La Forge de la Guilde Atlassian</h3>
+
+    <p><strong>Bitbucket</strong> est la plateforme Git de l'écosystème Atlassian (Jira, Confluence, Trello).</p>
+    <ul>
+      <li><strong>CI/CD</strong> : Bitbucket Pipelines</li>
+      <li><strong>Points forts</strong> : intégration native avec Jira, bon pour les petites équipes</li>
+      <li><strong>Idéal pour</strong> : équipes qui utilisent déjà Jira/Confluence</li>
+    </ul>
+
+    <h3>Comparaison rapide</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Caractéristique</th>
+          <th>GitHub</th>
+          <th>GitLab</th>
+          <th>Bitbucket</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CI/CD intégré</td>
+          <td>GitHub Actions</td>
+          <td>GitLab CI/CD</td>
+          <td>Pipelines</td>
+        </tr>
+        <tr>
+          <td>Auto-hébergeable</td>
+          <td>Enterprise (payant)</td>
+          <td>Oui (gratuit)</td>
+          <td>Data Center (payant)</td>
+        </tr>
+        <tr>
+          <td>Dépôts privés gratuits</td>
+          <td>Oui</td>
+          <td>Oui</td>
+          <td>Oui (5 utilisateurs max)</td>
+        </tr>
+        <tr>
+          <td>Communauté</td>
+          <td>La plus grande</td>
+          <td>Grande</td>
+          <td>Moyenne</td>
+        </tr>
+        <tr>
+          <td>Écosystème</td>
+          <td>Actions Marketplace</td>
+          <td>Tout intégré</td>
+          <td>Atlassian (Jira, etc.)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="narrative">
+      <p>« Il existe plusieurs grandes Forges dans le royaume. La <strong>Forge du Peuple</strong> (GitHub) est la plus fréquentée - c'est là que se retrouvent la plupart des Archivistes du monde. La <strong>Forge Autonome</strong> (GitLab) permet de bâtir ta propre forge indépendante. La <strong>Forge d'Atlassian</strong> (Bitbucket) s'intègre parfaitement avec les outils de gestion des grandes guildes. Choisis ta forge selon tes besoins, mais <strong>apprends-en au moins une à fond</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Créer un compte GitHub -->
+    <h2>Créer un compte <span class="keyword">GitHub</span></h2>
+
+    <p>GitHub sera notre forge de référence pour la suite du cours. Voici comment créer ton compte.</p>
+
+    <div class="steps">
+      <ol>
+        <li>Va sur <a href="https://github.com" target="_blank">github.com</a></li>
+        <li>Clique sur <strong>Sign up</strong></li>
+        <li>Entre ton adresse e-mail</li>
+        <li>Choisis un mot de passe solide</li>
+        <li>Choisis un nom d'utilisateur (ce sera ton identité publique de développeur !)</li>
+        <li>Vérifie ton e-mail</li>
+      </ol>
+    </div>
+
+    <div class="tip">
+      <p>Choisis un nom d'utilisateur <strong>professionnel</strong> - il apparaîtra sur ton profil public et c'est ce que les recruteurs verront !</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Créer un dépôt sur GitHub -->
+    <h2>Créer un dépôt sur GitHub</h2>
+
+    <p>Une fois connecté à GitHub :</p>
+
+    <div class="steps">
+      <ol>
+        <li>Clique sur le <strong>+</strong> en haut à droite, puis <strong>New repository</strong></li>
+        <li>Donne un nom à ton dépôt (ex : <code>mes-chroniques</code>)</li>
+        <li>Ajoute une description (optionnel mais recommandé)</li>
+        <li>Choisis <strong>Public</strong> ou <strong>Private</strong></li>
+        <li>Tu peux cocher "Add a README file", "Add .gitignore", "Choose a license"</li>
+        <li>Clique sur <strong>Create repository</strong></li>
+      </ol>
+    </div>
+
+    <h3>Les fichiers spéciaux de GitHub</h3>
+
+    <ul>
+      <li><strong>README.md</strong> : la page d'accueil de ton dépôt. C'est le premier fichier que les visiteurs voient. Écris-le en Markdown</li>
+      <li><strong>LICENSE</strong> : définit les droits d'utilisation de ton code (MIT, GPL, Apache, etc.)</li>
+      <li><strong>.gitignore</strong> : liste les fichiers que Git doit ignorer (tu connais déjà grâce à la quête sur les sceaux magiques !)</li>
+    </ul>
+
+    <div class="key-message">
+      <p>Un dépôt sans README, c'est comme une bibliothèque sans catalogue. Les visiteurs ne savent pas ce qu'ils trouveront à l'intérieur. <strong>Toujours</strong> ajouter un README.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Connecter local à GitHub -->
+    <h2>Connecter un dépôt local à GitHub</h2>
+
+    <p>Tu as un dépôt Git local et tu veux l'envoyer vers GitHub ? Voici comment relier les deux.</p>
+
+    <h3>Ajouter un remote</h3>
+
+    <pre data-lang="bash"><code>git remote add origin https://github.com/TON-NOM/mon-depot.git</code></pre>
+
+    <p>Tu connais déjà <span class="git-cmd">git remote</span> grâce à la quête 09 (Les Portails Distants). Ici, <code>origin</code> pointe vers GitHub au lieu d'un dépôt local.</p>
+
+    <h3>Pousser pour la première fois</h3>
+
+    <pre data-lang="bash"><code>git push -u origin main</code></pre>
+
+    <p>L'option <code>-u</code> (ou <code>--set-upstream</code>) crée un <strong>lien de suivi</strong> entre ta branche locale <code>main</code> et la branche distante <code>origin/main</code>. Après ce premier push, tu pourras simplement taper <span class="git-cmd">git push</span> sans préciser la destination.</p>
+
+    <h3>Vérifier la connexion</h3>
+
+    <pre data-lang="bash"><code>git remote -v</code></pre>
+
+    <p>Tu devrais voir quelque chose comme :</p>
+
+    <pre data-lang="bash"><code>origin  https://github.com/TON-NOM/mon-depot.git (fetch)
+origin  https://github.com/TON-NOM/mon-depot.git (push)</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : SSH vs HTTPS -->
+    <h2>Authentification : <span class="keyword">SSH</span> vs <span class="keyword">HTTPS</span></h2>
+
+    <p>Pour communiquer avec GitHub, tu as deux méthodes d'authentification.</p>
+
+    <h3>HTTPS - La méthode simple</h3>
+
+    <pre data-lang="bash"><code>git remote add origin https://github.com/TON-NOM/mon-depot.git</code></pre>
+
+    <ul>
+      <li>Tu utilises ton nom d'utilisateur et un <strong>token d'accès personnel</strong> (Personal Access Token)</li>
+      <li>Facile à configurer</li>
+      <li>GitHub ne supporte plus les mots de passe classiques depuis 2021 - il faut un token</li>
+    </ul>
+
+    <h3>SSH - La méthode des clés</h3>
+
+    <pre data-lang="bash"><code>git remote add origin git@github.com:TON-NOM/mon-depot.git</code></pre>
+
+    <ul>
+      <li>Tu génères une <strong>paire de clés</strong> (publique + privée) sur ta machine</li>
+      <li>Tu ajoutes la clé publique à ton compte GitHub</li>
+      <li>Plus besoin de taper quoi que ce soit à chaque push/pull</li>
+    </ul>
+
+    <h3>Générer une clé SSH</h3>
+
+    <pre data-lang="bash"><code># Générer la paire de clés
+ssh-keygen -t ed25519 -C "ton@email.com"
+
+# Afficher la clé publique (à copier sur GitHub)
+cat ~/.ssh/id_ed25519.pub</code></pre>
+
+    <p>Ensuite, sur GitHub : <strong>Settings</strong> &gt; <strong>SSH and GPG keys</strong> &gt; <strong>New SSH key</strong> &gt; colle ta clé publique.</p>
+
+    <h3>Quelle méthode choisir ?</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Critère</th>
+          <th>HTTPS</th>
+          <th>SSH</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Facilité de mise en place</td>
+          <td>Plus simple</td>
+          <td>Configuration initiale nécessaire</td>
+        </tr>
+        <tr>
+          <td>Authentification</td>
+          <td>Token à chaque fois (ou credential manager)</td>
+          <td>Automatique après configuration</td>
+        </tr>
+        <tr>
+          <td>Utilisation quotidienne</td>
+          <td>Peut demander le token</td>
+          <td>Transparente</td>
+        </tr>
+        <tr>
+          <td>Recommandé pour</td>
+          <td>Débuter rapidement</td>
+          <td>Usage régulier</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="narrative">
+      <p>« Les clés SSH sont comme des <strong>sceaux personnels</strong> - une fois gravés, ils t'identifient sans que tu aies besoin de décliner ton nom à chaque passage. Pour un Archiviste qui pousse des parchemins plusieurs fois par jour, c'est un gain de temps considérable. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - Envoyer tes chroniques à la Forge</h2>
+
+    <div class="quest-objective">
+      <p>Envoie tes chroniques à la Forge Éternelle :</p>
+      <ol>
+        <li>Crée un dépôt <code>chroniques-forge</code> avec <span class="git-cmd">git init</span></li>
+        <li>Crée un <code>README.md</code> et fais un premier commit</li>
+        <li>Ajoute deux autres fichiers avec un commit chacun (au moins 3 commits au total)</li>
+        <li>Crée un dépôt bare <code>forge-eternelle.git</code> (ta Forge locale)</li>
+        <li>Ajoute-le comme remote <code>origin</code></li>
+        <li>Pousse tes chroniques vers la Forge avec <span class="git-cmd">git push -u origin main</span></li>
+        <li>Lance le script de vérification</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer tes chroniques</h3>
+
+    <pre data-lang="bash"><code>mkdir chroniques-forge
+cd chroniques-forge
+git init</code></pre>
+
+    <h3>Étape 2 - Écrire le premier parchemin</h3>
+
+    <pre data-lang="bash"><code>cat > README.md << 'EOF'
+# Chroniques de la Forge
+
+Bienvenue dans mes chroniques - un recueil de parchemins
+envoyés aux Forges Éternelles pour vérification et archivage.
+
+## Contenu
+
+- Chronique du premier jour
+- Notes de l'apprenti forgeron
+EOF
+
+git add README.md
+git commit -m "Créer le README des chroniques de la Forge"</code></pre>
+
+    <h3>Étape 3 - Ajouter d'autres parchemins</h3>
+
+    <pre data-lang="bash"><code>cat > chronique-01.txt << 'EOF'
+Chronique du Premier Jour aux Forges
+
+Aujourd'hui j'ai découvert les Forges Éternelles.
+Les constructs enchantés testent chaque parchemin automatiquement.
+Le CI vérifie, le CD déploie. La chaîne ne s'arrête jamais.
+EOF
+
+git add chronique-01.txt
+git commit -m "Ajouter la chronique du premier jour aux Forges"</code></pre>
+
+    <pre data-lang="bash"><code>cat > notes-forgeron.txt << 'EOF'
+Notes de l'Apprenti Forgeron
+
+Les trois grandes Forges du royaume :
+- GitHub : la Forge du Peuple
+- GitLab : la Forge Autonome
+- Bitbucket : la Forge d'Atlassian
+
+Un pipeline CI/CD :
+Build -> Test -> Deploy
+EOF
+
+git add notes-forgeron.txt
+git commit -m "Ajouter les notes sur les forges et le pipeline CI/CD"</code></pre>
+
+    <h3>Étape 4 - Créer la Forge (dépôt bare)</h3>
+
+    <pre data-lang="bash"><code>cd ..
+git init --bare forge-eternelle.git</code></pre>
+
+    <div class="tip">
+      <p>Un <strong>dépôt bare</strong> est un dépôt Git sans répertoire de travail - exactement comme un serveur GitHub ou GitLab. Il ne contient que les données Git, pas les fichiers de travail.</p>
+    </div>
+
+    <h3>Étape 5 - Connecter et pousser</h3>
+
+    <pre data-lang="bash"><code>cd chroniques-forge
+git remote add origin ../forge-eternelle.git
+git push -u origin main</code></pre>
+
+    <h3>Étape 6 - Vérifier</h3>
+
+    <pre data-lang="bash"><code># Voir le remote configuré
+git remote -v
+
+# Voir le log avec les références distantes
+git log --oneline --all</code></pre>
+
+    <p>Tu devrais voir <code>origin/main</code> à côté de ton dernier commit.</p>
+
+    <h3>Étape 7 - Lancer la vérification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif des commandes -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git remote add origin &lt;url&gt;</code></td>
+          <td>Ajouter un dépôt distant nommé <code>origin</code></td>
+        </tr>
+        <tr>
+          <td><code>git push -u origin main</code></td>
+          <td>Pousser et créer le lien de suivi</td>
+        </tr>
+        <tr>
+          <td><code>git push</code></td>
+          <td>Pousser (après le premier push avec <code>-u</code>)</td>
+        </tr>
+        <tr>
+          <td><code>git remote -v</code></td>
+          <td>Afficher les remotes configurés</td>
+        </tr>
+        <tr>
+          <td><code>git init --bare nom.git</code></td>
+          <td>Créer un dépôt bare (serveur)</td>
+        </tr>
+        <tr>
+          <td><code>ssh-keygen -t ed25519</code></td>
+          <td>Générer une paire de clés SSH</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif des concepts -->
+    <h2>Récapitulatif des concepts</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="keyword">CI</span> (Intégration Continue)</td>
+          <td>Intégrer et tester automatiquement à chaque push</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">CD</span> (Livraison/Déploiement Continu)</td>
+          <td>Déployer automatiquement le code validé</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">Pipeline</span></td>
+          <td>Chaîne d'étapes automatiques (build, test, deploy)</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">GitHub</span></td>
+          <td>Plateforme Git la plus populaire, avec GitHub Actions</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">GitLab</span></td>
+          <td>Plateforme avec CI/CD intégré, auto-hébergeable</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">Bitbucket</span></td>
+          <td>Plateforme Git de l'écosystème Atlassian</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">Dépôt bare</span></td>
+          <td>Dépôt sans répertoire de travail (serveur)</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">SSH vs HTTPS</span></td>
+          <td>Deux méthodes d'authentification vers les plateformes</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Tu regardes tes chroniques traverser le conduit lumineux et atterrir dans la Forge Éternelle. Les golems de métal s'activent immédiatement - ils inspectent, classent et archivent chaque parchemin avec une précision mécanique.</p>
+      <p>Le Maître Archiviste pose une main sur ton épaule.</p>
+      <p>« Tu viens d'accomplir ton <strong>premier envoi aux Forges</strong>. Tes parchemins sont désormais en sécurité, dupliqués et accessibles depuis n'importe quel avant-poste du royaume. C'est le fondement de tout ce qui va suivre. »</p>
+      <p>Il désigne les forges les plus profondes de la vallée, là où des flammes plus intenses illuminent des mécanismes encore plus complexes.</p>
+      <p>« Maintenant que tu sais <strong>envoyer</strong> tes chroniques aux Forges, il est temps d'apprendre à <strong>commander les constructs</strong> qui y travaillent. Dans la prochaine quête, tu écriras tes premiers <strong>plans de forge</strong> - ce que le monde moderne appelle des <strong>fichiers de pipeline</strong>. Les Forges n'attendent plus que tes ordres. »</p>
+    </div>

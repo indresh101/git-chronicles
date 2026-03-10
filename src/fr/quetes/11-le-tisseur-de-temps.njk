@@ -1,0 +1,374 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_11
+quest_number: "11"
+arc: 3
+title: "Le Tisseur de Temps"
+subtitle: "git stash - Geler et reprendre ton travail"
+quest_slug_fr: "11-le-tisseur-de-temps"
+quest_slug_en: "11-the-time-weaver"
+permalink: /fr/quetes/11-le-tisseur-de-temps/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>L'escalier descend en spirale dans les profondeurs de la Citadelle. L'air est plus frais ici, chargé d'une énergie que tu n'avais jamais ressentie. Le Maître Archiviste s'arrête devant une porte ornée d'un sablier gravé dans la pierre. Il la pousse lentement.</p>
+      <p>La salle est circulaire, baignée d'une lumière bleutée. Des fils lumineux flottent dans l'air - certains en mouvement, d'autres figés, suspendus entre deux instants.</p>
+      <p>« Bienvenue dans l'Atelier du Tisseur de Temps. Ici, tu vas apprendre un art que peu d'Archivistes maîtrisent : <strong>la capacité de geler ton travail en cours</strong>, d'aller régler une affaire urgente, puis de <strong>reprendre exactement où tu en étais</strong>. Comme un mage du temps qui suspend un fil temporel pour en tisser un autre. On appelle cela le <strong>Stash</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Le problème -->
+    <h2>Le problème : l'urgence en plein travail</h2>
+
+    <p>Imagine la situation : tu es en train de modifier un fichier important. Ton travail n'est pas terminé - tu ne veux pas faire un commit avec du code à moitié fini. Et soudain, on te signale un <strong>bug critique</strong> sur une autre branche qui doit être corrigé immédiatement.</p>
+
+    <p>Tu ne peux pas changer de branche avec des modifications non committées - Git risque de refuser ou, pire, de mélanger tes changements en cours avec la branche cible.</p>
+
+    <div class="warning">
+      <p><strong>Tes options sans <code>git stash</code> :</strong></p>
+      <ul>
+        <li><span class="highlight-red">Committer un travail inachevé</span> - mauvaise idée, ça pollue l'historique</li>
+        <li><span class="highlight-red">Perdre tes modifications</span> - évidemment non</li>
+        <li><strong>Utiliser <span class="git-cmd">git stash</span></strong> - la bonne réponse</li>
+      </ul>
+    </div>
+
+    <div class="key-message">
+      <p>Un Archiviste ne laisse jamais un parchemin inachevé traîner sur son bureau quand le Conseil l'appelle en urgence. Il <strong>le range soigneusement dans un tiroir temporel</strong>, sachant qu'il pourra le ressortir intact plus tard.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : git stash -->
+    <h2><span class="git-cmd">git stash</span> - Geler ton travail en cours</h2>
+
+    <p>La commande <span class="git-cmd">git stash</span> prend toutes tes modifications en cours (indexées et non indexées) et les met de côté dans une <strong>pile temporaire</strong>. Ton répertoire de travail redevient propre, comme si tu n'avais rien touché.</p>
+
+    <pre data-lang="bash"><code>git stash</code></pre>
+
+    <p>C'est comme appuyer sur "pause" : tout est sauvegardé, mais invisible. Tu peux maintenant changer de branche en toute sécurité.</p>
+
+    <h3>Stash avec un message descriptif</h3>
+
+    <p>Par défaut, le stash est nommé automatiquement d'après le dernier commit. Mais quand tu accumules plusieurs stashes, c'est vite illisible. Utilise l'option <code>-m</code> pour ajouter un message clair :</p>
+
+    <pre data-lang="bash"><code>git stash push -m "Chronique du dragon : chapitre 3 en cours"</code></pre>
+
+    <div class="narrative">
+      <p>« <strong>Toujours nommer tes fils temporels.</strong> Un tiroir sans étiquette est un tiroir dans lequel on ne retrouve plus rien. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : git stash list -->
+    <h2><span class="git-cmd">git stash list</span> - Voir tes stashes</h2>
+
+    <p>La commande <span class="git-cmd">git stash list</span> affiche tous les stashes empilés :</p>
+
+    <pre data-lang="bash"><code>git stash list</code></pre>
+
+    <p>Résultat :</p>
+
+    <pre data-lang="bash"><code>stash@{0}: On main: Chronique du dragon : chapitre 3 en cours
+stash@{1}: WIP on main: abc1234 Ajouter le titre</code></pre>
+
+    <div class="tip">
+      <p>Les stashes sont numérotés en partant de <code>0</code> (le plus récent). C'est une <strong>pile</strong> (stack) : le dernier ajouté est en haut. <code>stash@{0}</code> est toujours le plus récent.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : git stash show -->
+    <h2><span class="git-cmd">git stash show</span> - Prévisualiser un stash</h2>
+
+    <p>Avant de restaurer un stash, tu peux voir ce qu'il contient :</p>
+
+    <pre data-lang="bash"><code># Résumé des fichiers modifiés
+git stash show
+
+# Diff complet
+git stash show -p
+
+# Un stash spécifique
+git stash show stash@{1}</code></pre>
+
+    <p>C'est comme jeter un oeil dans le tiroir sans en sortir le contenu.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : git stash pop -->
+    <h2><span class="git-cmd">git stash pop</span> - Restaurer et supprimer</h2>
+
+    <p>La commande <span class="git-cmd">git stash pop</span> restaure le stash le plus récent et le <strong>supprime de la pile</strong> :</p>
+
+    <pre data-lang="bash"><code>git stash pop</code></pre>
+
+    <p>C'est l'opération la plus courante : tu récupères ton travail et le stash disparaît.</p>
+
+    <p>Tu peux aussi restaurer un stash spécifique :</p>
+
+    <pre data-lang="bash"><code>git stash pop stash@{2}</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : git stash apply -->
+    <h2><span class="git-cmd">git stash apply</span> - Restaurer sans supprimer</h2>
+
+    <p>Parfois, tu veux restaurer un stash mais le <strong>garder dans la pile</strong> (par exemple, pour l'appliquer sur plusieurs branches) :</p>
+
+    <pre data-lang="bash"><code>git stash apply</code></pre>
+
+    <p>La différence avec <span class="git-cmd">pop</span> :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Restaure les modifications</th>
+          <th>Supprime le stash</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git stash pop</code></td>
+          <td>Oui</td>
+          <td>Oui</td>
+        </tr>
+        <tr>
+          <td><code>git stash apply</code></td>
+          <td>Oui</td>
+          <td>Non</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="narrative">
+      <p>« <span class="git-cmd">pop</span> ouvre le tiroir et le vide. <span class="git-cmd">apply</span> ouvre le tiroir et <strong>en fait une copie</strong>. Le tiroir reste intact. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : drop et clear -->
+    <h2><span class="git-cmd">git stash drop</span> et <span class="git-cmd">git stash clear</span> - Faire le ménage</h2>
+
+    <p>Pour supprimer un stash spécifique sans le restaurer :</p>
+
+    <pre data-lang="bash"><code># Supprimer le stash le plus récent
+git stash drop
+
+# Supprimer un stash spécifique
+git stash drop stash@{1}</code></pre>
+
+    <p>Pour tout supprimer d'un coup :</p>
+
+    <pre data-lang="bash"><code>git stash clear</code></pre>
+
+    <div class="warning">
+      <p><strong>Attention :</strong> <span class="git-cmd">git stash clear</span> est irréversible. Tous les stashes sont perdus définitivement. Utilise cette commande uniquement quand tu es sûr de ne plus avoir besoin d'aucun stash.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Fichiers spécifiques -->
+    <h2>Stasher des fichiers spécifiques</h2>
+
+    <p>Par défaut, <span class="git-cmd">git stash</span> met de côté <strong>toutes</strong> les modifications. Mais tu peux cibler des fichiers précis :</p>
+
+    <pre data-lang="bash"><code>git stash push -m "Juste le rapport" rapport.txt</code></pre>
+
+    <p>Les autres fichiers modifiés restent en place. C'est utile quand tu veux mettre de côté seulement une partie de ton travail.</p>
+
+    <div class="tip">
+      <p>Tu peux spécifier plusieurs fichiers : <code>git stash push -m "message" fichier1.txt fichier2.txt</code></p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 9 : Workflow complet -->
+    <h2>Le workflow complet : stash dans la vraie vie</h2>
+
+    <p>Voici le scénario typique d'utilisation du stash :</p>
+
+    <pre data-lang="bash"><code>1. Tu travailles sur une fonctionnalité (branche main ou feature)
+2. Urgence ! Un bug critique est signalé
+3. git stash push -m "feature X en cours"    # geler le travail
+4. git switch correctif-urgent               # changer de branche
+5. ... corriger le bug, committer ...
+6. git switch main                           # revenir
+7. git stash pop                             # reprendre le travail</code></pre>
+
+    <p>C'est fluide, rapide, et tu ne perds rien.</p>
+
+    <div class="key-message">
+      <p>Le stash est ton <strong>filet de sécurité</strong> pour les interruptions. Chaque fois que tu dois changer de contexte en urgence, pense <span class="git-cmd">git stash</span>.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - L'Urgence du Dragon</h2>
+
+    <div class="quest-objective">
+      <p>Tu es en pleine rédaction d'une chronique quand un messager fait irruption : <strong>un dragon a été aperçu !</strong> Tu dois mettre ton travail de côté, rédiger un rapport d'alerte, puis reprendre ta chronique.</p>
+      <ol>
+        <li>Crée un repo avec un premier commit</li>
+        <li>Commence à travailler sur une chronique (sans committer)</li>
+        <li>Stashe le travail en cours avec un message descriptif</li>
+        <li>Crée une branche <code>rapport-dragon</code> et committe le rapport d'alerte</li>
+        <li>Reviens sur <code>main</code> et restaure ton stash</li>
+        <li>Termine et committe la chronique</li>
+        <li>Lance le script de vérification</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer le dépôt et le premier commit</h3>
+
+    <pre data-lang="bash"><code>mkdir tisseur-de-temps
+cd tisseur-de-temps
+git init
+echo "# Chroniques du Royaume" > chronique.txt
+echo "" >> chronique.txt
+echo "Les temps sont calmes dans le royaume." >> chronique.txt
+git add chronique.txt
+git commit -m "Créer le registre des chroniques"</code></pre>
+
+    <h3>Étape 2 - Commencer à travailler sur une chronique</h3>
+
+    <p>Tu commences à rédiger un nouveau chapitre :</p>
+
+    <pre data-lang="bash"><code>echo "" >> chronique.txt
+echo "## Chapitre 2 - Les moissons" >> chronique.txt
+echo "Les récoltes de cette année sont abondantes..." >> chronique.txt</code></pre>
+
+    <p>Vérifie que tu as bien des modifications en cours :</p>
+
+    <pre data-lang="bash"><code>git status</code></pre>
+
+    <p>Tu devrais voir <code>chronique.txt</code> dans les fichiers modifiés. <span class="highlight-red">Ne committe pas</span> - le chapitre n'est pas terminé.</p>
+
+    <h3>Étape 3 - L'urgence ! Stasher le travail</h3>
+
+    <div class="narrative">
+      <p>Un messager fait irruption dans la salle, hors d'haleine : « <strong>Un dragon ! Un dragon a été aperçu dans les montagnes du nord !</strong> Le Conseil demande un rapport d'alerte immédiat ! »</p>
+    </div>
+
+    <p>Tu dois mettre ton travail de côté :</p>
+
+    <pre data-lang="bash"><code>git stash push -m "Chapitre 2 en cours de rédaction"</code></pre>
+
+    <p>Vérifie que ton répertoire est propre :</p>
+
+    <pre data-lang="bash"><code>git status
+git stash list</code></pre>
+
+    <h3>Étape 4 - Traiter l'urgence sur une nouvelle branche</h3>
+
+    <pre data-lang="bash"><code>git switch -c rapport-dragon
+echo "# ALERTE - Rapport de Dragon" > alerte.txt
+echo "" >> alerte.txt
+echo "Un dragon a été aperçu dans les montagnes du nord." >> alerte.txt
+echo "Les défenses sont en cours de mobilisation." >> alerte.txt
+git add alerte.txt
+git commit -m "Rédiger le rapport d'alerte dragon"</code></pre>
+
+    <h3>Étape 5 - Revenir à la branche principale</h3>
+
+    <p>L'urgence est traitée, retour à ton travail :</p>
+
+    <pre data-lang="bash"><code>git switch main</code></pre>
+
+    <h3>Étape 6 - Récupérer le travail en cours</h3>
+
+    <pre data-lang="bash"><code>git stash pop</code></pre>
+
+    <p>Vérifie que tes modifications sont revenues :</p>
+
+    <pre data-lang="bash"><code>git status
+cat chronique.txt</code></pre>
+
+    <p>Tu devrais retrouver le chapitre 2 en cours, exactement comme tu l'avais laissé.</p>
+
+    <h3>Étape 7 - Terminer et committer</h3>
+
+    <pre data-lang="bash"><code>echo "Les greniers sont pleins, le peuple est serein." >> chronique.txt
+git add chronique.txt
+git commit -m "Rédiger le chapitre 2 des chroniques"</code></pre>
+
+    <h3>Étape 8 - Vérifier l'historique</h3>
+
+    <pre data-lang="bash"><code>git log --oneline --all --graph</code></pre>
+
+    <h3>Étape 9 - Lancer la vérification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git stash</code></td>
+          <td>Mettre de côté les modifications en cours</td>
+        </tr>
+        <tr>
+          <td><code>git stash push -m "msg"</code></td>
+          <td>Stasher avec un message descriptif</td>
+        </tr>
+        <tr>
+          <td><code>git stash list</code></td>
+          <td>Lister tous les stashes</td>
+        </tr>
+        <tr>
+          <td><code>git stash show</code></td>
+          <td>Prévisualiser le contenu d'un stash</td>
+        </tr>
+        <tr>
+          <td><code>git stash show -p</code></td>
+          <td>Voir le diff complet d'un stash</td>
+        </tr>
+        <tr>
+          <td><code>git stash pop</code></td>
+          <td>Restaurer le dernier stash et le supprimer</td>
+        </tr>
+        <tr>
+          <td><code>git stash apply</code></td>
+          <td>Restaurer le dernier stash sans le supprimer</td>
+        </tr>
+        <tr>
+          <td><code>git stash drop</code></td>
+          <td>Supprimer un stash spécifique</td>
+        </tr>
+        <tr>
+          <td><code>git stash clear</code></td>
+          <td>Supprimer tous les stashes</td>
+        </tr>
+        <tr>
+          <td><code>git stash push &lt;fichier&gt;</code></td>
+          <td>Stasher un fichier spécifique</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste observe les fils temporels se remettre en mouvement autour de toi.</p>
+      <p>« Tu as tissé ton premier fil de temps. Tu sais désormais <strong>geler ton travail</strong>, aller traiter une urgence, et <strong>reprendre exactement où tu en étais</strong>. C'est un pouvoir simple en apparence, mais les Archivistes expérimentés l'utilisent des dizaines de fois par jour. »</p>
+      <p>Il désigne un autre atelier, plus loin dans le couloir.</p>
+      <p>« Le prochain art que tu apprendras est encore plus subtil : <strong>cueillir un commit précis dans une branche pour le transplanter dans une autre</strong>. Mais pour l'instant, savoure cette nouvelle maîtrise. Le Tisseur de Temps ne fait que commencer son apprentissage. »</p>
+    </div>

@@ -1,0 +1,729 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_A6
+quest_number: "A6"
+arc: 6
+title: "L'Atelier des Enlumineurs"
+subtitle: "Git pour le design, LFS, SVG et design tokens"
+quest_slug_fr: "A6-latelier-des-enlumineurs"
+quest_slug_en: "A6-the-illuminators-workshop"
+permalink: /fr/quetes/A6-latelier-des-enlumineurs/
+---
+
+
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Dans l'aile ouest de la Citadelle, baignée par la lumière douce des vitraux, se trouve l'<strong>Atelier des Enlumineurs</strong>. C'est ici que les artistes du royaume créent les ornements, les illustrations et les interfaces qui donnent vie aux parchemins. Leurs pinceaux numériques produisent des oeuvres visuelles qui ne se résument pas à du texte - et c'est précisément le défi.</p>
+      <p>La Maîtresse Enlumineuse t'observe avec curiosité. « Tu sais versionner du code, Versionneur. Mais sais-tu versionner de l'<strong>art</strong> ? Un fichier Photoshop de 200 Mo ? Un design system complet ? Des tokens de couleurs partagés entre dix applications ? Bienvenue dans notre monde. Il est magnifique, mais il ne suit pas tes règles habituelles. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Le problème -->
+    <h2>Le problème des <span class="keyword">assets graphiques</span></h2>
+
+    <p>Dans un projet logiciel, les designers produisent des fichiers très différents du code source :</p>
+
+    <ul>
+      <li><strong>Fichiers source volumineux</strong> : .psd (Photoshop), .ai (Illustrator), .sketch, .fig (Figma) - de 10 Mo à 500 Mo chacun</li>
+      <li><strong>Formats binaires</strong> : Git ne peut pas calculer de diff textuel</li>
+      <li><strong>Modifications fréquentes</strong> : un designer peut sauvegarder 50 fois par jour</li>
+      <li><strong>Nombreuses variantes</strong> : icon-v1.psd, icon-v2.psd, icon-v2-final.psd, icon-v2-final-VRAI.psd...</li>
+    </ul>
+
+    <p>Sans solution adaptée, un dépôt avec des assets graphiques devient rapidement <strong>ingérable</strong> :</p>
+
+    <pre data-lang="bash"><code># Un repo sans Git LFS, après 6 mois de design :
+du -sh .git/
+# 4.7 GB    .git/
+
+# Chaque version de chaque PSD est stockée en entier dans l'historique.
+# Le clone prend 45 minutes.
+# Personne n'est content.</code></pre>
+
+    <div class="key-message">
+      <p>Les assets graphiques ne sont pas comme du code. Ils sont gros, binaires, et changent souvent. Il faut des outils et des workflows adaptés pour les versionner correctement.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Git LFS pour le design -->
+    <h2><span class="keyword">Git LFS</span> pour le design</h2>
+
+    <p>Tu as peut-être déjà croisé Git LFS (Large File Storage) dans d'autres quêtes. Voici un rappel rapide et les patterns spécifiques au design.</p>
+
+    <h3>Rappel du principe</h3>
+
+    <p>Git LFS remplace les gros fichiers dans ton dépôt par de petits fichiers "pointeurs". Les vrais fichiers sont stockés sur un serveur LFS séparé. Résultat : le dépôt reste léger, les clones sont rapides.</p>
+
+    <pre data-lang="bash"><code># Installation (une seule fois par machine)
+git lfs install
+
+# Dans ton projet, tracker les fichiers design
+git lfs track "*.psd"
+git lfs track "*.ai"
+git lfs track "*.sketch"
+git lfs track "*.fig"
+git lfs track "*.xd"
+git lfs track "*.tiff"
+git lfs track "*.raw"
+
+# Cela modifie .gitattributes
+cat .gitattributes
+# *.psd filter=lfs diff=lfs merge=lfs -text
+# *.ai filter=lfs diff=lfs merge=lfs -text
+# *.sketch filter=lfs diff=lfs merge=lfs -text
+# *.fig filter=lfs diff=lfs merge=lfs -text
+# *.xd filter=lfs diff=lfs merge=lfs -text
+# *.tiff filter=lfs diff=lfs merge=lfs -text
+# *.raw filter=lfs diff=lfs merge=lfs -text</code></pre>
+
+    <h3>Patterns LFS complets pour le design</h3>
+
+    <pre data-lang="gitattributes"><code># .gitattributes - patterns recommandés pour un repo design
+
+# Fichiers source design
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.psb filter=lfs diff=lfs merge=lfs -text
+*.ai filter=lfs diff=lfs merge=lfs -text
+*.sketch filter=lfs diff=lfs merge=lfs -text
+*.fig filter=lfs diff=lfs merge=lfs -text
+*.xd filter=lfs diff=lfs merge=lfs -text
+
+# Images haute résolution
+*.tiff filter=lfs diff=lfs merge=lfs -text
+*.tif filter=lfs diff=lfs merge=lfs -text
+*.raw filter=lfs diff=lfs merge=lfs -text
+*.bmp filter=lfs diff=lfs merge=lfs -text
+
+# Images exportées (optionnel - certains préfèrent ne pas LFS les PNG)
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+
+# Polices
+*.otf filter=lfs diff=lfs merge=lfs -text
+*.ttf filter=lfs diff=lfs merge=lfs -text
+*.woff filter=lfs diff=lfs merge=lfs -text
+*.woff2 filter=lfs diff=lfs merge=lfs -text
+
+# Vidéos et animations
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text</code></pre>
+
+    <div class="tip">
+      <p><strong>Astuce :</strong> Pour les PNG et JPG, la décision dépend de ta situation. Si ce sont de petites icônes (quelques Ko), pas besoin de LFS. Si ce sont des maquettes haute résolution (plusieurs Mo), LFS est recommandé. La règle : LFS pour tout fichier de plus de 500 Ko.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Diff visuel d'images -->
+    <h2><span class="keyword">Diff visuel</span> d'images</h2>
+
+    <p>Quand un designer modifie une maquette, comment savoir ce qui a changé ? Les outils de diff visuel comparent deux versions d'une image et montrent les différences.</p>
+
+    <h3>git-diff-image</h3>
+
+    <p><strong>git-diff-image</strong> est un outil open source qui s'intègre directement dans <span class="git-cmd">git diff</span> pour afficher les différences visuelles entre deux versions d'une image :</p>
+
+    <pre data-lang="bash"><code># Installation
+git clone https://github.com/ewanmellor/git-diff-image.git
+cd git-diff-image
+./install.sh
+
+# Après installation, git diff affiche automatiquement
+# les différences visuelles pour les images
+git diff HEAD~1 -- assets/hero-banner.png
+# Ouvre une fenêtre avec les deux versions côte à côte
+# et une vue en surimpression montrant les pixels modifiés</code></pre>
+
+    <h3>Beyond Compare et Kaleidoscope</h3>
+
+    <p>Pour un usage professionnel, des outils comme <strong>Beyond Compare</strong> (multiplateforme) ou <strong>Kaleidoscope</strong> (macOS) offrent des fonctionnalités avancées :</p>
+
+    <ul>
+      <li><strong>Mode côte à côte</strong> : les deux versions l'une à côté de l'autre</li>
+      <li><strong>Mode superposition</strong> : une image par-dessus l'autre avec un slider</li>
+      <li><strong>Mode différence</strong> : seuls les pixels différents sont affichés</li>
+      <li><strong>Zoom synchronisé</strong> : zoomer sur un détail dans les deux versions</li>
+    </ul>
+
+    <pre data-lang="bash"><code># Configurer Beyond Compare comme outil de diff pour les images
+git config --global diff.tool bc4
+git config --global difftool.bc4.cmd '"C:/Program Files/Beyond Compare 4/BComp.exe" "$LOCAL" "$REMOTE"'
+
+# Utilisation
+git difftool HEAD~1 -- assets/hero-banner.png</code></pre>
+
+    <pre data-lang="powershell"><code># PowerShell - configuration identique
+git config --global diff.tool bc4
+git config --global difftool.bc4.cmd '"C:\Program Files\Beyond Compare 4\BComp.exe" "$LOCAL" "$REMOTE"'</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : SVG -->
+    <h2><span class="keyword">SVG</span> dans Git - le format rêvé</h2>
+
+    <p>Le format <strong>SVG</strong> (Scalable Vector Graphics) est un cas spécial et merveilleux pour le versionnement : c'est du <strong>XML</strong>, donc du texte. Git peut calculer des diffs, et tu peux voir exactement ce qui a changé.</p>
+
+    <pre data-lang="bash"><code># Un fichier SVG, c'est du texte :
+cat icon-home.svg
+# &lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"&gt;
+#   &lt;path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/&gt;
+# &lt;/svg&gt;
+
+# Git diff fonctionne parfaitement :
+git diff icon-home.svg
+# -  &lt;path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/&gt;
+# +  &lt;path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"
+# +        fill="#333333"/&gt;</code></pre>
+
+    <h3>Avantages du SVG dans Git</h3>
+
+    <ul>
+      <li><strong>Diffs lisibles</strong> : tu vois exactement quel attribut a changé</li>
+      <li><strong>Fichiers légers</strong> : pas besoin de Git LFS</li>
+      <li><strong>Scalable</strong> : pas de perte de qualité, parfait pour les icônes et illustrations</li>
+      <li><strong>Mergeable</strong> : en théorie, Git peut merger des modifications SVG (avec prudence)</li>
+    </ul>
+
+    <h3>Optimisation avec SVGO</h3>
+
+    <p><strong>SVGO</strong> (SVG Optimizer) nettoie et optimise les fichiers SVG exportés des logiciels de design. Les SVG exportés depuis Illustrator ou Figma contiennent souvent du code inutile :</p>
+
+    <pre data-lang="bash"><code># Installation
+npm install -g svgo
+
+# Optimiser un fichier SVG
+svgo icon-home.svg
+# icon-home.svg : 1.24 KB -> 0.45 KB (63.7% de réduction)
+
+# Optimiser tout un dossier
+svgo -f assets/icons/ -o assets/icons-optimized/
+
+# Configuration personnalisée (.svgo.config.js)
+cat > .svgo.config.js << 'EOF'
+module.exports = {
+  plugins: [
+    'preset-default',
+    'removeDimensions',         // Utiliser viewBox au lieu de width/height
+    {
+      name: 'removeAttrs',
+      params: {
+        attrs: ['data-name']    // Supprimer les attributs Illustrator
+      }
+    }
+  ]
+}
+EOF
+
+# Astuce : ajouter SVGO en hook pre-commit
+# pour optimiser automatiquement les SVG avant chaque commit</code></pre>
+
+    <div class="tip">
+      <p><strong>Astuce :</strong> Privilégie le SVG pour tout ce qui peut l'être : icônes, logos, illustrations simples, graphiques. Réserve les formats bitmap (PNG, JPG) aux photos et images complexes qui ne se vectorisent pas bien.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Workflow designers + devs -->
+    <h2>Workflow <span class="keyword">designers + développeurs</span></h2>
+
+    <p>Le plus grand défi n'est pas technique - c'est <strong>humain</strong>. Comment faire travailler ensemble des designers (qui pensent en pixels) et des développeurs (qui pensent en code) sur le même dépôt ?</p>
+
+    <h3>Qui touche quoi ?</h3>
+
+    <pre data-lang="bash"><code># Structure claire avec séparation des responsabilités
+mon-projet/
+├── src/                    # Développeurs : code applicatif
+├── assets/
+│   ├── raw/                # Designers : fichiers sources (PSD, AI, Sketch)
+│   │   └── hero-banner.psd
+│   ├── exported/           # Designers : exports finaux
+│   │   ├── hero-banner.png
+│   │   ├── hero-banner@2x.png
+│   │   └── icons/
+│   │       ├── home.svg
+│   │       └── search.svg
+│   └── fonts/              # Partagé : polices utilisées
+├── tokens/                 # Partagé : design tokens (JSON/YAML)
+└── docs/
+    └── design/             # Designers : documentation visuelle</code></pre>
+
+    <h3>Conventions de nommage</h3>
+
+    <p>Des conventions strictes évitent le chaos :</p>
+
+    <ul>
+      <li><strong>Minuscules avec tirets</strong> : <code>hero-banner.png</code>, pas <code>Hero Banner.png</code> ou <code>HeroBanner.png</code></li>
+      <li><strong>Pas d'espaces</strong> : les espaces dans les noms de fichiers causent des problèmes partout</li>
+      <li><strong>Suffixes de taille</strong> : <code>icon@1x.png</code>, <code>icon@2x.png</code>, <code>icon@3x.png</code></li>
+      <li><strong>Pas de "final" dans le nom</strong> : c'est Git qui gère les versions, pas le nom du fichier</li>
+    </ul>
+
+    <div class="warning">
+      <p><strong>Anti-pattern :</strong> <code>logo-v3-final-FINAL-corrige-2.psd</code>. Avec Git, la dernière version est toujours <code>logo.psd</code> sur la branche <code>main</code>. Point.</p>
+    </div>
+
+    <h3>File locking pour les assets binaires</h3>
+
+    <p>Deux designers ne peuvent pas modifier le même fichier PSD en même temps - il n'y a pas de merge possible sur un binaire. La solution : le <strong>file locking</strong> de Git LFS.</p>
+
+    <pre data-lang="bash"><code># Configurer le locking dans .gitattributes
+# *.psd filter=lfs diff=lfs merge=lfs -text lockable
+# *.ai filter=lfs diff=lfs merge=lfs -text lockable
+
+# Avant de modifier un fichier, le verrouiller
+git lfs lock assets/raw/hero-banner.psd
+# Locked assets/raw/hero-banner.psd
+
+# Voir les fichiers verrouillés
+git lfs locks
+# ID    Path                           Owner      Locked At
+# 1234  assets/raw/hero-banner.psd     alice      2026-03-09T14:30:00Z
+
+# Après le commit, déverrouiller
+git lfs unlock assets/raw/hero-banner.psd
+
+# Si un collègue essaie de modifier un fichier verrouillé :
+git push
+# Forbidden: assets/raw/hero-banner.psd is locked by alice</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Figma et design tokens -->
+    <h2>Intégration <span class="keyword">Figma</span> et <span class="keyword">design tokens</span></h2>
+
+    <p><strong>Figma</strong> est l'outil de design dominant aujourd'hui. Ses fichiers sont stockés dans le cloud (pas dans Git), mais on peut créer un pont entre Figma et Git grâce aux <strong>design tokens</strong>.</p>
+
+    <h3>Qu'est-ce qu'un design token ?</h3>
+
+    <p>Un <span class="keyword">design token</span> est une valeur de design abstraite : une couleur, une taille de police, un espacement, un rayon de bordure. Au lieu d'écrire <code>#3B82F6</code> partout, tu écris <code>color.primary.500</code>.</p>
+
+    <pre data-lang="json"><code># tokens/colors.json - Design tokens au format W3C
+{
+  "color": {
+    "primary": {
+      "50":  { "$value": "#EFF6FF", "$type": "color" },
+      "100": { "$value": "#DBEAFE", "$type": "color" },
+      "500": { "$value": "#3B82F6", "$type": "color" },
+      "700": { "$value": "#1D4ED8", "$type": "color" },
+      "900": { "$value": "#1E3A5F", "$type": "color" }
+    },
+    "neutral": {
+      "0":   { "$value": "#FFFFFF", "$type": "color" },
+      "100": { "$value": "#F3F4F6", "$type": "color" },
+      "900": { "$value": "#111827", "$type": "color" }
+    }
+  },
+  "spacing": {
+    "xs":  { "$value": "4px",  "$type": "dimension" },
+    "sm":  { "$value": "8px",  "$type": "dimension" },
+    "md":  { "$value": "16px", "$type": "dimension" },
+    "lg":  { "$value": "24px", "$type": "dimension" },
+    "xl":  { "$value": "32px", "$type": "dimension" }
+  },
+  "font": {
+    "family": {
+      "heading": { "$value": "Inter, sans-serif", "$type": "fontFamily" },
+      "body":    { "$value": "Inter, sans-serif", "$type": "fontFamily" },
+      "mono":    { "$value": "JetBrains Mono, monospace", "$type": "fontFamily" }
+    },
+    "size": {
+      "sm":  { "$value": "14px", "$type": "dimension" },
+      "md":  { "$value": "16px", "$type": "dimension" },
+      "lg":  { "$value": "20px", "$type": "dimension" },
+      "xl":  { "$value": "24px", "$type": "dimension" }
+    }
+  },
+  "border": {
+    "radius": {
+      "sm":   { "$value": "4px",  "$type": "dimension" },
+      "md":   { "$value": "8px",  "$type": "dimension" },
+      "full": { "$value": "9999px", "$type": "dimension" }
+    }
+  }
+}</code></pre>
+
+    <h3>Export depuis Figma vers Git</h3>
+
+    <p>Plusieurs plugins Figma permettent d'exporter les tokens directement dans un format exploitable :</p>
+
+    <ul>
+      <li><strong>Tokens Studio for Figma</strong> : le plus populaire. Synchronise les tokens entre Figma et un dépôt Git (GitHub, GitLab). Les designers modifient dans Figma, les tokens sont automatiquement mis à jour dans le repo.</li>
+      <li><strong>Figma Tokens</strong> : export manuel ou automatisé vers JSON</li>
+      <li><strong>API Figma</strong> : scripts custom pour extraire les styles</li>
+    </ul>
+
+    <pre data-lang="bash"><code># Workflow avec Tokens Studio
+# 1. Le designer modifie une couleur dans Figma
+# 2. Tokens Studio détecte le changement
+# 3. Tokens Studio crée une Pull Request sur GitHub
+#    avec le fichier tokens.json mis à jour
+# 4. Le développeur revoit et merge la PR
+# 5. Le CI/CD génère les variables CSS/SCSS/JS</code></pre>
+
+    <h3>Style Dictionary - transformer les tokens</h3>
+
+    <p><strong>Style Dictionary</strong> (par Amazon) transforme les design tokens JSON en variables utilisables dans n'importe quelle plateforme :</p>
+
+    <pre data-lang="bash"><code># Installation
+npm install -g style-dictionary
+
+# Configuration (config.json)
+cat > config.json << 'EOF'
+{
+  "source": ["tokens/**/*.json"],
+  "platforms": {
+    "css": {
+      "transformGroup": "css",
+      "buildPath": "build/css/",
+      "files": [{
+        "destination": "variables.css",
+        "format": "css/variables"
+      }]
+    },
+    "scss": {
+      "transformGroup": "scss",
+      "buildPath": "build/scss/",
+      "files": [{
+        "destination": "_variables.scss",
+        "format": "scss/variables"
+      }]
+    },
+    "js": {
+      "transformGroup": "js",
+      "buildPath": "build/js/",
+      "files": [{
+        "destination": "tokens.js",
+        "format": "javascript/es6"
+      }]
+    }
+  }
+}
+EOF
+
+# Générer les variables pour toutes les plateformes
+style-dictionary build
+
+# Résultat CSS :
+cat build/css/variables.css
+# :root {
+#   --color-primary-50: #EFF6FF;
+#   --color-primary-500: #3B82F6;
+#   --spacing-sm: 8px;
+#   --spacing-md: 16px;
+#   --font-size-md: 16px;
+#   --border-radius-md: 8px;
+# }
+
+# Résultat SCSS :
+cat build/scss/_variables.scss
+# $color-primary-50: #EFF6FF;
+# $color-primary-500: #3B82F6;
+# $spacing-sm: 8px;</code></pre>
+
+    <div class="key-message">
+      <p>Les design tokens sont le <strong>pont entre design et code</strong>. Versionnés dans Git en JSON, ils sont la source de vérité partagée entre designers et développeurs. Quand un designer change une couleur, le <span class="git-cmd">git diff</span> montre exactement : <code>"#3B82F6" -> "#2563EB"</code>.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Le format W3C -->
+    <h2>Le format <span class="keyword">W3C Design Tokens</span></h2>
+
+    <p>Le <strong>W3C Design Tokens Community Group</strong> travaille sur un standard pour les design tokens. Le format que nous avons utilisé plus haut (<code>$value</code>, <code>$type</code>) est le format W3C émergent. Il vise à devenir le standard universel.</p>
+
+    <h3>Structure du format</h3>
+
+    <pre data-lang="bash"><code># Format W3C Design Tokens
+{
+  "group-name": {
+    "token-name": {
+      "$value": "...",          # La valeur du token
+      "$type": "color",         # Le type (color, dimension, fontFamily, etc.)
+      "$description": "..."     # Description optionnelle
+    }
+  }
+}
+
+# Types supportés :
+# color       - couleurs (#hex, rgb, hsl)
+# dimension   - tailles (px, rem, em)
+# fontFamily  - familles de polices
+# fontWeight  - graisses (400, 700, bold)
+# duration    - durées d'animation (200ms)
+# cubicBezier - courbes d'animation
+# shadow      - ombres portées
+# gradient    - dégradés</code></pre>
+
+    <p>L'avantage d'utiliser le format W3C : tous les outils convergent vers ce standard. Tokens Studio, Style Dictionary, et de nombreux autres outils le supportent déjà.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Organisation du repo -->
+    <h2>Organisation d'un <span class="keyword">repo design</span></h2>
+
+    <pre data-lang="bash"><code>mon-design-system/
+├── assets/
+│   ├── raw/                     # Sources design (PSD, AI, Sketch)
+│   │   ├── illustrations/       # Illustrations haute résolution
+│   │   ├── photography/         # Photos de référence
+│   │   └── mockups/             # Maquettes d'écrans
+│   └── exported/                # Exports optimisés prêts à l'emploi
+│       ├── icons/               # Icônes SVG optimisées
+│       │   ├── home.svg
+│       │   ├── search.svg
+│       │   └── user.svg
+│       ├── logos/               # Logos en différents formats
+│       │   ├── logo-full.svg
+│       │   ├── logo-icon.svg
+│       │   └── logo-full.png
+│       └── images/              # Images pour le produit
+├── tokens/                      # Design tokens (source de vérité)
+│   ├── colors.json
+│   ├── spacing.json
+│   ├── typography.json
+│   └── shadows.json
+├── build/                       # Fichiers générés (dans .gitignore)
+│   ├── css/variables.css
+│   ├── scss/_variables.scss
+│   └── js/tokens.js
+├── components/                  # Composants documentés
+│   ├── button/
+│   │   ├── button.md            # Documentation du composant
+│   │   └── button-preview.png   # Aperçu visuel
+│   └── card/
+│       ├── card.md
+│       └── card-preview.png
+├── docs/                        # Documentation du design system
+│   ├── getting-started.md
+│   └── contribution-guide.md
+├── .gitattributes               # Patterns LFS
+├── .gitignore
+├── config.json                  # Config Style Dictionary
+└── package.json</code></pre>
+
+    <div class="tip">
+      <p><strong>Astuce :</strong> Le dossier <code>build/</code> doit être dans le <code>.gitignore</code> - il est généré automatiquement par Style Dictionary. Seuls les fichiers <code>tokens/</code> (la source de vérité) sont versionnés.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - <span class="keyword">Repo design avec LFS et tokens</span></h2>
+
+    <div class="quest-objective">
+      <p>Crée un dépôt pour un design system fictif (le "Grimoire Visuel" de la Citadelle) avec Git LFS pour les assets et des design tokens versionnés :</p>
+      <ol>
+        <li>Crée la structure recommandée</li>
+        <li>Configure Git LFS pour les fichiers design</li>
+        <li>Ajoute des design tokens en JSON (format W3C)</li>
+        <li>Crée des icônes SVG et optimise-les</li>
+        <li>Simule un changement de couleur et observe le diff</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer la structure</h3>
+
+    <pre data-lang="bash"><code># Créer le dépôt
+mkdir grimoire-visuel
+cd grimoire-visuel
+git init
+
+# Créer l'arborescence
+mkdir -p assets/raw/illustrations
+mkdir -p assets/raw/mockups
+mkdir -p assets/exported/icons
+mkdir -p assets/exported/logos
+mkdir -p assets/exported/images
+mkdir -p tokens
+mkdir -p components/button
+mkdir -p components/card
+mkdir -p docs</code></pre>
+
+    <h3>Étape 2 - Configurer Git LFS</h3>
+
+    <pre data-lang="bash"><code># Initialiser Git LFS
+git lfs install
+
+# Tracker les fichiers design
+git lfs track "*.psd"
+git lfs track "*.ai"
+git lfs track "*.sketch"
+git lfs track "*.tiff"
+git lfs track "*.raw"
+git lfs track "assets/exported/images/*.png"
+git lfs track "assets/exported/images/*.jpg"
+
+# Créer le .gitignore
+cat > .gitignore << 'EOF'
+# Fichiers générés
+build/
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Éditeurs
+*.swp
+*.swo
+*~
+EOF
+
+# Premier commit
+git add .gitattributes .gitignore
+git commit -m "Configuration initiale : Git LFS + .gitignore"</code></pre>
+
+    <h3>Étape 3 - Ajouter les design tokens</h3>
+
+    <pre data-lang="bash"><code># Créer les tokens de couleur
+cat > tokens/colors.json << 'EOF'
+{
+  "color": {
+    "primary": {
+      "500": { "$value": "#7C3AED", "$type": "color", "$description": "Violet principal du Grimoire" },
+      "700": { "$value": "#5B21B6", "$type": "color", "$description": "Violet foncé" }
+    },
+    "accent": {
+      "500": { "$value": "#F59E0B", "$type": "color", "$description": "Or des enluminures" }
+    },
+    "neutral": {
+      "0":   { "$value": "#FFFFFF", "$type": "color" },
+      "900": { "$value": "#1F2937", "$type": "color" }
+    }
+  }
+}
+EOF
+
+# Créer les tokens d'espacement
+cat > tokens/spacing.json << 'EOF'
+{
+  "spacing": {
+    "xs": { "$value": "4px",  "$type": "dimension" },
+    "sm": { "$value": "8px",  "$type": "dimension" },
+    "md": { "$value": "16px", "$type": "dimension" },
+    "lg": { "$value": "24px", "$type": "dimension" },
+    "xl": { "$value": "32px", "$type": "dimension" }
+  }
+}
+EOF
+
+git add tokens/
+git commit -m "Ajout des design tokens couleurs et espacements"</code></pre>
+
+    <h3>Étape 4 - Créer des icônes SVG</h3>
+
+    <pre data-lang="bash"><code># Créer une icône SVG simple
+cat > assets/exported/icons/shield.svg << 'EOF'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+</svg>
+EOF
+
+cat > assets/exported/icons/scroll.svg << 'EOF'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+  <polyline points="14 2 14 8 20 8"/>
+  <line x1="16" y1="13" x2="8" y2="13"/>
+  <line x1="16" y1="17" x2="8" y2="17"/>
+</svg>
+EOF
+
+git add assets/exported/icons/
+git commit -m "Ajout des icônes SVG shield et scroll"</code></pre>
+
+    <h3>Étape 5 - Simuler un changement de couleur</h3>
+
+    <pre data-lang="bash"><code># Le designer décide de changer le violet principal
+sed -i 's/#7C3AED/#8B5CF6/' tokens/colors.json
+sed -i 's/#5B21B6/#6D28D9/' tokens/colors.json
+
+# Observer le diff - parfaitement lisible !
+git diff tokens/colors.json
+# -      "500": { "$value": "#7C3AED", "$type": "color", ...
+# +      "500": { "$value": "#8B5CF6", "$type": "color", ...
+# -      "700": { "$value": "#5B21B6", "$type": "color", ...
+# +      "700": { "$value": "#6D28D9", "$type": "color", ...
+
+# Commiter le changement
+git add tokens/colors.json
+git commit -m "Mise à jour couleur primaire : violet plus clair"
+
+# L'historique montre clairement l'évolution
+git log --oneline
+# abc1234 Mise à jour couleur primaire : violet plus clair
+# def5678 Ajout des icônes SVG shield et scroll
+# ghi9012 Ajout des design tokens couleurs et espacements
+# jkl3456 Configuration initiale : Git LFS + .gitignore</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des concepts</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Git LFS pour le design</strong></td>
+          <td>Tracker les PSD, AI, Sketch et autres binaires volumineux</td>
+        </tr>
+        <tr>
+          <td><strong>File locking</strong></td>
+          <td>Verrouiller un fichier binaire pour éviter les conflits</td>
+        </tr>
+        <tr>
+          <td><strong>Diff visuel</strong></td>
+          <td>Outils pour comparer visuellement deux versions d'une image</td>
+        </tr>
+        <tr>
+          <td><strong>SVG</strong></td>
+          <td>Format vectoriel en texte - diffs parfaits dans Git</td>
+        </tr>
+        <tr>
+          <td><strong>SVGO</strong></td>
+          <td>Optimiseur de SVG, élimine le code inutile</td>
+        </tr>
+        <tr>
+          <td><strong>Design tokens</strong></td>
+          <td>Valeurs de design abstraites (couleurs, tailles) en JSON</td>
+        </tr>
+        <tr>
+          <td><strong>Format W3C</strong></td>
+          <td>Standard émergent pour les design tokens ($value, $type)</td>
+        </tr>
+        <tr>
+          <td><strong>Tokens Studio</strong></td>
+          <td>Plugin Figma pour synchroniser les tokens avec Git</td>
+        </tr>
+        <tr>
+          <td><strong>Style Dictionary</strong></td>
+          <td>Outil pour transformer les tokens JSON en CSS/SCSS/JS</td>
+        </tr>
+        <tr>
+          <td><strong>Conventions de nommage</strong></td>
+          <td>Minuscules, tirets, pas d'espaces, pas de "final"</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>La Maîtresse Enlumineuse examine ton dépôt avec un sourire approbateur. « Tu as compris l'essentiel : le <strong>design et le code ne vivent pas dans des mondes séparés</strong>. Ils partagent la même source de vérité - les tokens. Ils vivent dans le même dépôt - avec LFS pour les gros fichiers. Ils parlent le même langage - celui de Git. »</p>
+      <p>« Trop de projets échouent parce que les designers travaillent dans leur coin et les développeurs dans le leur. Les couleurs ne correspondent pas, les espacements sont incohérents, les icônes ont trois noms différents. Avec ce que tu sais maintenant, <strong>tu peux bâtir un pont entre ces deux mondes</strong>. »</p>
+      <p>Elle te tend un pinceau dont le manche est gravé de branches d'arbre Git. « Ceci est le symbole des Enlumineurs Versionneurs. Tu sais désormais que l'art, comme le code, mérite un historique. Que chaque pixel changé soit documenté. Que chaque couleur ait sa source de vérité. Va, et que tes designs soient aussi propres que tes commits. »</p>
+    </div>
+

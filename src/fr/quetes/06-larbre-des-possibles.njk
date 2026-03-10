@@ -1,0 +1,316 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_06
+quest_number: "06"
+arc: 2
+title: "L'Arbre des Possibles"
+subtitle: "Branches, switch et timelines parallèles"
+quest_slug_fr: "06-larbre-des-possibles"
+quest_slug_en: "06-the-tree-of-possibilities"
+permalink: /fr/quetes/06-larbre-des-possibles/
+---
+
+      <!-- Introduction narrative -->
+      <section>
+        <h2>Introduction</h2>
+
+        <div class="narrative">
+          <p>Le Maître Archiviste te convoque dans une salle que tu n'avais jamais vue auparavant. Au centre, un immense arbre de cristal s'élève du sol au plafond. Ses branches translucides pulsent d'une lumière douce, et chacune semble contenir des images mouvantes - des fragments d'histoires différentes, des futurs parallèles du royaume.</p>
+        </div>
+
+        <blockquote>
+          <p>« Apprenti, jusqu'à présent, tu as travaillé sur <strong>une seule ligne du temps</strong> - une chronique unique, linéaire, où chaque événement suit le précédent. Mais les grands Archivistes savent quelque chose que les novices ignorent : <strong><span class="highlight">l'histoire n'a pas qu'un seul chemin possible</span></strong>. Regarde cet arbre. Chaque branche représente une <strong>timeline parallèle</strong> - un futur possible pour le royaume. On peut explorer ces branches, y consigner des événements, et décider plus tard laquelle deviendra la chronique officielle. C'est le pouvoir des <strong><span class="highlight">branches Git</span></strong>. »</p>
+        </blockquote>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Qu'est-ce qu'une branche ? -->
+      <section>
+        <h2>Qu'est-ce qu'une branche ?</h2>
+
+        <p>Jusqu'ici, tous tes commits se sont enchaînés sur une seule branche : <strong>main</strong> (anciennement "master"). C'est la chronique officielle - la timeline principale du projet.</p>
+
+        <div class="key-message">
+          <p>Une <span class="keyword">branche</span> est simplement un <strong>pointeur mobile vers un commit</strong>. Quand tu crées une branche, tu crées une timeline parallèle où tu peux travailler sans affecter la timeline principale.</p>
+        </div>
+
+        <h3>Pourquoi utiliser des branches ?</h3>
+
+        <ul>
+          <li><strong>Expérimenter sans risque</strong> : tu testes une idée sur une branche. Si ça marche, tu la gardes. Sinon, tu la supprimes.</li>
+          <li><strong>Travailler en parallèle</strong> : pendant qu'un collègue travaille sur une fonctionnalité, tu travailles sur une autre, chacun sur sa branche.</li>
+          <li><strong>Garder <code>main</code> propre</strong> : la branche principale ne contient que du code validé et testé.</li>
+        </ul>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Voir les branches existantes -->
+      <section>
+        <h2>Voir les branches existantes</h2>
+
+        <p>Pour lister toutes les branches de ton dépôt :</p>
+
+        <pre data-lang="bash"><code>git branch</code></pre>
+
+        <p>La branche courante est marquée d'une étoile <code>*</code> et apparaît en vert :</p>
+
+        <pre><code>* main</code></pre>
+
+        <p>Pour l'instant, tu n'as qu'une seule branche. Ça va changer.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Créer une nouvelle branche -->
+      <section>
+        <h2>Créer une nouvelle branche</h2>
+
+        <p>Pour créer une branche sans y basculer :</p>
+
+        <pre data-lang="bash"><code>git branch &lt;nom&gt;</code></pre>
+
+        <p>Exemple :</p>
+
+        <pre data-lang="bash"><code>git branch expedition-nord</code></pre>
+
+        <p>Cela crée une branche <code>expedition-nord</code> qui pointe vers le même commit que ta branche actuelle. Mais tu es <span class="highlight">toujours sur <code>main</code></span> - tu n'as pas changé de timeline.</p>
+
+        <p>Vérifie :</p>
+
+        <pre data-lang="bash"><code>git branch</code></pre>
+
+        <pre><code>  expedition-nord
+* main</code></pre>
+
+        <p>L'étoile est toujours sur <code>main</code>.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Basculer sur une branche -->
+      <section>
+        <h2>Basculer sur une branche</h2>
+
+        <h3>La commande moderne : <span class="git-cmd">git switch</span></h3>
+
+        <pre data-lang="bash"><code>git switch expedition-nord</code></pre>
+
+        <p>C'est la méthode recommandée depuis Git 2.23. Simple, claire, sans ambiguïté.</p>
+
+        <h3>L'ancienne méthode : <span class="git-cmd">git checkout</span></h3>
+
+        <pre data-lang="bash"><code>git checkout expedition-nord</code></pre>
+
+        <p>Tu verras <span class="git-cmd">git checkout</span> dans beaucoup de tutoriels et de projets existants. Ça fonctionne, mais <span class="git-cmd">git switch</span> est plus explicite car <span class="git-cmd">git checkout</span> fait aussi d'autres choses (restaurer des fichiers, par exemple).</p>
+
+        <div class="tip">
+          <p>Utilise <span class="git-cmd">git switch</span> pour changer de branche. C'est plus clair et ça évite les erreurs.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Créer et basculer en une seule commande -->
+      <section>
+        <h2>Créer et basculer en une seule commande</h2>
+
+        <p>Tu peux combiner la création et le basculement :</p>
+
+        <pre data-lang="bash"><code>git switch -c nouvelle-branche</code></pre>
+
+        <p>Ou avec l'ancienne syntaxe :</p>
+
+        <pre data-lang="bash"><code>git checkout -b nouvelle-branche</code></pre>
+
+        <div class="key-message">
+          <p>L'option <code>-c</code> (pour "create") crée la branche et y bascule immédiatement. C'est la commande que tu utiliseras le plus souvent.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- HEAD -->
+      <section>
+        <h2><span class="keyword">HEAD</span> - Le marqueur de position</h2>
+
+        <p><span class="keyword">HEAD</span> est un pointeur spécial qui indique <strong>où tu te trouves</strong> dans l'historique. Plus précisément, <span class="keyword">HEAD</span> pointe vers la branche courante, qui elle-même pointe vers un commit.</p>
+
+        <pre><code>HEAD -> main -> commit C3
+         expedition-nord -> commit C3</code></pre>
+
+        <p>Quand tu fais <span class="git-cmd">git switch expedition-nord</span> :</p>
+
+        <pre><code>         main -> commit C3
+HEAD -> expedition-nord -> commit C3</code></pre>
+
+        <p>Et quand tu fais un nouveau commit sur <code>expedition-nord</code> :</p>
+
+        <pre><code>         main -> commit C3
+HEAD -> expedition-nord -> commit C4</code></pre>
+
+        <div class="key-message">
+          <p>La branche <code>main</code> reste sur C3 pendant que <code>expedition-nord</code> avance vers C4. Ce sont <strong>deux timelines qui divergent</strong>.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Supprimer une branche -->
+      <section>
+        <h2>Supprimer une branche</h2>
+
+        <h3>Suppression sécurisée</h3>
+
+        <pre data-lang="bash"><code>git branch -d nom-de-la-branche</code></pre>
+
+        <p>L'option <code>-d</code> (minuscule) supprime la branche <strong>uniquement si elle a été fusionnée</strong>. C'est une sécurité : Git refuse de supprimer une branche qui contient du travail non intégré.</p>
+
+        <h3>Suppression forcée</h3>
+
+        <pre data-lang="bash"><code>git branch -D nom-de-la-branche</code></pre>
+
+        <div class="warning">
+          <p>L'option <code>-D</code> (majuscule) supprime la branche <span class="highlight-red">même si elle n'a pas été fusionnée</span>. À utiliser avec précaution - le travail non fusionné sera perdu (enfin, pas vraiment perdu, mais beaucoup plus difficile à retrouver).</p>
+        </div>
+
+        <div class="tip">
+          <p>Tu ne peux pas supprimer la branche sur laquelle tu te trouves. Bascule d'abord sur une autre branche.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Exercice pratique -->
+      <section>
+        <h2>Exercice pratique - Les Chroniques parallèles</h2>
+
+        <div class="quest-objective">
+          <p>Le royaume fait face à un dilemme. Deux expéditions doivent être documentées : une vers le <strong>Nord</strong>, dans les Montagnes de Givre, et une vers le <strong>Sud</strong>, dans la Forêt d'Émeraude. Chaque expédition mérite sa propre chronique, sa propre timeline. À toi de les créer, Archiviste.</p>
+        </div>
+
+        <h3>Étape 1 - Créer le dépôt</h3>
+
+        <p>Crée un nouveau dossier et initialise un dépôt Git :</p>
+
+        <pre data-lang="bash"><code>mkdir chroniques-paralleles
+cd chroniques-paralleles
+git init</code></pre>
+
+        <h3>Étape 2 - Premier commit sur main</h3>
+
+        <p>Crée un fichier de base et fais ton premier commit :</p>
+
+        <pre data-lang="bash"><code>echo "# Chroniques du Royaume" &gt; chroniques.md
+git add chroniques.md
+git commit -m "Créer le registre des chroniques du royaume"</code></pre>
+
+        <h3>Étape 3 - Créer la branche expedition-nord</h3>
+
+        <pre data-lang="bash"><code>git branch expedition-nord</code></pre>
+
+        <h3>Étape 4 - Basculer sur expedition-nord</h3>
+
+        <pre data-lang="bash"><code>git switch expedition-nord</code></pre>
+
+        <p>Vérifie que tu es bien sur la bonne branche :</p>
+
+        <pre data-lang="bash"><code>git branch</code></pre>
+
+        <p>Tu devrais voir l'étoile sur <code>expedition-nord</code>.</p>
+
+        <h3>Étape 5 - Commiter sur expedition-nord</h3>
+
+        <p>Crée un fichier et commite-le :</p>
+
+        <pre data-lang="bash"><code>echo "Jour 1 : L'expédition quitte la cité vers les Montagnes de Givre." &gt; nord.md
+git add nord.md
+git commit -m "Ajouter le journal de l'expédition nord"</code></pre>
+
+        <h3>Étape 6 - Revenir sur main</h3>
+
+        <pre data-lang="bash"><code>git switch main</code></pre>
+
+        <div class="tip">
+          <p>Remarque : le fichier <code>nord.md</code> a disparu de ton dossier ! Il n'existe que sur la branche <code>expedition-nord</code>. Pas de panique, il est en sécurité dans cette timeline.</p>
+        </div>
+
+        <h3>Étape 7 - Créer et basculer sur expedition-sud</h3>
+
+        <p>Cette fois, combine les deux en une seule commande :</p>
+
+        <pre data-lang="bash"><code>git switch -c expedition-sud</code></pre>
+
+        <h3>Étape 8 - Commiter sur expedition-sud</h3>
+
+        <pre data-lang="bash"><code>echo "Jour 1 : L'expédition s'enfonce dans la Forêt d'Émeraude." &gt; sud.md
+git add sud.md
+git commit -m "Ajouter le journal de l'expédition sud"</code></pre>
+
+        <h3>Étape 9 - Lister toutes les branches</h3>
+
+        <pre data-lang="bash"><code>git branch</code></pre>
+
+        <p>Tu devrais voir trois branches : <code>expedition-nord</code>, <code>expedition-sud</code> (avec l'étoile), et <code>main</code>.</p>
+
+        <h3>Étape 10 - Vérifier</h3>
+
+        <p>Lance le script de vérification pour valider ta quête :</p>
+
+        <p><strong>Bash</strong> (Linux / macOS / Git Bash sur Windows) :</p>
+
+        <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+        <p><strong>PowerShell</strong> (Windows) :</p>
+
+        <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+        <p>Le script vérifie :</p>
+
+        <ol class="steps">
+          <li>Tu es dans un dépôt Git</li>
+          <li>La branche <code>expedition-nord</code> existe</li>
+          <li>La branche <code>expedition-sud</code> existe</li>
+          <li>La branche <code>expedition-nord</code> contient au moins un commit propre</li>
+          <li>La branche <code>expedition-sud</code> contient au moins un commit propre</li>
+          <li>Il y a au moins 3 branches au total</li>
+        </ol>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Récapitulatif des commandes -->
+      <section>
+        <h2>Récapitulatif des commandes</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Commande</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>git branch</code></td><td>Lister les branches</td></tr>
+            <tr><td><code>git branch &lt;nom&gt;</code></td><td>Créer une branche</td></tr>
+            <tr><td><code>git switch &lt;nom&gt;</code></td><td>Basculer sur une branche</td></tr>
+            <tr><td><code>git checkout &lt;nom&gt;</code></td><td>Basculer sur une branche (ancienne syntaxe)</td></tr>
+            <tr><td><code>git switch -c &lt;nom&gt;</code></td><td>Créer une branche et basculer dessus</td></tr>
+            <tr><td><code>git checkout -b &lt;nom&gt;</code></td><td>Créer et basculer (ancienne syntaxe)</td></tr>
+            <tr><td><code>git branch -d &lt;nom&gt;</code></td><td>Supprimer une branche (sécurisé)</td></tr>
+            <tr><td><code>git branch -D &lt;nom&gt;</code></td><td>Supprimer une branche (forcé)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Conclusion narrative -->
+      <div class="narrative">
+        <p>Tu contemples l'Arbre des Possibles. Trois branches brillent désormais d'un éclat distinct - trois timelines parallèles, chacune racontant une histoire différente. Le Maître Archiviste pose sa main sur ton épaule.</p>
+        <div class="key-message">
+          <p>« Tu vois, Archiviste ? L'histoire n'est plus une simple ligne droite. Tu sais désormais <strong>créer des futurs parallèles</strong>, <strong>naviguer entre eux</strong>, et <strong>voir le monde différemment selon la branche où tu te trouves</strong>. Mais créer des branches n'est que le début. Bientôt, tu apprendras à les <strong>réunir</strong> - à fusionner les timelines pour n'en garder que le meilleur. C'est la véritable maîtrise de l'Arbre des Possibles. »</p>
+        </div>
+      </div>

@@ -1,0 +1,330 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_03
+quest_number: "03"
+arc: 1
+title: "Le Premier Parchemin"
+subtitle: "git init, add, commit, status, log"
+quest_slug_fr: "03-le-premier-parchemin"
+quest_slug_en: "03-the-first-scroll"
+permalink: /fr/quetes/03-le-premier-parchemin/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Les couloirs de la Citadelle du Savoir résonnent de tes pas tandis que tu te diriges vers la Salle des Archives. Après avoir compris comment Git organise le travail dans ses Trois Salles, il est temps de passer à l'action. Le Maître Archiviste t'attend devant un bureau couvert de parchemins vierges.</p>
+      <p>« Assez de théorie, jeune apprenti. Aujourd'hui, tu vas <strong>créer ta première archive</strong> et y sceller tes premiers documents. C'est le geste fondamental de tout Archiviste : <strong>observer, consigner, sceller</strong>. Chaque parchemin que tu archiveras portera ta marque dans l'histoire du royaume. <strong>Commençons.</strong> »</p>
+    </div>
+
+    <!-- ================================================ -->
+    <h2>Les commandes en détail</h2>
+    <!-- ================================================ -->
+
+    <!-- git init -->
+    <h3><code>git init</code> - Créer un nouveau dépôt</h3>
+
+    <p>La commande <code>git init</code> transforme un simple dossier en dépôt Git. Elle crée un sous-dossier caché <code>.git/</code> qui contient tout le mécanisme interne de Git (l'historique, la configuration, les objets…).</p>
+
+    <pre data-lang="bash"><code>mkdir mon-projet
+cd mon-projet
+git init</code></pre>
+
+    <p>Résultat attendu :</p>
+
+    <pre><code>Initialized empty Git repository in /chemin/vers/mon-projet/.git/</code></pre>
+
+    <p>Tu peux vérifier que le dossier <code>.git/</code> a été créé :</p>
+
+    <pre data-lang="bash"><code>ls -la
+# Tu verras un dossier .git/</code></pre>
+
+    <div class="tip">
+      <p>Ne touche jamais manuellement au contenu du dossier <code>.git/</code>. C'est le coffre-fort de Git - laisse-le gérer ses affaires.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- git status -->
+    <h3><code>git status</code> - Vérifier l'état du dépôt</h3>
+
+    <p>C'est la commande que tu utiliseras le plus souvent. Elle te dit exactement où en sont tes fichiers :</p>
+
+    <pre data-lang="bash"><code>git status</code></pre>
+
+    <p>Les fichiers apparaissent en couleur :</p>
+    <ul>
+      <li><span class="highlight-red">Rouge</span> - fichiers modifiés ou nouveaux, mais <strong>pas encore dans la zone de <span class="keyword">staging</span></strong> (<span class="keyword">Working Directory</span>)</li>
+      <li><span class="highlight-green">Vert</span> - fichiers <strong>prêts à être scellés</strong> (dans la <span class="keyword">Staging Area</span>, en attente de <span class="keyword">commit</span>)</li>
+      <li><strong>Rien</strong> - tout est propre, aucune modification en cours</li>
+    </ul>
+
+    <div class="tip">
+      <p>Prends le réflexe de taper <code>git status</code> avant et après chaque action. C'est ta boussole - elle t'indique toujours où tu en es.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- git add -->
+    <h3><code>git add &lt;fichier&gt;</code> - Ajouter au <span class="keyword">staging</span></h3>
+
+    <p>Cette commande déplace un fichier du <span class="keyword">Working Directory</span> vers la <span class="keyword">Staging Area</span> (la Salle de Préparation, vue dans la quête 02). C'est l'étape de préparation avant le scellement définitif.</p>
+
+    <pre data-lang="bash"><code># Ajouter un fichier spécifique
+git add mission.txt
+
+# Ajouter plusieurs fichiers
+git add fichier1.txt fichier2.txt
+
+# Ajouter TOUS les fichiers modifiés ou nouveaux
+git add .</code></pre>
+
+    <p>Après un <span class="git-cmd">git add</span>, fais un <span class="git-cmd">git status</span> : le fichier devrait passer du rouge au vert.</p>
+
+    <div class="warning">
+      <p><code>git add .</code> ajoute <strong>tout</strong> d'un coup. C'est pratique, mais fais attention à ne pas inclure des fichiers indésirables (fichiers temporaires, fichiers de configuration personnelle, etc.). Quand tu débutes, préfère ajouter les fichiers un par un pour bien contrôler ce que tu fais.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- git commit -->
+    <h3><code>git commit -m "message"</code> - Sceller dans l'archive</h3>
+
+    <p>Le <span class="keyword">commit</span> est l'acte de scellement : tu prends tout ce qui est dans la <span class="keyword">Staging Area</span> et tu l'archives définitivement dans le <span class="keyword">Repository</span> avec un message explicatif.</p>
+
+    <pre data-lang="bash"><code>git commit -m "Ajouter le rapport d'observation des frontières nord"</code></pre>
+
+    <p>Résultat attendu :</p>
+
+    <pre><code>[main (root-commit) a1b2c3d] Ajouter le rapport d'observation des frontières nord
+ 1 file changed, 15 insertions(+)
+ create mode 100644 mission.txt</code></pre>
+
+    <p>Git te donne :</p>
+    <ul>
+      <li>La <strong>branche</strong> sur laquelle tu es (<code>main</code>)</li>
+      <li>Un <strong>identifiant unique</strong> abrégé (<code>a1b2c3d</code>) - c'est le sceau du <span class="keyword">commit</span></li>
+      <li>Le <strong>message</strong> que tu as écrit</li>
+      <li>Un résumé des modifications (fichiers modifiés, lignes ajoutées/supprimées)</li>
+    </ul>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Messages de commit -->
+    <h3>Anatomie d'un bon message de <span class="keyword">commit</span></h3>
+
+    <p>Le message de <span class="keyword">commit</span> est essentiel : c'est ce que liront les autres (et toi-même dans six mois) pour comprendre <strong>pourquoi</strong> une modification a été faite. L'objectif est d'<span class="highlight">enregistrer chaque modification</span> de manière claire et lisible.</p>
+
+    <p><strong>Les règles d'or :</strong></p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Règle</th>
+          <th>Exemple bon</th>
+          <th>Exemple mauvais</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Commencer par un verbe à l'infinitif</td>
+          <td><code>Ajouter la page de contact</code></td>
+          <td><code>Ajouté la page</code></td>
+        </tr>
+        <tr>
+          <td>Être court (50 car. max)</td>
+          <td><code>Corriger le calcul de la taxe</code></td>
+          <td><code>J'ai corrigé le bug dans le calcul…</code></td>
+        </tr>
+        <tr>
+          <td>Être descriptif</td>
+          <td><code>Supprimer les logs de debug</code></td>
+          <td><code>fix</code></td>
+        </tr>
+        <tr>
+          <td>Décrire le pourquoi</td>
+          <td><code>Limiter l'upload à 5 Mo pour éviter les timeout</code></td>
+          <td><code>Modifier la variable MAX_SIZE</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="comparison">
+      <div class="comparison-good">
+        <p>Ajouter le formulaire d'inscription</p>
+        <p>Corriger l'affichage du menu sur mobile</p>
+        <p>Supprimer les fichiers temporaires du build</p>
+        <p>Mettre à jour les dépendances de sécurité</p>
+        <p>Refactoriser la fonction de calcul des scores</p>
+      </div>
+      <div class="comparison-bad">
+        <p>fix</p>
+        <p>update</p>
+        <p>modifs</p>
+        <p>wip</p>
+        <p>asdfgh</p>
+        <p>correction du truc</p>
+      </div>
+    </div>
+
+    <div class="key-message">
+      <p>Si tu n'arrives pas à résumer ton <span class="keyword">commit</span> en une phrase courte, c'est peut-être que tu as fait trop de choses d'un coup. Un bon <span class="keyword">commit</span> = <span class="highlight">une seule modification logique</span>.</p>
+    </div>
+
+    <!-- ================================================ -->
+    <h2>Exercice pratique - Mission en étapes</h2>
+    <!-- ================================================ -->
+
+    <div class="quest-objective">
+      <p>Le Maître Archiviste te confie ta première mission officielle. Suis les étapes dans l'ordre.</p>
+    </div>
+
+    <!-- Étape 1 -->
+    <h3>Étape 1 : Crée ton archive</h3>
+
+    <p>Crée un dossier <code>mon-archive/</code> et initialise un dépôt Git à l'intérieur :</p>
+
+    <pre data-lang="bash"><code>mkdir mon-archive
+cd mon-archive
+git init</code></pre>
+
+    <p>Vérifie que tout est en ordre :</p>
+
+    <pre data-lang="bash"><code>git status</code></pre>
+
+    <p>Tu devrais voir : <code>On branch main</code> (ou <code>master</code>) et <code>nothing to commit</code>.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Étape 2 -->
+    <h3>Étape 2 : Récupère l'ordre de mission</h3>
+
+    <p>Copie le fichier <code>parchemins/mission.txt</code> (fourni avec cette quête) dans ton dépôt <code>mon-archive/</code> :</p>
+
+    <pre data-lang="bash"><code># Depuis le dossier mon-archive/, copie le fichier mission.txt
+# Adapte le chemin selon l'emplacement de ta quête
+cp ../parchemins/mission.txt .</code></pre>
+
+    <p>Vérifie avec <span class="git-cmd">git status</span> - le fichier devrait apparaître en <span class="highlight-red">rouge</span> (non suivi).</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Étape 3 -->
+    <h3>Étape 3 : Premier scellement (<span class="keyword">commit</span>)</h3>
+
+    <p>Ajoute le fichier à la zone de <span class="keyword">staging</span>, puis scelle-le :</p>
+
+    <pre data-lang="bash"><code>git add mission.txt
+git status          # mission.txt devrait être en VERT maintenant
+git commit -m "Ajouter l'ordre de mission de la Guilde"</code></pre>
+
+    <div class="warning">
+      <p>Choisis un message de <span class="keyword">commit</span> descriptif ! Pas de <code>"Initial commit"</code> ou de <code>"test"</code>. Décris ce que tu fais réellement.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Étape 4 -->
+    <h3>Étape 4 : Complète la mission</h3>
+
+    <p>Ouvre <code>mission.txt</code> dans ton éditeur de texte préféré et remplis les champs d'observation. Par exemple :</p>
+
+    <pre><code>- Lieu : Forêt de Sombrebois, poste d'observation n°7
+- Créature observée : Wyverne à écailles argentées
+- Niveau de danger (1-5) : 4
+- Notes : Aperçue à l'aube, semble nicher dans les falaises est</code></pre>
+
+    <p>Sauvegarde le fichier.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Étape 5 -->
+    <h3>Étape 5 : Deuxième scellement</h3>
+
+    <p>Fais un <span class="git-cmd">git status</span> pour voir la modification, puis archive-la :</p>
+
+    <pre data-lang="bash"><code>git status          # mission.txt en ROUGE (modifié)
+git add mission.txt
+git commit -m "Compléter le rapport d'observation des frontières"</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Étape 6 -->
+    <h3>Étape 6 : Vérifie l'historique</h3>
+
+    <p>Consulte l'historique de ton archive :</p>
+
+    <pre data-lang="bash"><code>git log --oneline</code></pre>
+
+    <p>Tu devrais voir tes <strong>deux commits</strong>, du plus récent au plus ancien :</p>
+
+    <pre><code>b2c3d4e Compléter le rapport d'observation des frontières
+a1b2c3d Ajouter l'ordre de mission de la Guilde</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Étape 7 -->
+    <h3>Étape 7 : Validation de la quête</h3>
+
+    <p>Lance le script de vérification <strong>depuis ton dossier <code>mon-archive/</code></strong> :</p>
+
+    <p><strong>Bash (Linux / macOS / Git Bash) :</strong></p>
+
+    <pre data-lang="bash"><code>bash ../verifier.sh</code></pre>
+
+    <p><strong>PowerShell (Windows) :</strong></p>
+
+    <pre data-lang="powershell"><code>..\verifier.ps1</code></pre>
+
+    <p>Le script vérifie :</p>
+    <ol class="steps">
+      <li>Tu es dans un dépôt Git</li>
+      <li>Tu as au moins 2 commits</li>
+      <li>Le fichier <code>mission.txt</code> est suivi par Git</li>
+      <li>Ton premier message de <span class="keyword">commit</span> est personnalisé (pas <code>"Initial commit"</code>)</li>
+    </ol>
+
+    <!-- ================================================ -->
+    <h2>Récapitulatif des commandes</h2>
+    <!-- ================================================ -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git init</code></td>
+          <td>Initialiser un nouveau dépôt Git</td>
+        </tr>
+        <tr>
+          <td><code>git status</code></td>
+          <td>Voir l'état des fichiers (modifiés, staged, commités)</td>
+        </tr>
+        <tr>
+          <td><code>git add &lt;fichier&gt;</code></td>
+          <td>Ajouter un fichier à la zone de <span class="keyword">staging</span></td>
+        </tr>
+        <tr>
+          <td><code>git add .</code></td>
+          <td>Ajouter tous les fichiers modifiés au <span class="keyword">staging</span></td>
+        </tr>
+        <tr>
+          <td><code>git commit -m "msg"</code></td>
+          <td>Créer un <span class="keyword">commit</span> avec un message</td>
+        </tr>
+        <tr>
+          <td><code>git log --oneline</code></td>
+          <td>Afficher l'historique des commits (format court)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste examine ton archive avec attention. Un sourire se dessine sur son visage.</p>
+      <p>« Excellent travail, apprenti. Tu sais désormais <strong>créer une archive</strong>, y <strong>consigner des documents</strong> et <strong>sceller tes modifications</strong>. Ces gestes deviendront vite des réflexes. Dans la prochaine quête, tu découvriras que les archives ne se limitent pas à ton bureau - elles peuvent <strong>voyager à travers tout le royaume</strong>. Prépare-toi. »</p>
+    </div>

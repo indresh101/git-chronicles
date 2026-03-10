@@ -1,0 +1,856 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_A5
+quest_number: "A5"
+arc: 6
+title: "Les Courants du Destin"
+subtitle: "GitOps, ArgoCD, Flux et infrastructure as code"
+quest_slug_fr: "A5-les-courants-du-destin"
+quest_slug_en: "A5-the-currents-of-destiny"
+permalink: /fr/quetes/A5-les-courants-du-destin/
+---
+
+
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Au sommet de la plus haute tour de la Citadelle, il existe une salle secrète que peu d'archivistes connaissent : la <strong>Chambre des Courants</strong>. C'est ici que les Maîtres des Courants observent les forces invisibles qui gouvernent l'infrastructure du royaume - chaque pont, chaque route, chaque forteresse est façonné par ces courants.</p>
+      <p>Le Maître des Courants t'invite à observer la grande carte animée qui occupe tout un mur. Des lignes de lumière parcourent le royaume, connectant les serveurs de la Citadelle aux avant-postes les plus reculés. « Chaque modification que tu vois est un <strong>courant</strong> - un changement décrit dans un parchemin, qui façonne automatiquement la réalité. C'est ce qu'on appelle <strong>GitOps</strong>. Et c'est la manière la plus puissante de gouverner une infrastructure. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Philosophie GitOps -->
+    <h2>La philosophie <span class="keyword">GitOps</span></h2>
+
+    <p><strong>GitOps</strong> est une philosophie où <strong>Git est la source de vérité unique</strong> pour toute l'infrastructure et les déploiements applicatifs. L'idée est simple mais révolutionnaire :</p>
+
+    <ul>
+      <li><strong>Toute l'infrastructure est décrite dans des fichiers</strong> versionnés dans Git</li>
+      <li><strong>Modifier l'infrastructure = faire un commit</strong></li>
+      <li><strong>Déployer = merger une branche</strong></li>
+      <li><strong>Annuler un déploiement = git revert</strong></li>
+    </ul>
+
+    <p>Le terme a été inventé par <strong>Weaveworks</strong> en 2017. Depuis, il est devenu un standard de facto dans le monde Kubernetes et au-delà.</p>
+
+    <h3>Les quatre principes fondamentaux</h3>
+
+    <ol>
+      <li><strong>Déclaratif</strong> : l'état désiré du système est décrit dans des fichiers (YAML, JSON, HCL), pas dans des scripts impératifs</li>
+      <li><strong>Versionné</strong> : tout est dans Git - l'historique complet de chaque changement d'infrastructure</li>
+      <li><strong>Automatique</strong> : un agent applique automatiquement les changements quand Git est modifié</li>
+      <li><strong>Auto-réconciliant</strong> : si quelqu'un modifie l'infrastructure manuellement, l'agent la remet dans l'état décrit par Git</li>
+    </ol>
+
+    <div class="key-message">
+      <p>GitOps transforme Git en <strong>panneau de contrôle</strong> de toute ton infrastructure. Pas besoin d'accès SSH aux serveurs, pas besoin de scripts de déploiement manuels. Git est le seul point d'entrée.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Pull vs Push -->
+    <h2><span class="keyword">Pull</span> vs <span class="keyword">Push</span> deployment</h2>
+
+    <p>Il existe deux modèles pour appliquer les changements d'infrastructure. Comprendre la différence est fondamental.</p>
+
+    <h3>Le modèle Push (traditionnel)</h3>
+
+    <p>Dans le modèle <strong>push</strong>, un système externe (CI/CD) pousse les changements vers le cluster :</p>
+
+    <pre data-lang="bash"><code># Modèle PUSH - le pipeline CI/CD déploie directement
+# .github/workflows/deploy.yml
+
+# 1. Le développeur push du code
+# 2. Le CI/CD build l'image Docker
+# 3. Le CI/CD applique les manifestes Kubernetes
+#    kubectl apply -f k8s/deployment.yaml
+# 4. Le CI/CD a besoin d'accès direct au cluster (credentials)</code></pre>
+
+    <p>Problèmes du modèle push :</p>
+    <ul>
+      <li>Le pipeline CI/CD a besoin de <strong>credentials d'accès au cluster</strong> - surface d'attaque importante</li>
+      <li>Si quelqu'un modifie le cluster manuellement, le CI/CD ne le sait pas (<strong>drift</strong>)</li>
+      <li>Pas de réconciliation automatique</li>
+    </ul>
+
+    <h3>Le modèle Pull (GitOps)</h3>
+
+    <p>Dans le modèle <strong>pull</strong>, un agent installé <em>dans</em> le cluster surveille Git et applique les changements :</p>
+
+    <pre data-lang="bash"><code># Modèle PULL - un agent dans le cluster surveille Git
+
+# 1. Le développeur push du code et des manifestes dans Git
+# 2. L'agent GitOps (ArgoCD, Flux) détecte le changement
+# 3. L'agent PULL les manifestes depuis Git
+# 4. L'agent applique les changements dans le cluster
+# 5. Si quelqu'un modifie manuellement, l'agent corrige (auto-healing)</code></pre>
+
+    <p>Avantages du modèle pull :</p>
+    <ul>
+      <li><strong>Pas de credentials externes</strong> : l'agent est déjà dans le cluster</li>
+      <li><strong>Auto-healing</strong> : toute modification manuelle est automatiquement corrigée</li>
+      <li><strong>Audit complet</strong> : chaque changement est un commit Git</li>
+      <li><strong>Rollback simple</strong> : <span class="git-cmd">git revert</span> annule un déploiement</li>
+    </ul>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>Push (CI/CD classique)</th>
+          <th>Pull (GitOps)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Qui déploie</strong></td>
+          <td>Le pipeline CI/CD</td>
+          <td>Un agent dans le cluster</td>
+        </tr>
+        <tr>
+          <td><strong>Credentials</strong></td>
+          <td>Le CI/CD a accès au cluster</td>
+          <td>L'agent a accès à Git (lecture seule)</td>
+        </tr>
+        <tr>
+          <td><strong>Drift</strong></td>
+          <td>Non détecté</td>
+          <td>Automatiquement corrigé</td>
+        </tr>
+        <tr>
+          <td><strong>Rollback</strong></td>
+          <td>Re-déployer une ancienne version</td>
+          <td>git revert</td>
+        </tr>
+        <tr>
+          <td><strong>Audit</strong></td>
+          <td>Logs du CI/CD</td>
+          <td>git log (complet, permanent)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : ArgoCD -->
+    <h2><span class="keyword">ArgoCD</span> - le gardien du cluster</h2>
+
+    <p><strong>ArgoCD</strong> est l'outil GitOps le plus populaire pour Kubernetes. Il s'installe dans ton cluster et surveille un ou plusieurs dépôts Git. Dès qu'un changement est détecté, il l'applique.</p>
+
+    <h3>Concepts clés</h3>
+
+    <ul>
+      <li><strong>Application</strong> : une ressource ArgoCD qui lie un dépôt Git à un namespace Kubernetes</li>
+      <li><strong>Sync</strong> : le processus d'alignement entre l'état Git et l'état du cluster</li>
+      <li><strong>Health</strong> : l'état de santé des ressources déployées</li>
+      <li><strong>Diff</strong> : la différence entre l'état désiré (Git) et l'état actuel (cluster)</li>
+    </ul>
+
+    <h3>L'Application CRD</h3>
+
+    <p>On déclare une Application ArgoCD en YAML. C'est la ressource centrale qui dit : "surveille ce dépôt Git et déploie dans ce namespace" :</p>
+
+    <pre data-lang="yaml"><code># argocd-application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mon-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mon-org/mon-app-gitops.git
+    targetRevision: main
+    path: overlays/production    # Dossier contenant les manifestes
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mon-app
+  syncPolicy:
+    automated:                   # Sync automatique activé
+      prune: true                # Supprime les ressources absentes de Git
+      selfHeal: true             # Corrige les modifications manuelles
+    syncOptions:
+      - CreateNamespace=true     # Crée le namespace si nécessaire</code></pre>
+
+    <h3>Sync policies</h3>
+
+    <ul>
+      <li><strong>Manual sync</strong> : tu déclenches le déploiement manuellement depuis l'UI ou le CLI</li>
+      <li><strong>Automated sync</strong> : ArgoCD déploie automatiquement dès qu'il détecte un changement dans Git</li>
+      <li><strong>Self-heal</strong> : si quelqu'un fait un <code>kubectl edit</code> manuel, ArgoCD restaure l'état Git</li>
+      <li><strong>Prune</strong> : si tu supprimes un fichier de Git, ArgoCD supprime la ressource correspondante du cluster</li>
+    </ul>
+
+    <pre data-lang="bash"><code># CLI ArgoCD - commandes courantes
+# Se connecter
+argocd login argocd.mon-domaine.com
+
+# Lister les applications
+argocd app list
+
+# Voir l'état d'une application
+argocd app get mon-app
+
+# Synchroniser manuellement
+argocd app sync mon-app
+
+# Voir l'historique des déploiements
+argocd app history mon-app
+
+# Rollback vers une version précédente
+argocd app rollback mon-app 3</code></pre>
+
+    <div class="tip">
+      <p><strong>Astuce :</strong> ArgoCD offre une interface web superbe qui affiche l'état de chaque ressource Kubernetes sous forme d'arbre visuel. C'est souvent par l'UI que les équipes surveillent leurs déploiements au quotidien.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Flux -->
+    <h2><span class="keyword">Flux</span> - l'alternative CNCF</h2>
+
+    <p><strong>Flux</strong> (anciennement Flux v2) est l'autre grand outil GitOps, maintenu par la CNCF (Cloud Native Computing Foundation). Contrairement à ArgoCD, Flux n'a pas d'interface web par défaut - il est entièrement piloté par des ressources Kubernetes.</p>
+
+    <h3>Concepts clés de Flux</h3>
+
+    <ul>
+      <li><strong>GitRepository</strong> : pointe vers un dépôt Git à surveiller</li>
+      <li><strong>Kustomization</strong> : décrit quoi déployer depuis le dépôt et comment</li>
+      <li><strong>HelmRelease</strong> : déploie des charts Helm depuis Git ou un registry</li>
+      <li><strong>ImageUpdateAutomation</strong> : met à jour automatiquement les tags d'images dans Git</li>
+    </ul>
+
+    <pre data-lang="bash"><code># Installation de Flux dans un cluster
+flux bootstrap github \
+  --owner=mon-org \
+  --repository=flux-config \
+  --path=clusters/production \
+  --personal
+
+# Cela crée un dépôt Git et installe Flux dans le cluster
+# Flux se gère lui-même via GitOps !</code></pre>
+
+    <h3>Exemple de configuration Flux</h3>
+
+    <pre data-lang="yaml"><code># source.yaml - Définir la source Git
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: mon-app
+  namespace: flux-system
+spec:
+  interval: 1m                    # Vérifier Git toutes les minutes
+  url: https://github.com/mon-org/mon-app-gitops
+  ref:
+    branch: main
+
+---
+# kustomization.yaml - Définir quoi déployer
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mon-app
+  namespace: flux-system
+spec:
+  interval: 5m
+  path: ./overlays/production     # Chemin dans le dépôt
+  prune: true                     # Supprimer les ressources absentes de Git
+  sourceRef:
+    kind: GitRepository
+    name: mon-app
+  healthChecks:                   # Vérifier la santé après déploiement
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: mon-app
+      namespace: mon-app</code></pre>
+
+    <h3>ArgoCD vs Flux - comment choisir ?</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>ArgoCD</th>
+          <th>Flux</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Interface web</strong></td>
+          <td>Oui, riche et intuitive</td>
+          <td>Non (CLI + extensions tierces)</td>
+        </tr>
+        <tr>
+          <td><strong>Configuration</strong></td>
+          <td>Application CRD + UI</td>
+          <td>100% ressources Kubernetes</td>
+        </tr>
+        <tr>
+          <td><strong>Multi-cluster</strong></td>
+          <td>Natif (un ArgoCD gère N clusters)</td>
+          <td>Un Flux par cluster</td>
+        </tr>
+        <tr>
+          <td><strong>Helm</strong></td>
+          <td>Support intégré</td>
+          <td>HelmRelease CRD</td>
+        </tr>
+        <tr>
+          <td><strong>Philosophie</strong></td>
+          <td>Outil centralisé avec UI</td>
+          <td>Composants distribués, natif K8s</td>
+        </tr>
+        <tr>
+          <td><strong>Courbe d'apprentissage</strong></td>
+          <td>Plus facile (UI aide)</td>
+          <td>Plus raide (tout en YAML)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Structure d'un repo GitOps -->
+    <h2>Structure d'un <span class="keyword">repo GitOps</span></h2>
+
+    <p>L'organisation du dépôt GitOps est cruciale. La structure la plus répandue utilise <strong>Kustomize</strong> avec des overlays par environnement :</p>
+
+    <pre data-lang="bash"><code>mon-app-gitops/
+├── base/                        # Configuration commune à tous les envs
+│   ├── kustomization.yaml       # Liste des ressources de base
+│   ├── deployment.yaml          # Déploiement de l'application
+│   ├── service.yaml             # Service Kubernetes
+│   ├── configmap.yaml           # Configuration non-sensible
+│   └── hpa.yaml                 # Auto-scaling
+├── overlays/                    # Personnalisations par environnement
+│   ├── dev/
+│   │   ├── kustomization.yaml   # Hérite de base/ + patches dev
+│   │   ├── replicas-patch.yaml  # 1 réplica en dev
+│   │   └── resources-patch.yaml # Moins de CPU/RAM
+│   ├── staging/
+│   │   ├── kustomization.yaml
+│   │   ├── replicas-patch.yaml  # 2 réplicas en staging
+│   │   └── ingress-patch.yaml   # Domaine staging
+│   └── production/
+│       ├── kustomization.yaml
+│       ├── replicas-patch.yaml  # 5 réplicas en prod
+│       ├── resources-patch.yaml # Plus de CPU/RAM
+│       └── ingress-patch.yaml   # Domaine production
+└── apps/                        # Autres applications déployées
+    ├── monitoring/
+    │   ├── kustomization.yaml
+    │   └── prometheus.yaml
+    └── ingress/
+        ├── kustomization.yaml
+        └── nginx-ingress.yaml</code></pre>
+
+    <h3>Kustomize en deux mots</h3>
+
+    <p><strong>Kustomize</strong> est un outil intégré à <code>kubectl</code> qui permet de personnaliser des manifestes YAML sans les dupliquer. Le principe : une <strong>base</strong> commune et des <strong>overlays</strong> qui la modifient.</p>
+
+    <pre data-lang="yaml"><code># base/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+  - configmap.yaml
+
+---
+# overlays/production/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base                  # Hérite de la base
+patches:
+  - path: replicas-patch.yaml   # Applique les patches prod
+  - path: resources-patch.yaml
+namespace: mon-app-prod         # Namespace spécifique
+
+---
+# overlays/production/replicas-patch.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mon-app
+spec:
+  replicas: 5                   # 5 réplicas en production</code></pre>
+
+    <pre data-lang="bash"><code># Prévisualiser ce que Kustomize génère pour la prod
+kubectl kustomize overlays/production/
+
+# Appliquer directement (hors GitOps, pour tester)
+kubectl apply -k overlays/production/</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Gestion des secrets -->
+    <h2>Gestion des <span class="keyword">secrets</span> dans GitOps</h2>
+
+    <p>Le plus grand défi de GitOps : comment versionner des secrets (mots de passe, clés API, certificats) dans Git <strong>sans les exposer en clair</strong> ?</p>
+
+    <h3>Sealed Secrets (Bitnami)</h3>
+
+    <p><strong>Sealed Secrets</strong> chiffre tes secrets avec une clé publique. Seul le contrôleur installé dans le cluster peut les déchiffrer :</p>
+
+    <pre data-lang="bash"><code># Créer un Secret Kubernetes classique (NE PAS commiter !)
+kubectl create secret generic mon-secret \
+  --from-literal=db-password=SuperSecretMotDePasse \
+  --dry-run=client -o yaml > secret.yaml
+
+# Chiffrer avec kubeseal (clé publique du cluster)
+kubeseal --format yaml < secret.yaml > sealed-secret.yaml
+
+# Le SealedSecret est safe pour Git - il ne peut être déchiffré
+# que par le contrôleur du cluster
+cat sealed-secret.yaml
+# apiVersion: bitnami.com/v1alpha1
+# kind: SealedSecret
+# spec:
+#   encryptedData:
+#     db-password: AgBy3i4OJSWK+... (chiffré, illisible)
+
+# Commiter le SealedSecret (chiffré) dans Git
+git add sealed-secret.yaml
+git commit -m "Ajout du secret de base de données (chiffré)"</code></pre>
+
+    <h3>SOPS + age</h3>
+
+    <p><strong>SOPS</strong> (de Mozilla) chiffre les valeurs dans les fichiers YAML/JSON tout en gardant les clés lisibles. Combiné avec <strong>age</strong> (chiffrement moderne), c'est une solution élégante :</p>
+
+    <pre data-lang="bash"><code># Installer SOPS et age
+# (varie selon l'OS)
+
+# Générer une clé age
+age-keygen -o key.txt
+# Public key: age1ql3z7hjy...
+
+# Configurer SOPS pour le projet
+cat > .sops.yaml << 'EOF'
+creation_rules:
+  - path_regex: .*secrets.*\.yaml$
+    age: age1ql3z7hjy...        # Clé publique
+EOF
+
+# Chiffrer un fichier
+sops --encrypt secrets.yaml > secrets.enc.yaml
+
+# Le fichier chiffré garde les clés lisibles :
+# db:
+#     password: ENC[AES256_GCM,data:abc123...,type:str]
+#     host: ENC[AES256_GCM,data:def456...,type:str]
+
+# Déchiffrer (nécessite la clé privée)
+sops --decrypt secrets.enc.yaml</code></pre>
+
+    <h3>External Secrets Operator</h3>
+
+    <p><strong>External Secrets Operator</strong> (ESO) ne stocke pas les secrets dans Git du tout. Il les récupère depuis un gestionnaire de secrets externe (AWS Secrets Manager, HashiCorp Vault, Azure Key Vault) :</p>
+
+    <pre data-lang="yaml"><code># external-secret.yaml - Référence vers un secret externe
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: mon-secret
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: mon-secret             # Nom du Secret K8s créé
+  data:
+    - secretKey: db-password
+      remoteRef:
+        key: production/database  # Chemin dans Vault
+        property: password</code></pre>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Solution</th>
+          <th>Principe</th>
+          <th>Idéal pour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sealed Secrets</strong></td>
+          <td>Chiffrement asymétrique, déchiffrement dans le cluster</td>
+          <td>Petites équipes, setup simple</td>
+        </tr>
+        <tr>
+          <td><strong>SOPS + age</strong></td>
+          <td>Chiffrement des valeurs dans les fichiers YAML</td>
+          <td>Flexibilité, multi-cloud</td>
+        </tr>
+        <tr>
+          <td><strong>External Secrets</strong></td>
+          <td>Référence vers un gestionnaire de secrets externe</td>
+          <td>Entreprises avec Vault/AWS SM existant</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Puissance du modèle -->
+    <h2>La puissance du modèle - <span class="keyword">rollback et audit</span></h2>
+
+    <p>Voici où GitOps brille vraiment : les opérations qui sont complexes dans un déploiement traditionnel deviennent <strong>triviales</strong>.</p>
+
+    <h3>Rollback = git revert</h3>
+
+    <pre data-lang="bash"><code># Un déploiement a causé un problème en production ?
+# Pas de panique. C'est un simple git revert.
+
+# Voir l'historique des déploiements
+git log --oneline
+# a1b2c3d Mise à jour image v2.3.0
+# d4e5f6g Ajout variable d'environnement LOG_LEVEL
+# h7i8j9k Mise à jour image v2.2.0
+
+# Annuler le dernier déploiement
+git revert HEAD
+# [main k1l2m3n] Revert "Mise à jour image v2.3.0"
+
+# Push - l'agent GitOps détecte le changement et rollback automatiquement
+git push
+
+# En quelques secondes, la prod est revenue à v2.2.0
+# Pas besoin de trouver la bonne commande kubectl
+# Pas besoin de chercher la bonne image Docker
+# Git a TOUT l'historique</code></pre>
+
+    <h3>Audit trail = git log</h3>
+
+    <pre data-lang="bash"><code># Qui a modifié quoi, quand, et pourquoi ?
+git log --format="%h %an %ad %s" --date=short
+# a1b2c3d Alice 2026-03-09 Mise à jour image v2.3.0
+# d4e5f6g Bob   2026-03-08 Ajout variable LOG_LEVEL=debug
+# h7i8j9k Alice 2026-03-07 Mise à jour image v2.2.0
+# l4m5n6o Carol 2026-03-05 Augmentation replicas 3 -> 5
+
+# Qui a touché à la config de production ?
+git log --oneline -- overlays/production/
+
+# Qu'est-ce qui a changé exactement dans ce déploiement ?
+git diff d4e5f6g..a1b2c3d</code></pre>
+
+    <div class="key-message">
+      <p>Avec GitOps, <span class="git-cmd">git log</span> devient ton <strong>journal d'audit complet</strong>. Chaque changement d'infrastructure est tracé, attribué à un auteur, et peut être annulé. C'est exactement ce que les auditeurs de sécurité adorent.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Multi-environnement -->
+    <h2><span class="keyword">Multi-environnement</span> - branches vs dossiers</h2>
+
+    <p>Comment gérer dev, staging et production dans un repo GitOps ? Deux approches existent :</p>
+
+    <h3>Approche par branches (non recommandée)</h3>
+
+    <pre data-lang="bash"><code># Branche dev    -> déploie en dev
+# Branche staging -> déploie en staging
+# Branche main   -> déploie en production
+
+# Problème : les promotions se font par merge/cherry-pick
+# entre branches. C'est fragile et source d'erreurs.
+# Les branches divergent facilement.</code></pre>
+
+    <h3>Approche par dossiers (recommandée)</h3>
+
+    <pre data-lang="bash"><code># Une seule branche (main), des dossiers par environnement
+# overlays/dev/       -> déploie en dev
+# overlays/staging/   -> déploie en staging
+# overlays/production/ -> déploie en production
+
+# Promotion : modifier le tag d'image dans le dossier suivant
+# 1. Tester en dev  : modifier overlays/dev/kustomization.yaml
+# 2. Promouvoir     : copier le même tag dans overlays/staging/
+# 3. Mettre en prod : copier le tag dans overlays/production/
+
+# Avantage : un seul git log montre tout l'historique
+# de tous les environnements. Pas de divergence de branches.</code></pre>
+
+    <div class="tip">
+      <p><strong>Astuce :</strong> La communauté GitOps recommande fortement l'approche par dossiers. Les branches par environnement semblent intuitives au début, mais deviennent rapidement un cauchemar de maintenance quand les environnements divergent.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - <span class="keyword">Structurer un repo GitOps</span></h2>
+
+    <div class="quest-objective">
+      <p>Crée un dépôt GitOps pour une application web fictive appelée "taverne-api" (l'API de la Taverne du royaume) avec Kustomize et trois environnements :</p>
+      <ol>
+        <li>Crée la structure base/ + overlays/ (dev, staging, production)</li>
+        <li>Écris les manifestes de base (deployment, service)</li>
+        <li>Personnalise chaque environnement (réplicas, ressources)</li>
+        <li>Simule une promotion de dev vers production</li>
+        <li>Simule un rollback avec git revert</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer la structure</h3>
+
+    <pre data-lang="bash"><code># Créer le dépôt
+mkdir taverne-gitops
+cd taverne-gitops
+git init
+
+# Créer l'arborescence
+mkdir -p base
+mkdir -p overlays/dev
+mkdir -p overlays/staging
+mkdir -p overlays/production</code></pre>
+
+    <h3>Étape 2 - Les manifestes de base</h3>
+
+    <pre data-lang="bash"><code># base/deployment.yaml
+cat > base/deployment.yaml << 'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taverne-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: taverne-api
+  template:
+    metadata:
+      labels:
+        app: taverne-api
+    spec:
+      containers:
+        - name: taverne-api
+          image: taverne-api:v1.0.0
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+EOF
+
+# base/service.yaml
+cat > base/service.yaml << 'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: taverne-api
+spec:
+  selector:
+    app: taverne-api
+  ports:
+    - port: 80
+      targetPort: 8080
+EOF
+
+# base/kustomization.yaml
+cat > base/kustomization.yaml << 'EOF'
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+EOF
+
+git add base/
+git commit -m "Ajout des manifestes de base taverne-api"</code></pre>
+
+    <h3>Étape 3 - Les overlays par environnement</h3>
+
+    <pre data-lang="bash"><code># overlays/dev/kustomization.yaml
+cat > overlays/dev/kustomization.yaml << 'EOF'
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+namespace: taverne-dev
+images:
+  - name: taverne-api
+    newTag: v1.0.0
+EOF
+
+# overlays/staging/kustomization.yaml
+cat > overlays/staging/kustomization.yaml << 'EOF'
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+namespace: taverne-staging
+images:
+  - name: taverne-api
+    newTag: v1.0.0
+patches:
+  - path: replicas-patch.yaml
+EOF
+
+cat > overlays/staging/replicas-patch.yaml << 'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taverne-api
+spec:
+  replicas: 2
+EOF
+
+# overlays/production/kustomization.yaml
+cat > overlays/production/kustomization.yaml << 'EOF'
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+namespace: taverne-prod
+images:
+  - name: taverne-api
+    newTag: v1.0.0
+patches:
+  - path: replicas-patch.yaml
+  - path: resources-patch.yaml
+EOF
+
+cat > overlays/production/replicas-patch.yaml << 'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taverne-api
+spec:
+  replicas: 5
+EOF
+
+cat > overlays/production/resources-patch.yaml << 'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taverne-api
+spec:
+  template:
+    spec:
+      containers:
+        - name: taverne-api
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+EOF
+
+git add overlays/
+git commit -m "Ajout des overlays dev, staging et production"</code></pre>
+
+    <h3>Étape 4 - Simuler une promotion</h3>
+
+    <pre data-lang="bash"><code># Nouvelle version testée en dev
+sed -i 's/newTag: v1.0.0/newTag: v1.1.0/' overlays/dev/kustomization.yaml
+git add overlays/dev/
+git commit -m "Deploy taverne-api v1.1.0 en dev"
+
+# Promotion en staging
+sed -i 's/newTag: v1.0.0/newTag: v1.1.0/' overlays/staging/kustomization.yaml
+git add overlays/staging/
+git commit -m "Promotion taverne-api v1.1.0 en staging"
+
+# Promotion en production
+sed -i 's/newTag: v1.0.0/newTag: v1.1.0/' overlays/production/kustomization.yaml
+git add overlays/production/
+git commit -m "Promotion taverne-api v1.1.0 en production"</code></pre>
+
+    <h3>Étape 5 - Simuler un rollback</h3>
+
+    <pre data-lang="bash"><code># Bug en prod ! On annule le dernier déploiement
+git revert HEAD --no-edit
+# [main abc1234] Revert "Promotion taverne-api v1.1.0 en production"
+
+# Vérifier que la prod est revenue à v1.0.0
+grep newTag overlays/production/kustomization.yaml
+#     newTag: v1.0.0
+
+# L'historique complet montre tout
+git log --oneline
+# abc1234 Revert "Promotion taverne-api v1.1.0 en production"
+# def5678 Promotion taverne-api v1.1.0 en production
+# ghi9012 Promotion taverne-api v1.1.0 en staging
+# jkl3456 Deploy taverne-api v1.1.0 en dev
+# mno7890 Ajout des overlays dev, staging et production
+# pqr1234 Ajout des manifestes de base taverne-api</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des concepts</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>GitOps</strong></td>
+          <td>Philosophie où Git est la source de vérité pour l'infrastructure</td>
+        </tr>
+        <tr>
+          <td><strong>Modèle Pull</strong></td>
+          <td>Un agent dans le cluster surveille Git et applique les changements</td>
+        </tr>
+        <tr>
+          <td><strong>Modèle Push</strong></td>
+          <td>Le CI/CD pousse les changements vers le cluster (traditionnel)</td>
+        </tr>
+        <tr>
+          <td><strong>ArgoCD</strong></td>
+          <td>Outil GitOps populaire avec interface web riche</td>
+        </tr>
+        <tr>
+          <td><strong>Flux</strong></td>
+          <td>Outil GitOps CNCF, 100% natif Kubernetes</td>
+        </tr>
+        <tr>
+          <td><strong>Kustomize</strong></td>
+          <td>Outil de personnalisation de manifestes YAML (base + overlays)</td>
+        </tr>
+        <tr>
+          <td><strong>Sealed Secrets</strong></td>
+          <td>Chiffrement asymétrique de secrets pour Git</td>
+        </tr>
+        <tr>
+          <td><strong>SOPS + age</strong></td>
+          <td>Chiffrement des valeurs dans les fichiers YAML</td>
+        </tr>
+        <tr>
+          <td><strong>External Secrets</strong></td>
+          <td>Récupération de secrets depuis un gestionnaire externe</td>
+        </tr>
+        <tr>
+          <td><strong>Self-healing</strong></td>
+          <td>Correction automatique des modifications manuelles</td>
+        </tr>
+        <tr>
+          <td><strong>Dossiers vs branches</strong></td>
+          <td>Les dossiers par environnement sont préférés aux branches</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître des Courants éteint la grande carte animée d'un geste de la main. La salle retrouve son calme. « Tu comprends maintenant pourquoi on les appelle les <strong>Courants du Destin</strong>. Chaque commit dans ton dépôt GitOps est un courant qui façonne l'infrastructure du royaume. Pas de magie obscure, pas de commandes tapées en urgence sur un serveur en feu. Juste des parchemins versionnés qui deviennent réalité. »</p>
+      <p>« Le plus beau, c'est que <strong>tout est dans l'historique</strong>. Qui a changé quoi, quand, pourquoi. Si quelque chose se brise, tu remontes le courant. Un simple <code>git revert</code>, et le royaume retrouve sa stabilité. C'est la paix de l'esprit que seul un Maître des Courants peut offrir. »</p>
+      <p>Il te tend un médaillon gravé d'un arbre dont les branches se transforment en flux lumineux. « Tu as appris à gouverner l'infrastructure par les Courants. Utilise ce pouvoir avec sagesse. »</p>
+    </div>
+

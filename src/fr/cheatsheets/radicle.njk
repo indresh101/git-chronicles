@@ -1,0 +1,192 @@
+---
+layout: layouts/cheatsheet.njk
+lang: fr
+title: "Radicle"
+cheatsheet_slug_fr: "radicle"
+cheatsheet_slug_en: "radicle"
+permalink: /fr/cheatsheets/radicle/
+---
+
+<div class="cheatsheet">
+
+      <section>
+        <h2>Installation</h2>
+<pre data-lang="bash"><code># Via binaires pré-compilés (recommandé)
+curl -sSf https://radicle.xyz/install | sh
+
+# Via Cargo (Rust)
+cargo install radicle-node radicle-cli
+
+# Vérifier
+rad --version
+rad --help</code></pre>
+        <p>Prérequis : Git installé, connexion réseau pour sync.</p>
+      </section>
+
+      <section>
+        <h2>Identité</h2>
+<pre data-lang="bash"><code># Créer une identité (clé Ed25519, une seule fois)
+rad auth
+# Tu choisis un alias et une passphrase
+
+# Afficher ton identité
+rad self
+# Montre : DID (did:key:z6Mk...), alias, node ID
+
+# L'identité est stockée localement
+# Pas de serveur central, pas de compte à créer</code></pre>
+        <p><strong>DID</strong> = Decentralized Identifier. C'est ta clé publique, ton identité sur le réseau.</p>
+      </section>
+
+      <section>
+        <h2>Projet</h2>
+<pre data-lang="bash"><code># Initialiser un projet Radicle (dans un dépôt git existant)
+cd mon-projet
+git init && git add . && git commit -m "init"
+rad init
+# Choisir : nom, description, branche par défaut, visibilité
+
+# Inspecter le projet
+rad inspect              # RID, nom, description, delegates
+rad id                   # ton identité dans ce projet
+
+# Structure créée
+# .git/refs/namespaces/   - refs Radicle
+# Aucun fichier ajouté dans le working tree</code></pre>
+      </section>
+
+      <section>
+        <h2>Réseau - Push / Sync</h2>
+<pre data-lang="bash"><code># Publier les changements sur le réseau
+rad push                 # push vers les seed nodes connectés
+
+# Synchroniser (envoie et récupère les mises à jour)
+rad sync                 # synchroniser avec les pairs
+
+# Cloner un projet distant
+rad clone rad:z3gqcJ...  # cloner via RID (Radicle ID)</code></pre>
+      </section>
+
+      <section>
+        <h2>Patches (équivalent des Pull Requests)</h2>
+<pre data-lang="bash"><code># Créer un patch (depuis une branche)
+git switch -c ma-feature
+# ... faire des modifs, commiter ...
+rad patch create         # crée un patch à partir de la branche
+
+# Lister les patches
+rad patch list           # tous les patches
+rad patch list --state open  # seulement les ouverts
+
+# Consulter un patch
+rad patch show PATCH_ID
+
+# Commenter / reviewer
+rad patch comment PATCH_ID --message "LGTM !"
+rad patch review PATCH_ID --accept
+rad patch review PATCH_ID --reject
+
+# Fusionner un patch
+rad patch merge PATCH_ID
+
+# Fermer sans fusionner
+rad patch close PATCH_ID</code></pre>
+      </section>
+
+      <section>
+        <h2>Issues (tickets décentralisés)</h2>
+<pre data-lang="bash"><code># Créer une issue
+rad issue create
+# Ouvre un éditeur pour titre + description
+
+# Lister
+rad issue list
+rad issue list --state open
+
+# Consulter
+rad issue show ISSUE_ID
+
+# Commenter
+rad issue comment ISSUE_ID "Bonne idée !"
+
+# Fermer
+rad issue close ISSUE_ID</code></pre>
+      </section>
+
+      <section>
+        <h2>Node - Gestion du noeud</h2>
+<pre data-lang="bash"><code># Démarrer le noeud local
+rad node start           # démarre en arrière-plan
+rad node status          # état du noeud
+rad node stop            # arrêter
+
+# Logs et debug
+rad node logs            # voir les logs en temps réel
+rad node config          # afficher la configuration
+
+# Le noeud écoute sur le port 8776 (TCP)
+# Nécessaire pour sync P2P</code></pre>
+      </section>
+
+      <section>
+        <h2>Tracking - Suivre des projets</h2>
+<pre data-lang="bash"><code># Suivre un projet (le répliquer localement)
+rad track rad:z3gqcJ...       # par RID
+rad untrack rad:z3gqcJ...     # arrêter de répliquer
+
+# Inspecter le projet courant (RID, delegates, etc.)
+rad inspect</code></pre>
+      </section>
+
+      <section>
+        <h2>Comparaison GitHub vs Radicle</h2>
+        <table>
+          <thead>
+            <tr><th>Concept</th><th>GitHub</th><th>Radicle</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Dépôt</td><td>Repository</td><td>Project (RID)</td></tr>
+            <tr><td>Identité</td><td>Compte GitHub</td><td>DID (clé crypto)</td></tr>
+            <tr><td>Contribution</td><td>Pull Request</td><td>Patch</td></tr>
+            <tr><td>Tickets</td><td>Issue</td><td>Issue</td></tr>
+            <tr><td>Copie</td><td>Fork</td><td>Clone (fork implicite)</td></tr>
+            <tr><td>Favori</td><td>Star</td><td>Track</td></tr>
+            <tr><td>CI/CD</td><td>GitHub Actions</td><td>radicle-ci</td></tr>
+            <tr><td>Hébergement</td><td>github.com</td><td>Seed nodes P2P</td></tr>
+            <tr><td>Modèle</td><td>Centralisé</td><td>Décentralisé (P2P)</td></tr>
+            <tr><td>Disponibilité</td><td>Dépend de GitHub</td><td>Réseau distribué</td></tr>
+            <tr><td>Censure</td><td>Possible (DMCA, etc.)</td><td>Résistant</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Seed Node - Hébergement</h2>
+<pre data-lang="bash"><code># Un seed node est un noeud Radicle permanent
+# Il réplique les projets et les rend accessibles
+
+# Prérequis serveur
+# - Linux, port 8776 ouvert (TCP)
+# - radicle-node installé
+
+# Configuration
+rad node config
+# Fichier : ~/.radicle/config.json
+# Policies : block (liste noire) ou allow (liste blanche)
+
+# Systemd (démarrage automatique)
+# /etc/systemd/system/radicle-node.service
+# [Service]
+# ExecStart=/usr/local/bin/radicle-node
+# User=radicle
+# Restart=always
+
+sudo systemctl enable radicle-node
+sudo systemctl start radicle-node
+
+# Firewall
+sudo ufw allow 8776/tcp     # Ubuntu
+sudo firewall-cmd --add-port=8776/tcp --permanent  # Fedora</code></pre>
+      </section>
+
+    </div>

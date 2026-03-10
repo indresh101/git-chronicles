@@ -1,0 +1,615 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_17
+quest_number: "17"
+arc: 4
+title: "Les Épreuves Automatiques"
+subtitle: "Tests automatisés, matrice, cache et artefacts"
+quest_slug_fr: "17-les-epreuves-automatiques"
+quest_slug_en: "17-the-automated-trials"
+permalink: /fr/quetes/17-les-epreuves-automatiques/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Tu avances dans les Forges Automatiques. Après avoir compris le fonctionnement des Pipelines (les chaînes d'assemblage enchantées), tu découvres une immense salle remplie de miroirs magiques et de balances de précision. Des parchemins sont suspendus dans les airs, tournant lentement tandis que des flammes colorées les inspectent sous tous les angles. Certains brillent d'un vert éclatant. D'autres rougissent et retombent dans un bac de rejet.</p>
+      <p>« Bienvenue dans la <strong>Salle des Épreuves</strong>. Ici, chaque chronique est soumise à des tests automatiques avant d'être acceptée dans la Grande Archive. Les Épreuves vérifient la <strong>forme</strong> du texte, la <strong>justesse</strong> de chaque calcul, la <strong>cohérence</strong> entre les chapitres, et le <strong>fonctionnement complet</strong> de l'ensemble. Aucun document ne passe sans avoir <strong>survécu à toutes les épreuves</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Pourquoi automatiser -->
+    <h2>Pourquoi automatiser les tests ?</h2>
+
+    <p>Imagine un monde sans tests automatiques : chaque modification du code doit être vérifiée <strong>manuellement</strong> par un humain. C'est lent, sujet aux erreurs, et ça ne passe pas à l'échelle.</p>
+
+    <p>Les tests automatiques apportent plusieurs avantages cruciaux :</p>
+
+    <ul>
+      <li><strong>Détection précoce</strong> : les erreurs sont attrapées avant qu'un humain ne relise le code</li>
+      <li><strong>Confiance</strong> : tu peux modifier du code existant sans craindre de tout casser</li>
+      <li><strong>Rapidité</strong> : des centaines de vérifications en quelques secondes</li>
+      <li><strong>Cohérence</strong> : les mêmes tests passent à chaque fois, sans oubli humain</li>
+      <li><strong>Documentation vivante</strong> : les tests montrent comment le code est censé fonctionner</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« Un Archiviste qui vérifie à la main chaque parchemin finit par s'épuiser et par <strong>laisser passer des erreurs</strong>. Les Épreuves Automatiques ne se fatiguent jamais. Elles sont les gardiennes infaillibles de la qualité. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Types d'épreuves -->
+    <h2>Les types d'épreuves automatiques</h2>
+
+    <p>Il existe plusieurs niveaux de tests, du plus rapide au plus complet. Chacun a un rôle précis.</p>
+
+    <h3>Le <span class="keyword">Linting</span> - L'épreuve de forme</h3>
+
+    <p>Le <strong>linting</strong> vérifie que le code respecte les <strong>règles de style et de formatage</strong>. Il ne teste pas si le code fonctionne - il vérifie qu'il est bien écrit.</p>
+
+    <p>Exemples de vérifications :</p>
+    <ul>
+      <li>Le script commence-t-il par un shebang (<code>#!/usr/bin/env bash</code>) ?</li>
+      <li>Les indentations sont-elles cohérentes ?</li>
+      <li>Y a-t-il des espaces manquants ou en trop ?</li>
+      <li>Les variables sont-elles correctement nommées ?</li>
+    </ul>
+
+    <p>Le linting est <strong>ultra-rapide</strong> et attrape les erreurs les plus simples. On le lance toujours en premier.</p>
+
+    <h3>Les <span class="keyword">tests unitaires</span> - L'épreuve de justesse</h3>
+
+    <p>Les <strong>tests unitaires</strong> vérifient que chaque <strong>fonction individuelle</strong> produit le bon résultat. On isole une petite partie du code et on teste ses entrées/sorties.</p>
+
+    <p>Exemple : si tu as une fonction qui additionne deux nombres, un test unitaire vérifie que <code>additionner 2 3</code> retourne bien <code>5</code>.</p>
+
+    <pre data-lang="bash"><code># Exemple de test unitaire simple
+resultat=$(./calculer.sh addition 2 3)
+if [ "$resultat" = "5" ]; then
+    echo "PASS: addition 2 + 3 = 5"
+else
+    echo "FAIL: attendu 5, obtenu $resultat"
+fi</code></pre>
+
+    <h3>Les <span class="keyword">tests d'intégration</span> - L'épreuve de cohérence</h3>
+
+    <p>Les <strong>tests d'intégration</strong> vérifient que plusieurs composants fonctionnent <strong>ensemble</strong>. Un test unitaire vérifie une fonction en isolation. Un test d'intégration vérifie que les fonctions collaborent correctement.</p>
+
+    <p>Exemple : vérifier que la fonction de calcul et la fonction d'affichage produisent le bon résultat quand on les combine.</p>
+
+    <h3>Les <span class="keyword">tests end-to-end</span> - L'épreuve complète</h3>
+
+    <p>Les <strong>tests end-to-end</strong> (bout en bout) simulent le <strong>parcours complet</strong> d'un utilisateur. Ils testent l'application entière, de l'entrée à la sortie.</p>
+
+    <p>Exemple : exécuter le script complet avec des arguments, vérifier que le fichier de sortie est correct, que les messages d'erreur sont appropriés, etc.</p>
+
+    <div class="key-message">
+      <p>Les épreuves suivent un <strong>ordre naturel</strong> : d'abord la forme (linting), puis la justesse de chaque pièce (unitaire), puis la cohérence entre les pièces (intégration), et enfin le fonctionnement complet (end-to-end). Chaque niveau attrape des erreurs que le précédent ne voit pas.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Matrice -->
+    <h2>La matrice de tests - <span class="keyword">Tester partout à la fois</span></h2>
+
+    <p>Ton code doit fonctionner sur différents systèmes d'exploitation et différentes versions d'outils. La <strong>matrice de tests</strong> permet de lancer les mêmes tests sur <strong>toutes les combinaisons</strong> en parallèle.</p>
+
+    <pre data-lang="yaml"><code>strategy:
+  matrix:
+    os: [ubuntu-latest, windows-latest, macos-latest]
+    node-version: [18, 20, 22]</code></pre>
+
+    <p>Avec cette configuration, GitHub Actions crée <strong>9 jobs</strong> (3 OS x 3 versions). Chaque combinaison est testée indépendamment.</p>
+
+    <p>On utilise les valeurs de la matrice dans le workflow :</p>
+
+    {% raw %}<pre data-lang="yaml"><code>jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm test</code></pre>{% endraw %}
+
+    <div class="narrative">
+      <p>« Les Épreuves de la Salle des Miroirs testent chaque chronique sous <strong>tous les angles possibles</strong>. Un parchemin qui fonctionne dans un miroir mais pas dans un autre est un parchemin défaillant. La matrice garantit une <strong>couverture totale</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Cache -->
+    <h2>Le cache - <span class="keyword">Accélérer les épreuves</span></h2>
+
+    <p>Télécharger les dépendances à chaque exécution du workflow est lent et gaspille des ressources. L'action <code>actions/cache</code> permet de <strong>sauvegarder</strong> ces fichiers entre les exécutions.</p>
+
+    {% raw %}<pre data-lang="yaml"><code>steps:
+  - uses: actions/checkout@v4
+
+  - name: Cache des dépendances
+    uses: actions/cache@v4
+    with:
+      path: ~/.npm
+      key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+      restore-keys: |
+        ${{ runner.os }}-npm-
+
+  - run: npm install
+  - run: npm test</code></pre>{% endraw %}
+
+    <p>Le fonctionnement est simple :</p>
+    <ul>
+      <li><code>path</code> : le dossier à mettre en cache</li>
+      <li><code>key</code> : un identifiant unique basé sur le système et le fichier de dépendances</li>
+      <li><code>restore-keys</code> : des clés de secours si la clé exacte n'est pas trouvée</li>
+    </ul>
+
+    <p>Si le fichier <code>package-lock.json</code> n'a pas changé, les dépendances sont restaurées depuis le cache au lieu d'être retéléchargées. C'est <strong>beaucoup plus rapide</strong>.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Artefacts -->
+    <h2>Les artefacts - <span class="keyword">Conserver les résultats</span></h2>
+
+    <p>Les <strong>artefacts</strong> sont des fichiers produits pendant le workflow que tu veux <strong>sauvegarder</strong> après l'exécution. Les cas d'usage les plus courants : rapports de tests, fichiers de couverture, logs.</p>
+
+    <pre data-lang="yaml"><code>steps:
+  - run: npm test -- --coverage
+
+  - name: Sauvegarder le rapport de couverture
+    uses: actions/upload-artifact@v4
+    with:
+      name: rapport-couverture
+      path: coverage/
+      retention-days: 30</code></pre>
+
+    <p>Après l'exécution du workflow, tu retrouves les artefacts dans l'onglet "Actions" de GitHub, téléchargeables directement.</p>
+
+    <p>Pour <strong>récupérer</strong> un artefact dans un job ultérieur :</p>
+
+    <pre data-lang="yaml"><code>  - uses: actions/download-artifact@v4
+    with:
+      name: rapport-couverture</code></pre>
+
+    <div class="narrative">
+      <p>« Les résultats des Épreuves ne disparaissent pas dans le néant. Ils sont <strong>archivés</strong> - les rapports, les preuves, les mesures. Un bon Archiviste garde toujours une <strong>trace des vérifications</strong> effectuées. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Status checks -->
+    <h2>Les status checks obligatoires - <span class="keyword">Protéger la branche principale</span></h2>
+
+    <p>Le véritable pouvoir des tests automatiques, c'est de les rendre <strong>obligatoires</strong>. Avec les <strong>required status checks</strong>, tu peux empêcher tout merge dans <span class="git-cmd">main</span> si les tests ne passent pas.</p>
+
+    <p>Configuration sur GitHub :</p>
+    <ol>
+      <li>Va dans <strong>Settings</strong> &gt; <strong>Branches</strong></li>
+      <li>Ajoute une <strong>Branch protection rule</strong> pour <code>main</code></li>
+      <li>Coche <strong>Require status checks to pass before merging</strong></li>
+      <li>Sélectionne les checks requis (le nom de tes jobs de workflow)</li>
+    </ol>
+
+    <pre data-lang="yaml"><code># Exemple : le job "tests" doit passer avant tout merge
+name: CI
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test</code></pre>
+
+    <p>Avec cette configuration, si quelqu'un ouvre une Pull Request vers <span class="git-cmd">main</span> et que les tests échouent, le bouton "Merge" sera <span class="highlight-red">bloqué</span>. Personne ne peut fusionner du code cassé.</p>
+
+    <div class="key-message">
+      <p>La Grande Archive est protégée par un <strong>sceau de qualité</strong>. Aucun parchemin ne peut y entrer sans avoir passé toutes les Épreuves. C'est la règle la plus importante des Forges : <strong>ce qui échoue aux tests ne merge pas</strong>.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Couverture -->
+    <h2>La couverture de tests</h2>
+
+    <p>La <strong>couverture de tests</strong> (test coverage) mesure le pourcentage de ton code qui est effectivement testé. C'est un indicateur utile mais imparfait.</p>
+
+    <ul>
+      <li><strong>100% de couverture</strong> ne signifie pas que ton code est parfait - ça signifie que chaque ligne est exécutée au moins une fois</li>
+      <li><strong>Faible couverture</strong> est un signal d'alarme - des parties entières de ton code ne sont jamais testées</li>
+      <li>Un bon objectif : viser <strong>70-80%</strong> pour un projet standard</li>
+    </ul>
+
+    <p>Les outils de couverture génèrent des rapports montrant quelles lignes sont testées (en <span class="highlight">vert</span>) et lesquelles ne le sont pas (en <span class="highlight-red">rouge</span>).</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Patterns courants -->
+    <h2>Patterns courants dans les workflows de test</h2>
+
+    <h3>Lancer le linter avant les tests</h3>
+
+    <p>Le linting est rapide. Si le code est mal formaté, inutile de lancer des tests coûteux. On met le linter en premier :</p>
+
+    <pre data-lang="yaml"><code>jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm run lint
+
+  tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test</code></pre>
+
+    <p>Le mot-clé <code>needs</code> crée une <strong>dépendance</strong> : le job <span class="keyword">tests</span> ne démarre que si <span class="keyword">lint</span> a réussi.</p>
+
+    <h3>Fail fast vs run all</h3>
+
+    <p>Par défaut, dans une matrice, si un job échoue, GitHub annule les autres. C'est le mode <span class="keyword">fail-fast</span> :</p>
+
+    <pre data-lang="yaml"><code>strategy:
+  fail-fast: true  # défaut : arrête tout dès qu'un job échoue
+  matrix:
+    os: [ubuntu-latest, windows-latest]</code></pre>
+
+    <p>Si tu veux voir <strong>tous</strong> les résultats même quand certains échouent :</p>
+
+    <pre data-lang="yaml"><code>strategy:
+  fail-fast: false  # continue même si un job échoue
+  matrix:
+    os: [ubuntu-latest, windows-latest]</code></pre>
+
+    <h3>Tester uniquement sur les Pull Requests</h3>
+
+    <p>Pour économiser des ressources, tu peux limiter les tests aux Pull Requests :</p>
+
+    <pre data-lang="yaml"><code>on:
+  pull_request:
+    branches: [main]</code></pre>
+
+    <p>Cela évite de relancer les tests à chaque push sur chaque branche. Les tests ne se déclenchent que quand quelqu'un propose de fusionner vers <span class="git-cmd">main</span>.</p>
+
+    <div class="narrative">
+      <p>« Un Maître des Épreuves sait <strong>organiser ses tests intelligemment</strong>. Les vérifications rapides passent en premier, les lentes en dernier. Les épreuves coûteuses ne sont lancées que lorsque c'est nécessaire. La sagesse, c'est aussi l'<strong>efficacité</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - Créer une suite d'épreuves automatiques</h2>
+
+    <div class="quest-objective">
+      <p>Crée tes propres Épreuves Automatiques :</p>
+      <ol>
+        <li>Crée un dépôt <code>epreuves-automatiques</code></li>
+        <li>Crée un script <code>calculer.sh</code> (calculatrice en ligne de commande)</li>
+        <li>Crée un script de test <code>test-calculer.sh</code></li>
+        <li>Crée un workflow GitHub Actions avec un job de lint et un job de tests</li>
+        <li>Utilise une matrice pour tester sur 2 systèmes d'exploitation</li>
+        <li>Commite le tout et lance la vérification</li>
+      </ol>
+    </div>
+
+    <h3>Étape 1 - Créer le dépôt</h3>
+
+    <pre data-lang="bash"><code>mkdir epreuves-automatiques
+cd epreuves-automatiques
+git init</code></pre>
+
+    <h3>Étape 2 - Créer le script de calcul</h3>
+
+    <p>Crée un fichier <code>calculer.sh</code> qui effectue des opérations mathématiques simples :</p>
+
+    <pre data-lang="bash"><code>cat > calculer.sh << 'EOF'
+#!/usr/bin/env bash
+# calculer.sh - Calculatrice simple en ligne de commande
+# Usage : ./calculer.sh &lt;operation&gt; &lt;nombre1&gt; &lt;nombre2&gt;
+
+operation="$1"
+a="$2"
+b="$3"
+
+if [ -z "$operation" ] || [ -z "$a" ] || [ -z "$b" ]; then
+    echo "Usage : ./calculer.sh &lt;operation&gt; &lt;nombre1&gt; &lt;nombre2&gt;"
+    echo "Opérations : addition, soustraction, multiplication"
+    exit 1
+fi
+
+case "$operation" in
+    addition)
+        echo $(( a + b ))
+        ;;
+    soustraction)
+        echo $(( a - b ))
+        ;;
+    multiplication)
+        echo $(( a * b ))
+        ;;
+    *)
+        echo "Erreur : opération inconnue '$operation'"
+        exit 1
+        ;;
+esac
+EOF</code></pre>
+
+    <p>Rends-le exécutable :</p>
+
+    <pre data-lang="bash"><code>chmod +x calculer.sh</code></pre>
+
+    <p>Teste-le manuellement :</p>
+
+    <pre data-lang="bash"><code>./calculer.sh addition 2 3
+# Doit afficher : 5
+
+./calculer.sh multiplication 4 7
+# Doit afficher : 28</code></pre>
+
+    <h3>Étape 3 - Créer le script de test</h3>
+
+    <p>Crée un fichier <code>test-calculer.sh</code> qui vérifie automatiquement chaque opération :</p>
+
+    <pre data-lang="bash"><code>cat > test-calculer.sh << 'EOF'
+#!/usr/bin/env bash
+# test-calculer.sh - Tests automatiques pour calculer.sh
+
+SCRIPT="./calculer.sh"
+ERREURS=0
+TOTAL=0
+
+tester() {
+    local description="$1"
+    local attendu="$2"
+    local obtenu="$3"
+    TOTAL=$((TOTAL + 1))
+
+    if [ "$attendu" = "$obtenu" ]; then
+        echo "  PASS: $description"
+    else
+        echo "  FAIL: $description (attendu: '$attendu', obtenu: '$obtenu')"
+        ERREURS=$((ERREURS + 1))
+    fi
+}
+
+echo "=== Tests de calculer.sh ==="
+echo ""
+
+echo "-- Tests d'addition --"
+tester "2 + 3 = 5"       "5"  "$($SCRIPT addition 2 3)"
+tester "0 + 0 = 0"       "0"  "$($SCRIPT addition 0 0)"
+tester "100 + 200 = 300"  "300" "$($SCRIPT addition 100 200)"
+
+echo ""
+echo "-- Tests de soustraction --"
+tester "10 - 3 = 7"      "7"  "$($SCRIPT soustraction 10 3)"
+tester "5 - 5 = 0"       "0"  "$($SCRIPT soustraction 5 5)"
+
+echo ""
+echo "-- Tests de multiplication --"
+tester "4 x 7 = 28"      "28" "$($SCRIPT multiplication 4 7)"
+tester "0 x 100 = 0"     "0"  "$($SCRIPT multiplication 0 100)"
+tester "3 x 3 = 9"       "9"  "$($SCRIPT multiplication 3 3)"
+
+echo ""
+echo "=== Résultat : $((TOTAL - ERREURS))/$TOTAL tests passés ==="
+
+if [ "$ERREURS" -gt 0 ]; then
+    exit 1
+fi
+
+exit 0
+EOF</code></pre>
+
+    <p>Rends-le exécutable et teste-le :</p>
+
+    <pre data-lang="bash"><code>chmod +x test-calculer.sh
+./test-calculer.sh</code></pre>
+
+    <p>Tu devrais voir tous les tests passer.</p>
+
+    <h3>Étape 4 - Créer le workflow GitHub Actions</h3>
+
+    <p>Crée le dossier et le fichier de workflow :</p>
+
+    <pre data-lang="bash"><code>mkdir -p .github/workflows</code></pre>
+
+    {% raw %}<pre data-lang="yaml"><code># .github/workflows/epreuves.yml
+name: Épreuves Automatiques
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Vérification de forme (lint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifier le shebang de calculer.sh
+        run: |
+          premiere_ligne=$(head -n 1 calculer.sh)
+          if [ "$premiere_ligne" != "#!/usr/bin/env bash" ]; then
+            echo "ERREUR : calculer.sh doit commencer par #!/usr/bin/env bash"
+            exit 1
+          fi
+          echo "OK : shebang correct"
+
+      - name: Vérifier le shebang de test-calculer.sh
+        run: |
+          premiere_ligne=$(head -n 1 test-calculer.sh)
+          if [ "$premiere_ligne" != "#!/usr/bin/env bash" ]; then
+            echo "ERREUR : test-calculer.sh doit commencer par #!/usr/bin/env bash"
+            exit 1
+          fi
+          echo "OK : shebang correct"
+
+  tests:
+    name: Tests (${{ matrix.os }})
+    needs: lint
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rendre les scripts exécutables
+        run: |
+          chmod +x calculer.sh
+          chmod +x test-calculer.sh
+
+      - name: Lancer les tests
+        run: ./test-calculer.sh</code></pre>{% endraw %}
+
+    <div class="tip">
+      <p>Pour écrire le fichier YAML, utilise la commande <code>cat > .github/workflows/epreuves.yml &lt;&lt; 'EOF'</code> suivie du contenu, puis <code>EOF</code> sur une ligne seule.</p>
+    </div>
+
+    <h3>Étape 5 - Commiter le tout</h3>
+
+    <pre data-lang="bash"><code>git add calculer.sh test-calculer.sh .github/workflows/epreuves.yml
+git commit -m "Ajouter la calculatrice, les tests et le workflow CI"</code></pre>
+
+    <h3>Étape 6 - Vérifier la structure</h3>
+
+    <pre data-lang="bash"><code># Le script de calcul existe et fonctionne
+./calculer.sh addition 10 20
+
+# Les tests passent
+./test-calculer.sh
+
+# Le workflow existe
+cat .github/workflows/epreuves.yml</code></pre>
+
+    <h3>Étape 7 - Lancer la vérification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif des concepts -->
+    <h2>Récapitulatif des concepts</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Linting</strong></td>
+          <td>Vérification du style et du formatage du code</td>
+        </tr>
+        <tr>
+          <td><strong>Tests unitaires</strong></td>
+          <td>Tests de fonctions individuelles en isolation</td>
+        </tr>
+        <tr>
+          <td><strong>Tests d'intégration</strong></td>
+          <td>Tests de plusieurs composants ensemble</td>
+        </tr>
+        <tr>
+          <td><strong>Tests end-to-end</strong></td>
+          <td>Tests du parcours complet de l'application</td>
+        </tr>
+        <tr>
+          <td><strong>Matrice de tests</strong></td>
+          <td>Exécution parallèle sur plusieurs OS/versions</td>
+        </tr>
+        <tr>
+          <td><strong>Cache</strong></td>
+          <td>Sauvegarde des dépendances entre les exécutions</td>
+        </tr>
+        <tr>
+          <td><strong>Artefacts</strong></td>
+          <td>Fichiers produits pendant le workflow à conserver</td>
+        </tr>
+        <tr>
+          <td><strong>Status checks</strong></td>
+          <td>Vérifications obligatoires avant un merge</td>
+        </tr>
+        <tr>
+          <td><strong>Couverture de tests</strong></td>
+          <td>Pourcentage du code effectivement testé</td>
+        </tr>
+        <tr>
+          <td><strong>Fail fast</strong></td>
+          <td>Arrêter tous les jobs dès qu'un échoue</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif YAML -->
+    <h2>Récapitulatif YAML</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Élément</th>
+          <th>Rôle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>strategy: matrix:</code></td>
+          <td>Définir les combinaisons OS/versions à tester</td>
+        </tr>
+        <tr>
+          <td><code>needs: job_name</code></td>
+          <td>Créer une dépendance entre les jobs</td>
+        </tr>
+        <tr>
+          <td><code>fail-fast: false</code></td>
+          <td>Continuer même si un job échoue</td>
+        </tr>
+        <tr>
+          <td><code>actions/cache@v4</code></td>
+          <td>Mettre en cache les dépendances</td>
+        </tr>
+        <tr>
+          <td><code>actions/upload-artifact@v4</code></td>
+          <td>Sauvegarder des fichiers produits</td>
+        </tr>
+        <tr>
+          <td><code>actions/download-artifact@v4</code></td>
+          <td>Récupérer des artefacts sauvegardés</td>
+        </tr>
+        <tr>
+          <td><code>on: pull_request:</code></td>
+          <td>Déclencher uniquement sur les PR</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le Maître des Forges observe les miroirs de test tourner autour de ta chronique. Un par un, ils s'illuminent en vert. Addition - vert. Soustraction - vert. Multiplication - vert. Ubuntu - vert. macOS - vert. Le linting valide la forme. Les tests confirment la justesse.</p>
+      <p>« Tu as compris l'essence des Épreuves Automatiques. Chaque chronique que tu soumettras sera désormais <strong>passée au crible par des gardiens infatigables</strong>. Le linter vérifie la forme. Les tests unitaires vérifient la justesse. La matrice vérifie la compatibilité. Et les status checks <strong>interdisent l'entrée aux parchemins défaillants</strong>. »</p>
+      <p>Il désigne une section plus profonde des Forges, où des machines encore plus complexes assemblent des pièces entre elles automatiquement.</p>
+      <p>« Tu sais tester. Bientôt, tu sauras <strong>construire et déployer</strong>. Mais ça, c'est l'épreuve suivante. »</p>
+    </div>

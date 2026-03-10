@@ -1,0 +1,917 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_A2
+quest_number: "A2"
+arc: 6
+title: "Les Archives Infinies"
+subtitle: "Data science, DVC et notebooks Jupyter"
+quest_slug_fr: "A2-les-archives-infinies"
+quest_slug_en: "A2-the-infinite-archives"
+permalink: /fr/quetes/A2-les-archives-infinies/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Au coeur de la Citadelle, derrière une porte que peu d'archivistes connaissent, se trouve la Bibliothèque Infinie. Ses couloirs s'étendent si loin que personne n'en a jamais vu la fin. Les étagères ploient sous le poids d'archives si volumineuses qu'aucun parchemin ordinaire ne pourrait les contenir - des jeux de données immenses, des modèles prédictifs complexes, des grimoires d'expériences qui font des centaines de milliers de pages.</p>
+      <p>L'Archiviste des Nombres t'attend à l'entrée, un abaque mécanique dans une main, un graphique couvert de courbes dans l'autre.</p>
+      <p>« Tu as appris à versionner du code. C'est bien. Mais le code n'est qu'une partie de l'histoire. Les données, les modèles, les expériences - voilà <strong>le vrai trésor</strong> de la Bibliothèque. Et ces trésors sont si volumineux, si complexes, qu'ils nécessitent des outils spéciaux. Suis-moi, je vais t'enseigner <strong>l'art de versionner l'infini</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Le problème -->
+    <h2>Le problème des <span class="keyword">données massives</span> dans Git</h2>
+
+    <p>Dans un projet de data science ou de machine learning, tu travailles avec des fichiers très différents du code source :</p>
+
+    <ul>
+      <li><strong>Datasets</strong> : des fichiers CSV, Parquet ou JSON de plusieurs Go</li>
+      <li><strong>Modèles entraînés</strong> : des fichiers binaires (.pkl, .h5, .pt, .onnx) de plusieurs centaines de Mo à plusieurs Go</li>
+      <li><strong>Notebooks Jupyter</strong> : des fichiers .ipynb qui mélangent code, résultats et visualisations</li>
+      <li><strong>Images d'entraînement</strong> : des milliers (voire millions) d'images pour le computer vision</li>
+      <li><strong>Résultats d'expériences</strong> : métriques, logs, graphiques générés</li>
+    </ul>
+
+    <p>Git n'est pas conçu pour gérer ces volumes. Un dataset de 2 Go commité 5 fois = 10 Go dans l'historique. Un modèle de 500 Mo entraîné 20 fois = 10 Go supplémentaires. Très vite, ton dépôt devient ingérable.</p>
+
+    <div class="key-message">
+      <p>En data science, le code ne représente souvent que 1% du projet en taille. Les 99% restants sont des données et des modèles. Git seul ne suffit pas.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : DVC -->
+    <h2><span class="keyword">DVC</span> - Data Version Control</h2>
+
+    <p><strong>DVC</strong> (<em>Data Version Control</em>) est un outil open source conçu spécifiquement pour versionner les données, les modèles ML et les pipelines de traitement. Il fonctionne <strong>en complément de Git</strong>, pas en remplacement.</p>
+
+    <p>Le principe est similaire à Git LFS : les gros fichiers sont stockés en dehors de Git, et Git ne garde qu'un petit fichier pointeur (<code>.dvc</code>). Mais DVC va beaucoup plus loin avec ses pipelines reproductibles.</p>
+
+    <h3>Installation</h3>
+
+    <pre data-lang="bash"><code># Avec pip (recommandé - fonctionne partout)
+pip install dvc
+
+# Avec support S3
+pip install "dvc[s3]"
+
+# Avec support Google Cloud Storage
+pip install "dvc[gs]"
+
+# Avec tous les remotes
+pip install "dvc[all]"
+
+# macOS avec Homebrew
+brew install dvc
+
+# Vérifier l'installation
+dvc version</code></pre>
+
+    <pre data-lang="powershell"><code># Avec pip (recommandé)
+pip install dvc
+
+# Avec support S3
+pip install "dvc[s3]"
+
+# Avec tous les remotes
+pip install "dvc[all]"
+
+# Ou avec conda
+conda install -c conda-forge dvc
+
+# Vérifier l'installation
+dvc version</code></pre>
+
+    <h3>Initialisation dans un projet Git</h3>
+
+    <pre data-lang="bash"><code># DVC s'initialise dans un dépôt Git existant
+cd mon-projet-ml
+git init
+dvc init
+
+# DVC crée un dossier .dvc/ et un fichier .dvcignore
+# Commiter l'initialisation
+git add .dvc .dvcignore
+git commit -m "Initialiser DVC"</code></pre>
+
+    <h3>Ajouter des données</h3>
+
+    <pre data-lang="bash"><code># Ajouter un dataset à DVC
+dvc add data/train.csv
+
+# DVC crée deux choses :
+# 1. data/train.csv.dvc → un petit fichier pointeur (commité dans Git)
+# 2. data/.gitignore → pour que Git ignore le vrai fichier
+
+# Commiter le pointeur dans Git
+git add data/train.csv.dvc data/.gitignore
+git commit -m "Ajouter le dataset d'entraînement"
+
+# Ajouter un modèle entraîné
+dvc add models/classifier.pkl
+git add models/classifier.pkl.dvc models/.gitignore
+git commit -m "Ajouter le modèle entraîné v1"</code></pre>
+
+    <p>Le fichier <code>.dvc</code> ressemble à ceci :</p>
+
+    <pre data-lang="yaml"><code># Contenu de data/train.csv.dvc
+outs:
+- md5: a1b2c3d4e5f6...
+  size: 2147483648
+  hash: md5
+  path: train.csv</code></pre>
+
+    <p>C'est un simple fichier YAML avec le hash MD5 du fichier et sa taille. Git peut le versionner efficacement, et DVC utilise le hash pour retrouver le vrai fichier.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Remotes DVC -->
+    <h2>Les <span class="keyword">remotes DVC</span></h2>
+
+    <p>Par défaut, DVC stocke les données dans un cache local (<code>.dvc/cache</code>). Pour partager les données avec ton équipe, tu configures un <span class="keyword">remote</span> - un emplacement de stockage distant.</p>
+
+    <pre data-lang="bash"><code># Remote local (dossier partagé, disque réseau)
+dvc remote add -d myremote /chemin/vers/stockage/partage
+
+# Remote S3 (Amazon Web Services)
+dvc remote add -d myremote s3://mon-bucket/dvc-storage
+
+# Remote Google Cloud Storage
+dvc remote add -d myremote gs://mon-bucket/dvc-storage
+
+# Remote Azure Blob Storage
+dvc remote add -d myremote azure://mon-container/dvc-storage
+
+# Remote SSH
+dvc remote add -d myremote ssh://user@serveur.com/dvc-storage
+
+# Voir les remotes configurés
+dvc remote list</code></pre>
+
+    <p>Le flag <code>-d</code> définit le remote comme remote par défaut.</p>
+
+    <h3>Push et Pull</h3>
+
+    <pre data-lang="bash"><code># Pousser les données vers le remote
+dvc push
+
+# Récupérer les données depuis le remote
+dvc pull
+
+# Récupérer les données sans les mettre dans le workspace
+dvc fetch
+
+# Vérifier l'état (quels fichiers sont synchronisés)
+dvc status</code></pre>
+
+    <div class="tip">
+      <p><strong>Workflow typique :</strong> tu fais <span class="git-cmd">git pull</span> pour récupérer les pointeurs <code>.dvc</code>, puis <code>dvc pull</code> pour récupérer les vraies données. Les deux commandes se complètent.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Pipelines DVC -->
+    <h2>Les <span class="keyword">pipelines DVC</span></h2>
+
+    <p>La vraie puissance de DVC, ce sont les <span class="keyword">pipelines</span>. Un pipeline décrit les étapes de ton workflow ML : préparer les données, entraîner le modèle, évaluer les résultats. DVC sait quelles étapes relancer quand les données ou le code changent.</p>
+
+    <h3>Le fichier dvc.yaml</h3>
+
+    <pre data-lang="yaml"><code># dvc.yaml - définit le pipeline
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+      - src/prepare.py
+      - data/raw/
+    outs:
+      - data/prepared/
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/prepared/
+    outs:
+      - models/model.pkl
+    metrics:
+      - metrics/train_metrics.json:
+          cache: false
+
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - models/model.pkl
+      - data/prepared/
+    metrics:
+      - metrics/eval_metrics.json:
+          cache: false
+    plots:
+      - plots/confusion_matrix.csv:
+          cache: false</code></pre>
+
+    <p>Chaque <strong>stage</strong> (étape) définit :</p>
+
+    <ul>
+      <li><code>cmd</code> : la commande à exécuter</li>
+      <li><code>deps</code> : les dépendances (si elles changent, l'étape sera relancée)</li>
+      <li><code>outs</code> : les sorties (gérées par DVC, pas par Git)</li>
+      <li><code>metrics</code> : les métriques (commités dans Git pour faciliter la comparaison)</li>
+      <li><code>plots</code> : les visualisations</li>
+    </ul>
+
+    <h3>Exécuter le pipeline</h3>
+
+    <pre data-lang="bash"><code># Exécuter tout le pipeline
+dvc repro
+
+# DVC ne relance que les étapes dont les dépendances ont changé !
+# Si tu modifies src/train.py, seules les étapes "train" et "evaluate"
+# seront relancées. "prepare" sera ignorée car ses deps n'ont pas changé.
+
+# Visualiser le graphe de dépendances (DAG)
+dvc dag
+
+# Exemple de sortie :
+#   +----------+
+#   | prepare  |
+#   +----------+
+#        |
+#        v
+#   +----------+
+#   |  train   |
+#   +----------+
+#        |
+#        v
+#   +----------+
+#   | evaluate |
+#   +----------+</code></pre>
+
+    <h3>Comparer des expériences</h3>
+
+    <pre data-lang="bash"><code># Voir les métriques actuelles
+dvc metrics show
+
+# Comparer avec une autre branche ou un autre commit
+dvc metrics diff
+
+# Exemple de sortie :
+# Path                       Metric    Old      New      Change
+# metrics/eval_metrics.json  accuracy  0.85     0.91     0.06
+# metrics/eval_metrics.json  f1_score  0.83     0.89     0.06</code></pre>
+
+    <div class="key-message">
+      <p>Les pipelines DVC rendent tes expériences <strong>reproductibles</strong>. N'importe qui peut cloner ton dépôt, faire <code>dvc repro</code>, et obtenir exactement les mêmes résultats. C'est la base de la science reproductible.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Notebooks Jupyter -->
+    <h2>Le problème des <span class="keyword">notebooks Jupyter</span></h2>
+
+    <p>Les notebooks Jupyter (<code>.ipynb</code>) sont le format favori des data scientists. Mais ils posent un problème majeur avec Git : <strong>ce sont des fichiers JSON</strong> qui contiennent à la fois le code, les résultats d'exécution, et les métadonnées.</p>
+
+    <h3>Pourquoi les diffs sont horribles</h3>
+
+    <pre data-lang="json"><code>// Un notebook Jupyter, c'est du JSON comme ça :
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "execution_count": 42,
+      "metadata": {
+        "collapsed": false,
+        "scrolled": true
+      },
+      "outputs": [
+        {
+          "data": {
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAA..."
+            // ← des centaines de lignes de base64 pour UNE image
+          }
+        }
+      ],
+      "source": ["print('hello')"]
+    }
+  ]
+}</code></pre>
+
+    <p>Chaque fois que tu exécutes une cellule, le <code>execution_count</code> change, les <code>outputs</code> changent, les métadonnées changent. Un diff Git montre des centaines de lignes modifiées pour un changement d'une seule ligne de code.</p>
+
+    <p>Et si ton notebook contient des graphiques, ils sont encodés en base64 directement dans le JSON. Des milliers de lignes de caractères illisibles dans chaque diff.</p>
+
+    <h3>Solution 1 : nbstripout - nettoyer les outputs</h3>
+
+    <p><strong>nbstripout</strong> est un outil qui supprime automatiquement les sorties des notebooks avant chaque commit. Seul le code source est versionné.</p>
+
+    <pre data-lang="bash"><code># Installer nbstripout
+pip install nbstripout
+
+# L'activer pour le dépôt courant (configure un filtre Git automatique)
+nbstripout --install
+
+# Maintenant, chaque fois que tu fais git add sur un notebook,
+# les outputs sont automatiquement retirés avant le commit.
+# Le notebook local garde ses outputs - seule la version Git est nettoyée.
+
+# Désinstaller si besoin
+nbstripout --uninstall</code></pre>
+
+    <div class="tip">
+      <p><strong>Bonne pratique :</strong> installe nbstripout dans <strong>chaque</strong> projet qui contient des notebooks. Ajoute <code>nbstripout --install</code> dans ton script de setup du projet pour que tous les membres de l'équipe l'aient automatiquement.</p>
+    </div>
+
+    <h3>Solution 2 : Jupytext - format texte</h3>
+
+    <p><strong>Jupytext</strong> synchronise automatiquement tes notebooks avec un fichier texte (.py, .md, ou .Rmd). Tu travailles dans Jupyter normalement, et Jupytext maintient une copie en texte pur que Git peut différencier proprement.</p>
+
+    <pre data-lang="bash"><code># Installer Jupytext
+pip install jupytext
+
+# Convertir un notebook en script Python
+jupytext --to py:percent notebook.ipynb
+
+# Cela crée notebook.py avec le format "percent" :
+# ---
+# jupyter:
+#   jupytext:
+#     text_representation:
+#       format_name: percent
+# ---
+
+# %% [markdown]
+# # Mon analyse
+
+# %%
+import pandas as pd
+df = pd.read_csv("data.csv")
+
+# %%
+df.describe()</code></pre>
+
+    <p>Tu peux configurer Jupytext pour synchroniser automatiquement les deux formats :</p>
+
+    <pre data-lang="ini"><code># Dans jupytext.toml à la racine du projet
+formats = "ipynb,py:percent"
+
+# Jupytext maintiendra les deux fichiers en sync
+# → Commite le .py dans Git (texte, diffs propres)
+# → Le .ipynb peut être dans .gitignore (ou commité sans outputs via nbstripout)</code></pre>
+
+    <h3>Solution 3 : ReviewNB - revue visuelle</h3>
+
+    <p><strong>ReviewNB</strong> est un outil en ligne qui s'intègre à GitHub et GitLab pour afficher les diffs de notebooks de manière visuelle - avec le rendu des graphiques, des tableaux et du Markdown. Idéal pour les Pull Requests qui touchent des notebooks.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Versionner des expériences -->
+    <h2>Versionner des <span class="keyword">expériences ML</span></h2>
+
+    <p>En machine learning, tu lances souvent des dizaines d'expériences avec des hyperparamètres différents. Suivre les résultats à la main devient vite chaotique. Plusieurs outils s'intègrent avec Git pour résoudre ce problème.</p>
+
+    <h3>MLflow + Git</h3>
+
+    <p><strong>MLflow</strong> est une plateforme open source pour gérer le cycle de vie du machine learning. Il enregistre automatiquement les paramètres, les métriques et les artefacts de chaque expérience.</p>
+
+    <pre data-lang="bash"><code># Installer MLflow
+pip install mlflow
+
+# Dans ton script d'entraînement
+import mlflow
+
+mlflow.set_experiment("classification-images")
+
+with mlflow.start_run():
+    # Log des paramètres
+    mlflow.log_param("learning_rate", 0.001)
+    mlflow.log_param("epochs", 50)
+    mlflow.log_param("batch_size", 32)
+
+    # ... entraînement ...
+
+    # Log des métriques
+    mlflow.log_metric("accuracy", 0.91)
+    mlflow.log_metric("f1_score", 0.89)
+
+    # Log du modèle
+    mlflow.sklearn.log_model(model, "model")
+
+# Lancer l'interface web pour visualiser les résultats
+# mlflow ui</code></pre>
+
+    <p>MLflow enregistre automatiquement le <strong>hash du commit Git</strong> pour chaque expérience. Tu peux ainsi retrouver exactement quel code a produit quels résultats.</p>
+
+    <h3>Weights & Biases (W&B)</h3>
+
+    <p><strong>Weights & Biases</strong> est un service cloud qui offre des fonctionnalités similaires à MLflow, avec une interface plus riche et des fonctionnalités de collaboration avancées (comparaison d'expériences, tableaux interactifs, rapports).</p>
+
+    <pre data-lang="bash"><code># Installer wandb
+pip install wandb
+
+# Dans ton script
+import wandb
+
+wandb.init(project="classification-images")
+wandb.config.learning_rate = 0.001
+wandb.config.epochs = 50
+
+# ... entraînement ...
+
+wandb.log({"accuracy": 0.91, "loss": 0.23})
+
+# Les résultats sont visibles sur app.wandb.ai</code></pre>
+
+    <div class="tip">
+      <p><strong>DVC vs MLflow vs W&B :</strong> ces outils ne sont pas en concurrence. DVC gère les <em>données et les pipelines</em>. MLflow et W&B gèrent les <em>expériences et les métriques</em>. Tu peux (et tu devrais) les utiliser ensemble.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Organisation d'un repo ML -->
+    <h2>Organisation d'un <span class="keyword">repo ML</span></h2>
+
+    <p>Un projet de data science bien organisé facilite la collaboration et la reproductibilité. Voici une structure recommandée :</p>
+
+    <pre data-lang="bash"><code>mon-projet-ml/
+├── .dvc/                 # Configuration DVC
+├── .dvcignore            # Fichiers ignorés par DVC
+├── .gitignore            # Fichiers ignorés par Git
+├── dvc.yaml              # Pipeline DVC
+├── dvc.lock              # Versions verrouillées du pipeline
+├── params.yaml           # Hyperparamètres (versionnés dans Git)
+├── README.md
+├── requirements.txt      # Dépendances Python
+│
+├── data/
+│   ├── raw/              # Données brutes (DVC, jamais modifiées)
+│   ├── processed/        # Données nettoyées (DVC, générées par le pipeline)
+│   └── external/         # Données externes (DVC)
+│
+├── models/               # Modèles entraînés (DVC)
+│
+├── src/                  # Code source (Git)
+│   ├── data/
+│   │   ├── download.py   # Télécharger les données
+│   │   └── prepare.py    # Préparer/nettoyer les données
+│   ├── features/
+│   │   └── build.py      # Construire les features
+│   ├── models/
+│   │   ├── train.py      # Entraîner le modèle
+│   │   └── predict.py    # Faire des prédictions
+│   └── evaluate/
+│       └── evaluate.py   # Évaluer le modèle
+│
+├── notebooks/            # Notebooks d'exploration (Git, avec nbstripout)
+│   ├── 01-exploration.ipynb
+│   ├── 02-feature-engineering.ipynb
+│   └── 03-analysis.ipynb
+│
+├── metrics/              # Métriques (Git, petits fichiers JSON)
+│   └── eval_metrics.json
+│
+├── plots/                # Visualisations générées (Git ou DVC selon la taille)
+│
+└── tests/                # Tests unitaires (Git)
+    └── test_prepare.py</code></pre>
+
+    <h3>.gitignore pour projets ML</h3>
+
+    <pre data-lang="bash"><code># .gitignore pour un projet ML
+# Données (gérées par DVC, pas par Git)
+/data/raw/
+/data/processed/
+/models/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Environnements virtuels
+venv/
+env/
+.env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MLflow
+mlruns/
+
+# W&B
+wandb/</code></pre>
+
+    <div class="key-message">
+      <p>La règle d'or : le <strong>code</strong> va dans Git, les <strong>données et modèles</strong> vont dans DVC. Les <strong>métriques</strong> (petits fichiers JSON) vont dans Git pour faciliter les comparaisons entre branches et commits.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - <span class="keyword">Mini-pipeline DVC</span></h2>
+
+    <div class="quest-objective">
+      <p>Crée un mini-projet de data science avec DVC. Tu vas initialiser un dépôt, ajouter un dataset, et créer un pipeline simple de traitement.</p>
+    </div>
+
+    <h3>Étape 1 - Initialiser le projet</h3>
+
+    <pre data-lang="bash"><code># Créer le projet
+mkdir projet-archives-infinies
+cd projet-archives-infinies
+git init
+dvc init
+
+# Créer la structure
+mkdir -p data/raw data/processed src models metrics
+
+# Commiter l'initialisation
+git add .
+git commit -m "Initialiser le projet avec Git et DVC"</code></pre>
+
+    <pre data-lang="powershell"><code># Créer le projet
+mkdir projet-archives-infinies
+cd projet-archives-infinies
+git init
+dvc init
+
+# Créer la structure
+New-Item -ItemType Directory -Force -Path data/raw, data/processed, src, models, metrics
+
+# Commiter l'initialisation
+git add .
+git commit -m "Initialiser le projet avec Git et DVC"</code></pre>
+
+    <h3>Étape 2 - Créer un dataset fictif</h3>
+
+    <pre data-lang="bash"><code># Créer un petit dataset CSV fictif
+cat > data/raw/adventurers.csv << 'EOF'
+name,class,level,strength,intelligence,xp
+Aldric,Guerrier,12,18,8,4500
+Lyria,Mage,10,6,20,3800
+Thorin,Paladin,15,16,12,7200
+Selene,Voleuse,8,10,14,2100
+Grimm,Barbare,20,22,5,12000
+Elara,Druide,11,12,16,4100
+Kael,Ranger,9,14,11,2800
+Mira,Enchanteur,14,7,19,6500
+Bron,Chevalier,17,19,10,9300
+Zara,Nécromancien,13,8,18,5700
+EOF
+
+# Ajouter le dataset à DVC
+dvc add data/raw/adventurers.csv
+
+# Commiter le pointeur
+git add data/raw/adventurers.csv.dvc data/raw/.gitignore
+git commit -m "Ajouter le dataset des aventuriers"</code></pre>
+
+    <pre data-lang="powershell"><code># Créer un petit dataset CSV fictif
+@"
+name,class,level,strength,intelligence,xp
+Aldric,Guerrier,12,18,8,4500
+Lyria,Mage,10,6,20,3800
+Thorin,Paladin,15,16,12,7200
+Selene,Voleuse,8,10,14,2100
+Grimm,Barbare,20,22,5,12000
+Elara,Druide,11,12,16,4100
+Kael,Ranger,9,14,11,2800
+Mira,Enchanteur,14,7,19,6500
+Bron,Chevalier,17,19,10,9300
+Zara,Nécromancien,13,8,18,5700
+"@ | Set-Content data/raw/adventurers.csv
+
+# Ajouter le dataset à DVC
+dvc add data/raw/adventurers.csv
+
+# Commiter le pointeur
+git add data/raw/adventurers.csv.dvc data/raw/.gitignore
+git commit -m "Ajouter le dataset des aventuriers"</code></pre>
+
+    <h3>Étape 3 - Créer les scripts du pipeline</h3>
+
+    <pre data-lang="bash"><code># Script de préparation des données
+cat > src/prepare.py << 'PYEOF'
+"""Préparer les données des aventuriers."""
+import csv
+import json
+import os
+
+def prepare():
+    os.makedirs("data/processed", exist_ok=True)
+
+    with open("data/raw/adventurers.csv") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    # Ajouter une colonne "power" = strength + intelligence
+    for row in rows:
+        row["power"] = int(row["strength"]) + int(row["intelligence"])
+
+    # Écrire les données préparées
+    fieldnames = list(rows[0].keys())
+    with open("data/processed/adventurers_prepared.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"Données préparées : {len(rows)} aventuriers")
+
+if __name__ == "__main__":
+    prepare()
+PYEOF
+
+# Script d'analyse (simule un "entraînement")
+cat > src/analyze.py << 'PYEOF'
+"""Analyser les aventuriers et produire des métriques."""
+import csv
+import json
+import os
+
+def analyze():
+    os.makedirs("metrics", exist_ok=True)
+
+    with open("data/processed/adventurers_prepared.csv") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    # Calculer des statistiques
+    levels = [int(r["level"]) for r in rows]
+    powers = [int(r["power"]) for r in rows]
+
+    metrics = {
+        "total_adventurers": len(rows),
+        "avg_level": round(sum(levels) / len(levels), 2),
+        "max_level": max(levels),
+        "avg_power": round(sum(powers) / len(powers), 2),
+        "max_power": max(powers),
+    }
+
+    with open("metrics/analysis.json", "w") as f:
+        json.dump(metrics, f, indent=2)
+
+    print(f"Analyse terminée : {metrics}")
+
+if __name__ == "__main__":
+    analyze()
+PYEOF</code></pre>
+
+    <pre data-lang="powershell"><code># Script de préparation des données
+@"
+"""Préparer les données des aventuriers."""
+import csv
+import json
+import os
+
+def prepare():
+    os.makedirs("data/processed", exist_ok=True)
+
+    with open("data/raw/adventurers.csv") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    # Ajouter une colonne "power" = strength + intelligence
+    for row in rows:
+        row["power"] = int(row["strength"]) + int(row["intelligence"])
+
+    # Écrire les données préparées
+    fieldnames = list(rows[0].keys())
+    with open("data/processed/adventurers_prepared.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"Données préparées : {len(rows)} aventuriers")
+
+if __name__ == "__main__":
+    prepare()
+"@ | Set-Content src/prepare.py
+
+# Script d'analyse
+@"
+"""Analyser les aventuriers et produire des métriques."""
+import csv
+import json
+import os
+
+def analyze():
+    os.makedirs("metrics", exist_ok=True)
+
+    with open("data/processed/adventurers_prepared.csv") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    # Calculer des statistiques
+    levels = [int(r["level"]) for r in rows]
+    powers = [int(r["power"]) for r in rows]
+
+    metrics = {
+        "total_adventurers": len(rows),
+        "avg_level": round(sum(levels) / len(levels), 2),
+        "max_level": max(levels),
+        "avg_power": round(sum(powers) / len(powers), 2),
+        "max_power": max(powers),
+    }
+
+    with open("metrics/analysis.json", "w") as f:
+        json.dump(metrics, f, indent=2)
+
+    print(f"Analyse terminée : {metrics}")
+
+if __name__ == "__main__":
+    analyze()
+"@ | Set-Content src/analyze.py</code></pre>
+
+    <h3>Étape 4 - Définir le pipeline DVC</h3>
+
+    <pre data-lang="bash"><code># Créer le fichier dvc.yaml
+cat > dvc.yaml << 'EOF'
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+      - src/prepare.py
+      - data/raw/adventurers.csv
+    outs:
+      - data/processed/adventurers_prepared.csv
+
+  analyze:
+    cmd: python src/analyze.py
+    deps:
+      - src/analyze.py
+      - data/processed/adventurers_prepared.csv
+    metrics:
+      - metrics/analysis.json:
+          cache: false
+EOF
+
+# Commiter les scripts et le pipeline
+git add src/ dvc.yaml
+git commit -m "Ajouter le pipeline DVC (prepare + analyze)"</code></pre>
+
+    <pre data-lang="powershell"><code># Créer le fichier dvc.yaml
+@"
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+      - src/prepare.py
+      - data/raw/adventurers.csv
+    outs:
+      - data/processed/adventurers_prepared.csv
+
+  analyze:
+    cmd: python src/analyze.py
+    deps:
+      - src/analyze.py
+      - data/processed/adventurers_prepared.csv
+    metrics:
+      - metrics/analysis.json:
+          cache: false
+"@ | Set-Content dvc.yaml
+
+# Commiter les scripts et le pipeline
+git add src/ dvc.yaml
+git commit -m "Ajouter le pipeline DVC (prepare + analyze)"</code></pre>
+
+    <h3>Étape 5 - Exécuter le pipeline</h3>
+
+    <pre data-lang="bash"><code># Lancer le pipeline complet
+dvc repro
+
+# DVC exécute les étapes dans l'ordre :
+# 1. prepare → crée data/processed/adventurers_prepared.csv
+# 2. analyze → crée metrics/analysis.json
+
+# Voir les métriques
+dvc metrics show
+
+# Commiter les résultats
+git add dvc.lock metrics/analysis.json
+git commit -m "Exécuter le pipeline - première analyse"</code></pre>
+
+    <pre data-lang="powershell"><code># Lancer le pipeline complet
+dvc repro
+
+# Voir les métriques
+dvc metrics show
+
+# Commiter les résultats
+git add dvc.lock metrics/analysis.json
+git commit -m "Exécuter le pipeline - première analyse"</code></pre>
+
+    <h3>Étape 6 - Modifier et relancer</h3>
+
+    <pre data-lang="bash"><code># Ajouter des aventuriers au dataset
+cat >> data/raw/adventurers.csv << 'EOF'
+Vex,Assassin,16,15,13,8100
+Luna,Prêtresse,18,9,17,10500
+EOF
+
+# Mettre à jour le fichier DVC
+dvc add data/raw/adventurers.csv
+git add data/raw/adventurers.csv.dvc
+
+# Relancer le pipeline - DVC détecte le changement
+dvc repro
+
+# Comparer les métriques
+dvc metrics diff
+
+# Commiter le tout
+git add dvc.lock metrics/analysis.json
+git commit -m "Ajouter 2 aventuriers - métriques mises à jour"</code></pre>
+
+    <div class="key-message">
+      <p>Si <code>dvc repro</code> exécute correctement les deux étapes et que <code>dvc metrics show</code> affiche les statistiques, bravo ! Tu as créé ton premier pipeline de data science reproductible.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>dvc init</code></td>
+          <td>Initialiser DVC dans un dépôt Git</td>
+        </tr>
+        <tr>
+          <td><code>dvc add &lt;fichier&gt;</code></td>
+          <td>Ajouter un fichier à DVC (crée un pointeur .dvc)</td>
+        </tr>
+        <tr>
+          <td><code>dvc push</code></td>
+          <td>Pousser les données vers le remote DVC</td>
+        </tr>
+        <tr>
+          <td><code>dvc pull</code></td>
+          <td>Récupérer les données depuis le remote DVC</td>
+        </tr>
+        <tr>
+          <td><code>dvc remote add</code></td>
+          <td>Configurer un remote de stockage</td>
+        </tr>
+        <tr>
+          <td><code>dvc repro</code></td>
+          <td>Exécuter le pipeline (uniquement les étapes modifiées)</td>
+        </tr>
+        <tr>
+          <td><code>dvc dag</code></td>
+          <td>Visualiser le graphe de dépendances du pipeline</td>
+        </tr>
+        <tr>
+          <td><code>dvc metrics show</code></td>
+          <td>Afficher les métriques actuelles</td>
+        </tr>
+        <tr>
+          <td><code>dvc metrics diff</code></td>
+          <td>Comparer les métriques entre versions</td>
+        </tr>
+        <tr>
+          <td><code>dvc status</code></td>
+          <td>Voir l'état des fichiers et du pipeline</td>
+        </tr>
+        <tr>
+          <td><code>nbstripout --install</code></td>
+          <td>Activer le nettoyage automatique des notebooks</td>
+        </tr>
+        <tr>
+          <td><code>jupytext --to py:percent</code></td>
+          <td>Convertir un notebook en script Python</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>L'Archiviste des Nombres referme le grand livre qu'il consultait et te regarde avec un sourire discret.</p>
+      <p>« Tu as appris à dompter l'infini. Les données ne te font plus peur. Tu sais les versionner sans faire exploser tes chroniques, tu sais créer des pipelines reproductibles, et tu sais que chaque expérience mérite d'être enregistrée avec soin. »</p>
+      <p>« Le monde de la data science évolue vite. De nouveaux outils apparaissent chaque mois. Mais les principes restent les mêmes : <strong>sépare le code des données</strong>, <strong>rends tes expériences reproductibles</strong>, et <strong>ne commite jamais un dataset de 10 Go dans Git</strong>. »</p>
+      <p>Il te raccompagne vers la sortie de la Bibliothèque Infinie. Les couloirs qui semblaient sans fin te paraissent maintenant familiers.</p>
+      <p>« Reviens quand tu veux. Les Archives Infinies sont toujours ouvertes. »</p>
+    </div>

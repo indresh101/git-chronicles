@@ -1,0 +1,169 @@
+---
+layout: layouts/cheatsheet.njk
+lang: fr
+title: "Git Avancé"
+cheatsheet_slug_fr: "git-avance"
+cheatsheet_slug_en: "advanced-git"
+permalink: /fr/cheatsheets/git-avance/
+---
+
+<div class="cheatsheet">
+
+      <section>
+        <h2>Rebase - Réécriture d'historique</h2>
+<pre data-lang="bash"><code># Rebase simple
+git rebase main              # rebaser la branche courante sur main
+git rebase --onto main A B   # rebaser B sur main depuis A
+git rebase --abort           # annuler un rebase en cours
+git rebase --continue        # continuer après résolution de conflit
+
+# Rebase interactif
+git rebase -i HEAD~3         # réécrire les 3 derniers commits
+# Actions disponibles :
+#   pick   = garder tel quel
+#   reword = modifier le message
+#   edit   = modifier le contenu
+#   squash = fusionner avec le précédent (garder message)
+#   fixup  = fusionner (jeter le message)
+#   drop   = supprimer le commit</code></pre>
+      </section>
+
+      <section>
+        <h2>Investigation</h2>
+<pre data-lang="bash"><code># Bisect - trouver le commit fautif (recherche dichotomique)
+git bisect start
+git bisect bad               # le commit courant est cassé
+git bisect good abc1234      # ce commit était bon
+# Git navigue automatiquement, pour chaque étape :
+git bisect good              # ça marche ici
+git bisect bad               # c'est cassé ici
+git bisect reset             # terminer et revenir
+
+# Blame - qui a écrit chaque ligne
+git blame fichier.txt        # annoter chaque ligne
+git blame -L 10,20 fichier  # lignes 10 à 20 seulement
+git blame -w fichier         # ignorer les changements de whitespace
+
+# Log avancé
+git log --all --graph --decorate --oneline  # vue complète
+git log -S "texte"           # chercher un texte dans les diffs
+git log --follow fichier     # suivre un fichier renommé
+git shortlog -sn             # classement par auteur</code></pre>
+      </section>
+
+      <section>
+        <h2>Stash - Sauvegarde temporaire</h2>
+<pre data-lang="bash"><code>git stash                    # sauvegarder les modifs en cours
+git stash push -m "message"  # avec un nom descriptif
+git stash list               # lister les stashs
+git stash pop                # restaurer le dernier + supprimer
+git stash apply              # restaurer sans supprimer
+git stash apply stash@{2}    # restaurer un stash spécifique
+git stash drop stash@{0}     # supprimer un stash
+git stash show               # voir le contenu (résumé)
+git stash show -p            # voir le contenu (diff complet)
+git stash branch ma-branche  # créer une branche depuis un stash
+git stash clear              # supprimer tous les stashs</code></pre>
+      </section>
+
+      <section>
+        <h2>Cherry-pick et Reflog</h2>
+<pre data-lang="bash"><code># Cherry-pick - copier un commit spécifique
+git cherry-pick abc1234      # appliquer un commit sur la branche courante
+git cherry-pick -n abc1234   # sans commiter (stage seulement)
+git cherry-pick A..B         # range de commits
+git cherry-pick --abort      # annuler
+
+# Reflog - historique de TOUTES tes actions
+git reflog                   # voir l'historique des HEAD
+git reflog show ma-branche   # historique d'une branche
+git reflog expire --expire=90.days.ago --all  # nettoyer
+# Cas d'usage : récupérer un commit après un reset --hard
+git reset --hard HEAD@{2}    # revenir 2 actions en arrière</code></pre>
+      </section>
+
+      <section>
+        <h2>Tags et versionnement</h2>
+<pre data-lang="bash"><code># Créer des tags
+git tag v1.0.0                     # tag léger
+git tag -a v1.0.0 -m "Release 1.0" # tag annoté (recommandé)
+git tag -a v1.0.0 abc1234          # tagger un ancien commit
+
+# Lister / supprimer
+git tag -l                    # lister tous les tags
+git tag -l "v1.*"             # filtrer par pattern
+git tag -d v1.0.0             # supprimer localement
+git push origin --delete v1.0.0  # supprimer sur le remote
+
+# Publier
+git push --tags               # envoyer tous les tags
+git push origin v1.0.0        # envoyer un tag spécifique</code></pre>
+        <h3>Semver (MAJOR.MINOR.PATCH)</h3>
+        <p><strong>MAJOR</strong> = changement incompatible | <strong>MINOR</strong> = nouvelle fonctionnalité | <strong>PATCH</strong> = correction de bug</p>
+      </section>
+
+      <section>
+        <h2>Hooks Git</h2>
+        <p>Scripts dans <code>.git/hooks/</code> - exécutés automatiquement.</p>
+<pre data-lang="bash"><code># Hooks les plus utiles
+pre-commit       # avant le commit (lint, tests, format)
+commit-msg       # vérifier le format du message
+prepare-commit-msg  # pré-remplir le message
+pre-push         # avant le push (tests complets)
+post-merge       # après un merge (npm install, etc.)
+
+# Rendre exécutable
+chmod +x .git/hooks/pre-commit
+
+# Exemple pre-commit minimaliste
+#!/bin/sh
+npm run lint || exit 1</code></pre>
+        <p>Outils : <code>husky</code> (JS), <code>pre-commit</code> (Python) pour partager les hooks.</p>
+      </section>
+
+      <section>
+        <h2>Alias recommandés</h2>
+<pre data-lang="bash"><code>git config --global alias.st "status -s"
+git config --global alias.co "switch"
+git config --global alias.ci "commit"
+git config --global alias.br "branch"
+git config --global alias.lg "log --oneline --graph --all --decorate"
+git config --global alias.last "log -1 HEAD"
+git config --global alias.unstage "restore --staged"
+git config --global alias.undo "reset --soft HEAD~1"
+git config --global alias.amend "commit --amend --no-edit"
+git config --global alias.wip "commit -am 'WIP'"</code></pre>
+      </section>
+
+      <section>
+        <h2>Maintenance</h2>
+<pre data-lang="bash"><code>git gc                 # garbage collection (nettoyage)
+git gc --aggressive    # nettoyage approfondi
+git fsck               # vérifier l'intégrité du dépôt
+git prune              # supprimer les objets orphelins
+git maintenance start  # activer la maintenance automatique
+git count-objects -vH  # taille du dépôt</code></pre>
+      </section>
+
+      <section>
+        <h2>Sous-modules</h2>
+<pre data-lang="bash"><code>git submodule add URL chemin     # ajouter un sous-module
+git submodule init               # initialiser après clone
+git submodule update             # télécharger le contenu
+git submodule update --init --recursive  # tout d'un coup
+git submodule foreach git pull   # MAJ tous les sous-modules
+git submodule deinit chemin      # désactiver
+# Config : .gitmodules (à commiter)</code></pre>
+      </section>
+
+      <section>
+        <h2>Worktrees</h2>
+<pre data-lang="bash"><code>git worktree add ../fix-urgente main   # nouveau worktree
+git worktree add ../feature -b feat    # worktree + nouvelle branche
+git worktree list                      # lister les worktrees
+git worktree remove ../fix-urgente     # supprimer
+# Permet de travailler sur plusieurs branches en parallèle
+# sans stash ni switch</code></pre>
+      </section>
+
+    </div>

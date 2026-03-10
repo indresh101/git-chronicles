@@ -1,0 +1,375 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_09
+quest_number: "09"
+arc: 2
+title: "Les Portails Distants"
+subtitle: "Remote, push, fetch et pull"
+quest_slug_fr: "09-les-portails-distants"
+quest_slug_en: "09-the-distant-portals"
+permalink: /fr/quetes/09-les-portails-distants/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Le Maître Archiviste t'emmène dans une salle que tu n'avais jamais remarquée. Les murs sont couverts de miroirs immenses, mais chacun montre un lieu différent - une citadelle dans les montagnes, un avant-poste au bord de la mer, une bibliothèque souterraine. Au centre de chaque miroir, une lumière dorée pulse doucement.</p>
+      <p>« Apprenti, tu as appris à <strong>créer des branches</strong>, à <strong>fusionner des timelines</strong>, et à <strong>résoudre les conflits</strong> entre elles. Mais tu as toujours travaillé seul, dans ta propre citadelle. Or, les Archives de la Guilde ne vivent pas dans un seul lieu. Regarde ces miroirs - ce sont des <strong>Portails Distants</strong>. Chacun relie notre citadelle à un <strong>avant-poste de la Guilde</strong>, quelque part dans le royaume. À travers ces portails, les Archivistes <strong>envoient leurs chroniques</strong> et <strong>reçoivent celles des autres</strong>. Aujourd'hui, tu vas apprendre à maîtriser ces portails. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Qu'est-ce qu'un remote -->
+    <h2>Qu'est-ce qu'un <span class="keyword">remote</span> ?</h2>
+
+    <p>Un <strong><span class="keyword">remote</span></strong> (ou dépôt distant) est un autre dépôt Git auquel le tien est connecté. C'est un <strong>portail</strong> vers une copie des Archives qui vit ailleurs - sur un serveur, sur la machine d'un collègue, ou même dans un autre dossier de ta propre machine.</p>
+
+    <div class="key-message">
+      <p>Un <span class="keyword">remote</span> est une connexion vers un autre dépôt Git. C'est le portail magique qui permet aux Archivistes de partager leurs chroniques à travers le royaume.</p>
+    </div>
+
+    <p>Quand tu as fait <span class="git-cmd">git clone</span> dans la quête 04, Git a automatiquement créé un remote nommé <code>origin</code> qui pointait vers le dépôt source. C'était ton premier portail, même si tu ne le savais pas encore.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Lister les remotes -->
+    <h2>Lister les <span class="keyword">remotes</span></h2>
+
+    <p>Pour voir quels portails sont configurés dans ton dépôt :</p>
+
+    <pre data-lang="bash"><code>git remote -v</code></pre>
+
+    <p>Le <code>-v</code> (verbose) affiche les URLs associées :</p>
+
+    <pre data-lang="bash"><code>origin  /chemin/vers/depot.git (fetch)
+origin  /chemin/vers/depot.git (push)</code></pre>
+
+    <p>Chaque remote a <strong>deux lignes</strong> : une pour <code>fetch</code> (recevoir) et une pour <code>push</code> (envoyer). En général, elles pointent vers le même endroit.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Ajouter un remote -->
+    <h2>Ajouter un <span class="keyword">remote</span></h2>
+
+    <p>Pour ouvrir un nouveau portail vers un autre dépôt :</p>
+
+    <pre data-lang="bash"><code>git remote add &lt;nom&gt; &lt;url&gt;</code></pre>
+
+    <p>Exemple :</p>
+
+    <pre data-lang="bash"><code>git remote add portail /tmp/portail-central.git</code></pre>
+
+    <p>Par convention :</p>
+    <ul>
+      <li><code>origin</code> est le remote principal (créé automatiquement par <span class="git-cmd">git clone</span>)</li>
+      <li>Tu peux ajouter autant de remotes que tu veux avec les noms de ton choix</li>
+    </ul>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : git push -->
+    <h2>Envoyer des commits : <span class="git-cmd">git push</span></h2>
+
+    <p>Pour envoyer tes commits à travers un portail :</p>
+
+    <pre data-lang="bash"><code>git push &lt;remote&gt; &lt;branche&gt;</code></pre>
+
+    <p>Exemple :</p>
+
+    <pre data-lang="bash"><code>git push portail main</code></pre>
+
+    <p>Cela envoie tous les commits de ta branche <code>main</code> qui n'existent pas encore sur le remote <code>portail</code>.</p>
+
+    <h3>Configurer le suivi avec <code>-u</code></h3>
+
+    <p>La première fois que tu pousses une branche, tu peux configurer le <span class="keyword">suivi</span> (tracking) :</p>
+
+    <pre data-lang="bash"><code>git push -u portail main</code></pre>
+
+    <p>L'option <code>-u</code> (ou <code>--set-upstream</code>) crée un lien permanent entre ta branche locale <code>main</code> et la branche <code>main</code> du remote <code>portail</code>. Après cela, tu pourras simplement écrire :</p>
+
+    <pre data-lang="bash"><code>git push</code></pre>
+
+    <p>Sans préciser le remote ni la branche - Git saura où envoyer.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : fetch vs pull -->
+    <h2><span class="highlight">Récupérer les changements : fetch vs pull</span></h2>
+
+    <p>C'est l'une des distinctions les plus importantes à comprendre.</p>
+
+    <h3><span class="git-cmd">git fetch</span> - Observer sans toucher</h3>
+
+    <pre data-lang="bash"><code>git fetch &lt;remote&gt;</code></pre>
+
+    <p><span class="git-cmd">git fetch</span> télécharge les nouveaux commits depuis le remote, mais <strong><span class="highlight-red">ne modifie rien dans ton travail</span></strong>. Les changements sont stockés dans les <span class="keyword">branches de suivi</span> (comme <code>portail/main</code>), pas dans tes branches locales.</p>
+
+    <div class="tip">
+      <p><span class="git-cmd">git fetch</span>, c'est comme regarder à travers le portail pour voir ce que les autres Archivistes ont fait, <strong>sans toucher à tes propres parchemins</strong>.</p>
+    </div>
+
+    <h3><span class="git-cmd">git pull</span> - Récupérer et fusionner</h3>
+
+    <pre data-lang="bash"><code>git pull &lt;remote&gt; &lt;branche&gt;</code></pre>
+
+    <p><span class="git-cmd">git pull</span> fait <strong>deux choses</strong> en une seule commande :</p>
+
+    <ol>
+      <li><span class="git-cmd">git fetch</span> - télécharge les nouveaux commits</li>
+      <li><span class="git-cmd">git merge</span> - fusionne les changements dans ta branche courante</li>
+    </ol>
+
+    <p>C'est comme ouvrir le portail, attraper les parchemins, et les <strong>intégrer directement</strong> dans ta chronique.</p>
+
+    <h3>Quand utiliser l'un ou l'autre ?</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Situation</th>
+          <th>Commande</th>
+          <th>Pourquoi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tu veux voir ce qui a changé avant de décider</td>
+          <td><span class="git-cmd">git fetch</span></td>
+          <td>Tu gardes le contrôle total</td>
+        </tr>
+        <tr>
+          <td>Tu veux récupérer et intégrer immédiatement</td>
+          <td><span class="git-cmd">git pull</span></td>
+          <td>Plus rapide, moins de contrôle</td>
+        </tr>
+        <tr>
+          <td>Tu travailles sur une branche sensible</td>
+          <td><span class="git-cmd">git fetch</span> + <span class="git-cmd">git merge</span></td>
+          <td>Tu inspectes avant de fusionner</td>
+        </tr>
+        <tr>
+          <td>Tu es seul sur la branche</td>
+          <td><span class="git-cmd">git pull</span></td>
+          <td>Pas de risque de conflit surprise</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="warning">
+      <p><strong>En règle générale :</strong> <span class="git-cmd">git fetch</span> suivi d'un examen puis d'un <span class="git-cmd">git merge</span> est la méthode la plus sûre. <span class="git-cmd">git pull</span> est un raccourci pratique quand tu es sûr que tout ira bien.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Branches de suivi -->
+    <h2>Les <span class="keyword">branches de suivi</span></h2>
+
+    <p>Quand tu fais <span class="git-cmd">git fetch</span>, les commits récupérés sont stockés dans des <strong><span class="keyword">branches de suivi</span></strong> (tracking branches). Ce sont des branches en lecture seule qui reflètent l'état d'un remote.</p>
+
+    <pre data-lang="bash"><code># Voir toutes les branches, y compris les branches de suivi
+git branch -a</code></pre>
+
+    <p>Tu verras quelque chose comme :</p>
+
+    <pre data-lang="bash"><code>* main
+  remotes/portail/main</code></pre>
+
+    <h3><code>portail/main</code> vs <code>main</code></h3>
+
+    <ul>
+      <li><strong><code>main</code></strong> : ta branche locale. C'est là que tu travailles.</li>
+      <li><strong><code>portail/main</code></strong> (ou <code>remotes/portail/main</code>) : la branche de suivi. C'est la <strong>dernière image connue</strong> de la branche <code>main</code> sur le remote <code>portail</code>.</li>
+    </ul>
+
+    <div class="key-message">
+      <p>Après un <span class="git-cmd">git fetch</span>, la branche de suivi <code>portail/main</code> est à jour avec le remote, mais ta branche locale <code>main</code> n'a pas bougé. C'est à toi de décider quand fusionner.</p>
+    </div>
+
+    <pre data-lang="bash"><code># Voir les commits distants non encore fusionnés
+git log main..portail/main --oneline
+
+# Fusionner quand tu es prêt
+git merge portail/main</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Supprimer une branche distante -->
+    <h2>Supprimer une branche distante</h2>
+
+    <p>Si une branche n'a plus besoin d'exister sur le remote :</p>
+
+    <pre data-lang="bash"><code>git push &lt;remote&gt; --delete &lt;branche&gt;</code></pre>
+
+    <p>Exemple :</p>
+
+    <pre data-lang="bash"><code>git push portail --delete ancienne-expedition</code></pre>
+
+    <div class="tip">
+      <p>Cela supprime la branche <strong>sur le remote seulement</strong>. Ta branche locale n'est pas affectée.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Workflow recommandé -->
+    <h2>Le <span class="keyword">workflow</span> recommandé</h2>
+
+    <p>Voici le flux de travail typique quand tu collabores à travers un portail :</p>
+
+    <div class="steps">
+      <ol>
+        <li><strong><span class="git-cmd">git fetch</span></strong> - Télécharge les nouveautés</li>
+        <li><strong>Examine</strong> - <code>git log main..portail/main</code> pour voir ce qui a changé</li>
+        <li><strong>Fusionne ou rebase</strong> - <code>git merge portail/main</code> ou <code>git rebase portail/main</code></li>
+        <li><strong>Travaille</strong> - Fais tes propres commits</li>
+        <li><strong>Pousse</strong> - <span class="git-cmd">git push</span> pour partager ton travail</li>
+      </ol>
+    </div>
+
+    <p>Ce cycle se répète tout au long de la collaboration.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 9 : Exercice pratique -->
+    <h2>Exercice pratique - Le Portail Central</h2>
+
+    <div class="narrative">
+      <p>« Un avant-poste de la Guilde vient d'être établi : le <strong>Portail Central</strong>. Tu vas l'ouvrir, y envoyer tes chroniques, puis découvrir qu'un autre Archiviste a également contribué à travers ce même portail. À toi de <strong>récupérer son travail</strong> et de <strong>l'intégrer au tien</strong>. »</p>
+    </div>
+
+    <div class="quest-objective">
+      <p>Crée un bare repo local, connecte-le comme remote, pousse tes commits, simule un deuxième Archiviste, puis récupère ses changements avec fetch et merge.</p>
+    </div>
+
+    <h3>Étape 1 - Créer ton dépôt de travail</h3>
+
+    <pre data-lang="bash"><code>mkdir portails-distants
+cd portails-distants
+
+# Crée ton dépôt de travail
+mkdir citadelle
+cd citadelle
+git init
+echo "# Chroniques de la Citadelle" > chroniques.md
+git add chroniques.md
+git commit -m "Fonder la chronique de la Citadelle"
+cd ..</code></pre>
+
+    <h3>Étape 2 - Créer le Portail Central (bare repo)</h3>
+
+    <pre data-lang="bash"><code>git init --bare portail-central.git</code></pre>
+
+    <h3>Étape 3 - Ouvrir le portail depuis ta citadelle</h3>
+
+    <pre data-lang="bash"><code>cd citadelle
+git remote add portail ../portail-central.git
+git remote -v
+cd ..</code></pre>
+
+    <h3>Étape 4 - Envoyer tes chroniques</h3>
+
+    <pre data-lang="bash"><code>cd citadelle
+git push -u portail main
+cd ..</code></pre>
+
+    <h3>Étape 5 - Un autre Archiviste arrive</h3>
+
+    <pre data-lang="bash"><code># Simuler un deuxième Archiviste
+git clone portail-central.git avant-poste
+cd avant-poste
+echo "Rapport de l'avant-poste : tout est calme aux frontières." >> chroniques.md
+git add chroniques.md
+git commit -m "Ajouter le rapport de l'avant-poste"
+git push origin main
+cd ..</code></pre>
+
+    <h3>Étape 6 - Découvrir les changements (fetch)</h3>
+
+    <pre data-lang="bash"><code>cd citadelle
+git fetch portail
+
+# Examine ce qui a changé
+git log main..portail/main --oneline</code></pre>
+
+    <h3>Étape 7 - Intégrer les changements (merge)</h3>
+
+    <pre data-lang="bash"><code>git merge portail/main
+
+# Vérifie que le fichier contient les deux contributions
+cat chroniques.md</code></pre>
+
+    <h3>Étape 8 - Vérification</h3>
+
+    <p>Depuis le dossier <code>citadelle/</code>, lance le script de vérification :</p>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <p>Le script vérifie :</p>
+    <ol>
+      <li>Tu es dans un dépôt Git</li>
+      <li>Au moins un remote est configuré</li>
+      <li>Tu as poussé au moins une fois vers un remote</li>
+      <li>Tu as récupéré des changements depuis un remote</li>
+    </ol>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git remote -v</code></td>
+          <td>Lister les remotes et leurs URLs</td>
+        </tr>
+        <tr>
+          <td><code>git remote add &lt;nom&gt; &lt;url&gt;</code></td>
+          <td>Ajouter un nouveau remote</td>
+        </tr>
+        <tr>
+          <td><code>git push &lt;remote&gt; &lt;branche&gt;</code></td>
+          <td>Envoyer des commits vers un remote</td>
+        </tr>
+        <tr>
+          <td><code>git push -u &lt;remote&gt; &lt;branche&gt;</code></td>
+          <td>Pousser et configurer le suivi</td>
+        </tr>
+        <tr>
+          <td><code>git fetch &lt;remote&gt;</code></td>
+          <td>Télécharger sans fusionner</td>
+        </tr>
+        <tr>
+          <td><code>git pull &lt;remote&gt; &lt;branche&gt;</code></td>
+          <td>Télécharger et fusionner</td>
+        </tr>
+        <tr>
+          <td><code>git branch -a</code></td>
+          <td>Voir toutes les branches (locales + suivi)</td>
+        </tr>
+        <tr>
+          <td><code>git log main..&lt;remote&gt;/main</code></td>
+          <td>Voir les commits distants non fusionnés</td>
+        </tr>
+        <tr>
+          <td><code>git push &lt;remote&gt; --delete &lt;branche&gt;</code></td>
+          <td>Supprimer une branche distante</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Tu contemples les miroirs de la salle. Chaque portail brille d'une lumière constante - les connexions sont établies, les chroniques circulent librement entre ta citadelle et les avant-postes de la Guilde. Le Maître Archiviste hoche la tête avec satisfaction.</p>
+      <p>« Tu sais maintenant <strong>ouvrir des portails</strong>, <strong>envoyer tes chroniques à travers le royaume</strong>, et <strong>recevoir le travail des autres Archivistes</strong>. Tu comprends la différence entre <strong>observer</strong> et <strong>intégrer</strong>, entre <strong>fetch</strong> et <strong>pull</strong>. C'est une compétence essentielle, car un Archiviste qui travaille seul dans sa tour ne sert personne. La vraie puissance vient de la <strong>collaboration à travers les portails</strong>. »</p>
+    </div>

@@ -1,0 +1,623 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_23
+quest_number: "23"
+arc: 5
+title: "Le Réseau des Pairs"
+subtitle: "Collaboration P2P, delegates, passerelles GitHub et écosystème Radicle"
+quest_slug_fr: "23-le-reseau-des-pairs"
+quest_slug_en: "23-the-peer-network"
+permalink: /fr/quetes/23-le-reseau-des-pairs/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Tu quittes la tour de guet au petit matin. Le Guetteur t'a donné la carte, et tu y vois maintenant des dizaines de points lumineux - d'autres tours, d'autres voyageurs, d'autres archivistes libres qui partagent leurs chroniques sans l'aide des grandes guildes.</p>
+      <p>Mais avoir des outils et une tour ne suffit pas. Un archiviste isolé reste isolé. La véritable puissance du réseau pair-à-pair ne se révèle que lorsqu'on apprend à <strong>travailler ensemble</strong>.</p>
+      <p>Le Maître Archiviste te rejoint sur le chemin. Il semble différent aujourd'hui - pas un professeur, mais un compagnon de route.</p>
+      <p>« Tu sais publier tes chroniques. Tu sais monter une tour. Mais sais-tu <strong>tisser des liens</strong> ? Sais-tu collaborer avec des pairs que tu n'as jamais rencontrés, qui vivent à l'autre bout du royaume, sans qu'aucune guilde ne vous mette en relation ? C'est le dernier art que je puisse t'enseigner. Et c'est aussi le plus <strong>humain</strong>. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Workflow d'équipe -->
+    <h2>Workflow d'équipe sur <span class="keyword">Radicle</span></h2>
+
+    <p>Sur GitHub, la collaboration passe par un serveur central : tu forks, tu push, tu ouvres une PR. Sur Radicle, il n'y a pas de serveur central. Le workflow est fondamentalement différent.</p>
+
+    <h3>Le workflow pair-à-pair</h3>
+
+    <pre data-lang="bash"><code># Workflow classique GitHub :
+# 1. Fork le dépôt (sur le serveur)
+# 2. Clone ton fork
+# 3. Push ta branche
+# 4. Ouvre une Pull Request (sur le serveur)
+# 5. Le mainteneur merge (sur le serveur)
+
+# Workflow Radicle :
+# 1. Clone le projet : rad clone rad:z...
+# 2. Crée ta branche et code
+# 3. Propose un patch : rad patch create
+# 4. Le mainteneur revoit et merge : rad patch merge
+# 5. Tout le monde synchronise : rad sync</code></pre>
+
+    <p>La différence fondamentale : sur Radicle, <strong>chaque pair possède sa copie complète</strong> du projet, incluant les patches, issues et métadonnées. Il n'y a pas de "source de vérité" unique sur un serveur. La source de vérité est le consensus entre les <strong>delegates</strong> du projet.</p>
+
+    <h3>Un scénario concret</h3>
+
+    <p>Imagine trois développeurs - Alice, Bob et Carol - qui travaillent ensemble sur un projet Radicle :</p>
+
+    <pre data-lang="bash"><code># Alice crée le projet
+# (sur la machine d'Alice)
+rad init
+rad push
+
+# Bob clone le projet
+# (sur la machine de Bob)
+rad clone rad:z2e7R...
+
+# Bob propose une amélioration
+git switch -c ajout-tests
+# ... code ...
+git commit -m "Ajouter les tests unitaires"
+rad patch create
+
+# Alice revoit le patch de Bob
+# (sur la machine d'Alice)
+rad sync                          # Récupère le patch de Bob
+rad patch list                    # Voit le patch
+rad patch show &lt;id&gt;              # Examine les changements
+rad patch comment &lt;id&gt; --message "Approuvé !"
+rad patch merge &lt;id&gt;             # Fusionne
+
+# Carol synchronise pour avoir la dernière version
+# (sur la machine de Carol)
+rad sync
+git pull</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Gestion de projet -->
+    <h2>Gestion de projet - <span class="keyword">delegates</span> et permissions</h2>
+
+    <p>Sur un projet Radicle, la gouvernance repose sur le concept de <strong>delegates</strong> (délégués). Ce sont les personnes de confiance qui ont le pouvoir de fusionner des patches et de prendre des décisions sur le projet.</p>
+
+    <h3>Les delegates</h3>
+
+    <p>Quand tu crées un projet avec <span class="git-cmd">rad init</span>, tu deviens automatiquement le seul delegate. Tu peux ensuite en ajouter d'autres :</p>
+
+    <pre data-lang="bash"><code># Voir les delegates actuels du projet
+rad inspect
+
+# Modifier les delegates du projet
+rad id edit</code></pre>
+
+    <div class="tip">
+      <p><strong>Attention :</strong> La syntaxe exacte pour ajouter ou retirer des delegates peut varier selon la version de Radicle. Les commandes <code>rad id update --delegate</code> et <code>rad id update --revoke</code> existaient dans des versions precedentes. Depuis Heartwood, utilise <code>rad id edit</code> pour modifier l'identite du projet (delegates et threshold). Consulte <code>rad id --help</code> pour la syntaxe de ta version.</p>
+    </div>
+
+    <h3>Le threshold (seuil)</h3>
+
+    <p>Le <span class="keyword">threshold</span> définit combien de delegates doivent approuver un changement pour qu'il soit considéré comme valide. Par défaut, le threshold est de 1 (un seul delegate suffit).</p>
+
+    <pre data-lang="bash"><code># Avec 3 delegates et threshold=2 :
+# Il faut l'accord de 2 delegates sur 3 pour merger un patch
+# C'est un système de vote à la majorité
+
+# Modifier le threshold (via rad id edit)
+rad id edit</code></pre>
+
+    <p>Ce mécanisme est puissant : il permet de créer une gouvernance démocratique sans aucune autorité centrale. C'est similaire aux systèmes de multi-signature en cryptographie.</p>
+
+    <h3>Visibilité du projet</h3>
+
+    <p>Un projet Radicle peut avoir différents niveaux de visibilité :</p>
+
+    <ul>
+      <li><strong>Public</strong> : tout pair qui connaît le RID peut cloner et contribuer. C'est le comportement par défaut</li>
+      <li><strong>Privé</strong> : seuls les pairs explicitement autorisés peuvent accéder au projet. Utile pour les projets d'entreprise ou les travaux en cours</li>
+    </ul>
+
+    <div class="key-message">
+      <p>La gouvernance sur Radicle est <strong>cryptographiquement vérifiable</strong>. Chaque action d'un delegate est signée avec sa clé. Personne ne peut usurper une décision, et tout l'historique de gouvernance est auditable.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Revue de patches -->
+    <h2>Revue de <span class="keyword">patches</span> en équipe</h2>
+
+    <p>La revue de code est aussi importante sur Radicle que sur GitHub. Les outils sont différents, mais le principe reste le même : relire, commenter, améliorer.</p>
+
+    <h3>Examiner un patch</h3>
+
+    <pre data-lang="bash"><code># Lister les patches en attente
+rad patch list --state open
+
+# Voir le détail d'un patch (titre, auteur, commits)
+rad patch show &lt;patch-id&gt;
+
+# Voir le diff du patch
+rad patch diff &lt;patch-id&gt;</code></pre>
+
+    <h3>Commenter et discuter</h3>
+
+    <pre data-lang="bash"><code># Ajouter un commentaire général
+rad patch comment &lt;patch-id&gt; --message "Le code est propre, mais il manque la gestion d'erreurs."
+
+# Les commentaires sont signés et propagés à tous les pairs
+# Chaque contributeur peut voir la discussion complète</code></pre>
+
+    <h3>Réviser formellement</h3>
+
+    <pre data-lang="bash"><code># Approuver un patch (revue positive)
+rad patch review &lt;patch-id&gt; --accept
+
+# Demander des modifications
+rad patch review &lt;patch-id&gt; --reject --message "Il faut corriger les tests avant de merger."</code></pre>
+
+    <h3>Le cycle de vie d'un patch</h3>
+
+    <pre data-lang="bash"><code># 1. Création       : rad patch create        (état: open)
+# 2. Discussion     : rad patch comment       (état: open)
+# 3. Revue          : rad patch review        (état: open)
+# 4a. Acceptation   : rad patch merge         (état: merged)
+# 4b. Rejet         : rad patch close         (état: closed)
+# 5. Mise à jour    : rad patch update        (l'auteur pousse de nouveaux commits)</code></pre>
+
+    <div class="tip">
+      <p><strong>Bonne pratique :</strong> Comme sur GitHub, fais des patches petits et ciblés. Un patch qui touche 5 fichiers et 50 lignes sera revu en 10 minutes. Un patch de 500 lignes sera ignoré pendant des semaines.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Passerelles avec GitHub -->
+    <h2>Passerelles avec <span class="keyword">GitHub</span></h2>
+
+    <p>Le monde ne va pas migrer vers Radicle du jour au lendemain. La plupart de tes collègues et des projets open source utilisent GitHub. Heureusement, Radicle et GitHub peuvent coexister.</p>
+
+    <h3>Pourquoi des passerelles ?</h3>
+
+    <ul>
+      <li><strong>Transition progressive</strong> : tu peux commencer à utiliser Radicle sans abandonner GitHub</li>
+      <li><strong>Redondance</strong> : ton code existe à la fois sur GitHub et sur le réseau Radicle</li>
+      <li><strong>Accessibilité</strong> : les contributeurs qui ne connaissent pas Radicle peuvent toujours passer par GitHub</li>
+    </ul>
+
+    <h3>Mirroring bidirectionnel</h3>
+
+    <p>Le <span class="keyword">mirroring</span> consiste à synchroniser un dépôt entre GitHub et Radicle dans les deux sens :</p>
+
+    <pre data-lang="bash"><code># Ton dépôt a deux remotes :
+git remote -v
+# origin     git@github.com:ton-user/ton-projet.git (GitHub)
+# rad        rad://z2e7R... (Radicle)
+
+# Push vers les deux en même temps
+git push origin main
+rad push
+
+# Ou configure un alias pour pousser partout
+git config alias.push-all '!git push origin main && rad push'
+git push-all</code></pre>
+
+    <h3>radicle-ci-broker</h3>
+
+    <p>Le <span class="keyword">radicle-ci-broker</span> est un outil qui connecte les patches Radicle à des systèmes de CI existants. Quand un patch est créé sur Radicle, le broker peut déclencher un pipeline GitHub Actions ou GitLab CI :</p>
+
+    <pre data-lang="bash"><code># Principe du CI broker :
+# 1. Un patch arrive sur Radicle
+# 2. Le broker détecte le nouveau patch
+# 3. Il pousse le code vers GitHub (branche temporaire)
+# 4. GitHub Actions exécute les tests
+# 5. Le résultat est reporté sur le patch Radicle</code></pre>
+
+    <p>C'est un pont entre le monde décentralisé et les outils de CI existants. À terme, Radicle développe ses propres solutions de CI, mais en attendant, le broker permet de ne rien perdre.</p>
+
+    <div class="tip">
+      <p><strong>Stratégie pragmatique :</strong> Utilise GitHub comme "vitrine" publique et CI/CD, et Radicle comme infrastructure de collaboration et de redondance. Le meilleur des deux mondes.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Interface web -->
+    <h2>L'interface web <span class="keyword">Radicle</span></h2>
+
+    <p>Radicle est avant tout un outil en ligne de commande, mais il existe des interfaces web pour ceux qui préfèrent le navigateur.</p>
+
+    <h3>app.radicle.xyz</h3>
+
+    <p><strong>app.radicle.xyz</strong> est l'interface web officielle de Radicle. Elle permet de :</p>
+
+    <ul>
+      <li>Parcourir les projets publics du réseau</li>
+      <li>Voir le code source, les commits, les branches</li>
+      <li>Consulter les patches et les issues</li>
+      <li>Découvrir de nouveaux projets</li>
+    </ul>
+
+    <h3>radicle-explorer (auto-hébergé)</h3>
+
+    <p>Tu peux aussi héberger ta propre interface web avec <span class="keyword">radicle-explorer</span>. C'est une application web qui se connecte à ton noeud local :</p>
+
+    <pre data-lang="bash"><code># Installer radicle-explorer (nécessite Node.js)
+# Le code source est disponible sur GitHub :
+git clone https://github.com/radicle-dev/radicle-explorer.git
+cd radicle-explorer
+npm install
+npm run build
+
+# Lancer en mode développement
+npm run dev
+# Ouvre http://localhost:3000</code></pre>
+
+    <div class="tip">
+      <p><strong>Note :</strong> L'interface web publique officielle est accessible sur <a href="https://app.radicle.xyz">app.radicle.xyz</a>. Tu n'as besoin d'auto-heberger l'explorer que si tu veux une interface web pour ton propre noeud.</p>
+    </div>
+
+    <p>L'explorer se connecte à l'API HTTP de ton noeud Radicle et affiche les projets, patches et issues dans une interface web élégante.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Matrice de décision -->
+    <h2>Matrice de décision - <span class="keyword">quel outil choisir</span> ?</h2>
+
+    <p>Radicle n'est pas la réponse à tout. Voici une matrice pour t'aider à choisir l'outil adapté à chaque situation :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Critère</th>
+          <th>GitHub</th>
+          <th>Forgejo (auto-hébergé)</th>
+          <th>Radicle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Facilité de démarrage</strong></td>
+          <td>Très facile</td>
+          <td>Moyenne (serveur requis)</td>
+          <td>Moyenne (CLI, concepts P2P)</td>
+        </tr>
+        <tr>
+          <td><strong>Interface web</strong></td>
+          <td>Excellente</td>
+          <td>Très bonne</td>
+          <td>Basique (en amélioration)</td>
+        </tr>
+        <tr>
+          <td><strong>CI/CD intégré</strong></td>
+          <td>GitHub Actions (puissant)</td>
+          <td>Forgejo Actions</td>
+          <td>Via CI broker (limité)</td>
+        </tr>
+        <tr>
+          <td><strong>Souveraineté des données</strong></td>
+          <td>Faible (Microsoft)</td>
+          <td>Totale (ton serveur)</td>
+          <td>Totale (ta clé)</td>
+        </tr>
+        <tr>
+          <td><strong>Résistance à la censure</strong></td>
+          <td>Faible</td>
+          <td>Moyenne</td>
+          <td>Forte</td>
+        </tr>
+        <tr>
+          <td><strong>Disponibilité</strong></td>
+          <td>Excellente (99.9%+)</td>
+          <td>Dépend de ton serveur</td>
+          <td>Dépend des seeds et pairs</td>
+        </tr>
+        <tr>
+          <td><strong>Écosystème / communauté</strong></td>
+          <td>Énorme</td>
+          <td>Croissant</td>
+          <td>Petit mais passionné</td>
+        </tr>
+        <tr>
+          <td><strong>Coût</strong></td>
+          <td>Gratuit (limites) / payant</td>
+          <td>Coût du serveur</td>
+          <td>Gratuit</td>
+        </tr>
+        <tr>
+          <td><strong>Idéal pour</strong></td>
+          <td>Open source grand public, entreprises</td>
+          <td>Équipes voulant le contrôle</td>
+          <td>Projets souverains, résilients</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="key-message">
+      <p>Il n'y a pas de "meilleur" outil universel. Le choix dépend de tes priorités : <strong>confort</strong> (GitHub), <strong>contrôle</strong> (Forgejo), ou <strong>souveraineté</strong> (Radicle). Et rien ne t'empêche de les combiner.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Écosystème Radicle -->
+    <h2>L'écosystème <span class="keyword">Radicle</span></h2>
+
+    <h3>Heartwood - le protocole</h3>
+
+    <p><span class="keyword">Heartwood</span> est le nom du protocole qui fait tourner Radicle. C'est le "coeur de bois" - la fondation technique sur laquelle tout repose. Heartwood définit :</p>
+
+    <ul>
+      <li>Comment les pairs se découvrent et se connectent</li>
+      <li>Comment les données sont répliquées entre les noeuds</li>
+      <li>Le format des patches, issues et autres objets collaboratifs</li>
+      <li>Le système d'identité basé sur les DIDs</li>
+    </ul>
+
+    <p>Heartwood est écrit en <strong>Rust</strong>, un langage reconnu pour sa performance et sa sécurité mémoire. Le protocole est ouvert et documenté - n'importe qui peut implémenter un client compatible.</p>
+
+    <h3>Les composants de l'écosystème</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Composant</th>
+          <th>Rôle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>radicle-cli (rad)</strong></td>
+          <td>L'outil en ligne de commande pour les utilisateurs</td>
+        </tr>
+        <tr>
+          <td><strong>radicle-node</strong></td>
+          <td>Le noeud qui participe au réseau P2P</td>
+        </tr>
+        <tr>
+          <td><strong>radicle-httpd</strong></td>
+          <td>API HTTP pour les interfaces web</td>
+        </tr>
+        <tr>
+          <td><strong>radicle-explorer</strong></td>
+          <td>Interface web pour naviguer les projets</td>
+        </tr>
+        <tr>
+          <td><strong>radicle-ci-broker</strong></td>
+          <td>Pont entre les patches Radicle et les CI existants</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>La roadmap</h3>
+
+    <p>Radicle est en développement actif. Voici les axes d'évolution :</p>
+
+    <ul>
+      <li><strong>Amélioration de l'UX</strong> : interface web plus riche, meilleure intégration IDE</li>
+      <li><strong>CI/CD natif</strong> : exécution de pipelines directement sur le réseau Radicle</li>
+      <li><strong>Notifications</strong> : être alerté des nouveaux patches et commentaires</li>
+      <li><strong>Performance</strong> : réplication plus rapide, meilleure gestion des gros dépôts</li>
+      <li><strong>Interopérabilité</strong> : passerelles améliorées avec GitHub, GitLab et Forgejo</li>
+    </ul>
+
+    <div class="narrative">
+      <p>« Radicle est jeune. Comme un arbre qui vient d'être planté, ses racines ne sont pas encore profondes. Mais chaque jour qui passe, le protocole mûrit, la communauté grandit, et les outils s'améliorent. Ceux qui plantent les premiers arbres sont rarement ceux qui profitent de leur ombre - mais sans eux, la forêt n'existerait jamais. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - <span class="keyword">Simuler une collaboration P2P</span></h2>
+
+    <div class="quest-objective">
+      <p>Dans cet exercice, tu vas simuler une collaboration entre deux identités Radicle sur ta propre machine. C'est comme jouer aux échecs contre toi-même - mais ça te permettra de comprendre le flux complet.</p>
+    </div>
+
+    <div class="steps">
+      <h3>Étape 1 - Préparer deux environnements</h3>
+
+      <p>On va créer deux "profils" Radicle distincts pour simuler deux utilisateurs :</p>
+
+      <div class="tip">
+        <p><strong>Astuce multi-profils :</strong> pour simuler deux identités sur la même machine, utilise la variable d'environnement <code>RAD_HOME</code> pour séparer les répertoires Radicle :</p>
+        <pre data-lang="bash"><code>export RAD_HOME=~/.radicle-alice    # Premier profil
+rad auth
+export RAD_HOME=~/.radicle-bob      # Second profil
+rad auth</code></pre>
+      </div>
+
+      <pre data-lang="bash"><code># Crée deux dossiers de travail
+mkdir -p ~/radicle-exercice/alice
+mkdir -p ~/radicle-exercice/bob</code></pre>
+
+      <h3>Étape 2 - Alice crée le projet</h3>
+
+      <pre data-lang="bash"><code># En tant qu'Alice
+cd ~/radicle-exercice/alice
+
+# Crée un dépôt Git
+git init projet-commun
+cd projet-commun
+
+# Crée du contenu
+cat > README.md &lt;&lt;EOF
+# Projet Commun
+Un projet collaboratif sur le réseau Radicle.
+
+## Contributeurs
+- Alice (créatrice)
+EOF
+
+git add README.md
+git commit -m "Initialisation du projet commun"
+
+# Initialise Radicle
+rad init
+# Note le RID qui s'affiche : rad:z...</code></pre>
+
+      <h3>Étape 3 - Bob clone et contribue</h3>
+
+      <pre data-lang="bash"><code># En tant que Bob
+cd ~/radicle-exercice/bob
+
+# Clone le projet d'Alice
+rad clone rad:z&lt;le-rid-du-projet&gt;
+cd projet-commun
+
+# Bob crée une branche et ajoute sa contribution
+git switch -c ajout-contribution-bob
+
+cat >> README.md &lt;&lt;EOF
+
+## Fonctionnalités prévues
+- Synchronisation pair-à-pair
+- Revue de code décentralisée
+- Issues sans serveur central
+EOF
+
+git add README.md
+git commit -m "Ajouter les fonctionnalités prévues"
+
+# Bob propose un patch
+rad patch create</code></pre>
+
+      <h3>Étape 4 - Alice revoit et merge</h3>
+
+      <pre data-lang="bash"><code># De retour en tant qu'Alice
+cd ~/radicle-exercice/alice/projet-commun
+
+# Synchronise pour recevoir le patch de Bob
+rad sync
+
+# Voir les patches
+rad patch list
+
+# Examiner le patch
+rad patch show &lt;patch-id&gt;
+
+# Commenter
+rad patch comment &lt;patch-id&gt; --message "Excellente contribution, Bob !"
+
+# Merger le patch
+rad patch merge &lt;patch-id&gt;</code></pre>
+
+      <h3>Étape 5 - Vérifier le résultat</h3>
+
+      <pre data-lang="bash"><code># Côté Alice - voir le résultat
+cd ~/radicle-exercice/alice/projet-commun
+git log --oneline
+cat README.md
+
+# Côté Bob - synchroniser
+cd ~/radicle-exercice/bob/projet-commun
+rad sync
+git pull
+git log --oneline</code></pre>
+
+      <h3>Étape 6 - Créer une issue et la résoudre</h3>
+
+      <pre data-lang="bash"><code># Bob crée une issue
+cd ~/radicle-exercice/bob/projet-commun
+rad issue create --title "Ajouter un fichier LICENCE" \
+                 --description "Le projet n'a pas encore de licence open source."
+
+# Alice voit l'issue
+cd ~/radicle-exercice/alice/projet-commun
+rad sync
+rad issue list
+
+# Alice résout l'issue
+echo "MIT License - Copyright $(date +%Y)" > LICENSE
+git add LICENSE
+git commit -m "Ajouter la licence MIT"
+rad push
+
+# Alice ferme l'issue
+rad issue close &lt;issue-id&gt;</code></pre>
+    </div>
+
+    <div class="tip">
+      <p><strong>Note :</strong> Sur une seule machine, la synchronisation entre les deux profils passe par le noeud local. Dans un vrai scénario, Alice et Bob seraient sur des machines différentes, connectés via le réseau Radicle. Le workflow reste exactement le même.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Delegates</strong></td>
+          <td>Les mainteneurs autorisés à merger des patches</td>
+        </tr>
+        <tr>
+          <td><strong>Threshold</strong></td>
+          <td>Nombre de delegates requis pour valider un changement</td>
+        </tr>
+        <tr>
+          <td><strong>rad patch review</strong></td>
+          <td>Approuver ou rejeter formellement un patch</td>
+        </tr>
+        <tr>
+          <td><strong>rad id edit</strong></td>
+          <td>Modifier les delegates ou le threshold du projet</td>
+        </tr>
+        <tr>
+          <td><strong>Mirroring</strong></td>
+          <td>Synchroniser un dépôt entre GitHub et Radicle</td>
+        </tr>
+        <tr>
+          <td><strong>radicle-ci-broker</strong></td>
+          <td>Pont entre patches Radicle et CI GitHub/GitLab</td>
+        </tr>
+        <tr>
+          <td><strong>radicle-explorer</strong></td>
+          <td>Interface web pour naviguer les projets Radicle</td>
+        </tr>
+        <tr>
+          <td><strong>app.radicle.xyz</strong></td>
+          <td>Interface web publique officielle</td>
+        </tr>
+        <tr>
+          <td><strong>Heartwood</strong></td>
+          <td>Le protocole de base de Radicle (écrit en Rust)</td>
+        </tr>
+        <tr>
+          <td><strong>radicle-httpd</strong></td>
+          <td>API HTTP pour connecter des interfaces au noeud</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Le soleil descend sur l'horizon. Depuis la crête où tu te trouves, tu vois le royaume tout entier : les tours des grandes guildes qui brillent au loin, les chemins pavés qui les relient, et partout entre eux, les sentiers discrets des voyageurs libres.</p>
+      <p>Le Maître Archiviste pose une main sur ton épaule.</p>
+      <p>« Tu as commencé ce voyage comme un apprenti qui ne savait pas ce qu'était un commit. Tu as traversé les fondations, maîtrisé les branches et les fusions, appris les arts anciens du stash et du bisect. Tu as forgé des pipelines automatiques dans les grandes guildes. Et maintenant, tu as <strong>marché au-delà des murs</strong>. »</p>
+    </div>
+
+    <div class="narrative">
+      <p>« Tu connais les outils des voyageurs libres. Tu sais construire une tour de guet. Tu sais tisser des liens avec d'autres pairs sans qu'aucune autorité ne vous mette en relation. Tu possèdes la compétence la plus rare de toutes : la capacité de <strong>choisir librement tes outils</strong>, en pleine connaissance de leurs forces et de leurs limites. »</p>
+      <p>Il défait le vieux compas Radicle de sa ceinture et te le tend.</p>
+      <p>« Garde-le. Son aiguille ne pointe vers aucun nord fixe, car <strong>le nord n'existe pas dans un monde pair-à-pair</strong>. Il n'y a que des pairs - des égaux qui choisissent de collaborer. »</p>
+    </div>
+
+    <div class="narrative">
+      <p>Tu ranges le compas dans ton sac de voyage, à côté de tous les outils que tu as accumulés au fil des quêtes. Le Maître Archiviste te sourit une dernière fois.</p>
+      <p>« Va, <strong>Voyageur Libre</strong>. Le réseau t'attend. Et souviens-toi : dans un monde pair-à-pair, chaque noeud compte. <strong>Y compris le tien.</strong> »</p>
+      <p>Il redescend vers la Citadelle. Tu restes un moment sur la crête, la carte des pairs dans une main, le compas dans l'autre. Devant toi, les chemins libres s'étendent à l'infini - et pour la première fois, tu sais exactement <strong>lequel prendre</strong>.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <div class="key-message">
+      <p>Tu es maintenant un <strong>Voyageur Libre</strong> - un archiviste qui maîtrise à la fois les outils des grandes guildes et ceux du réseau pair-à-pair. Que tes patches soient clairs, tes seeds toujours en ligne, et tes pairs toujours bienveillants.</p>
+    </div>

@@ -1,0 +1,255 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_01
+quest_number: "01"
+arc: 1
+title: "La Guilde des Archivistes"
+subtitle: "Installation et configuration de Git"
+quest_slug_fr: "01-la-guilde-des-archivistes"
+quest_slug_en: "01-the-archivists-guild"
+permalink: /fr/quetes/01-la-guilde-des-archivistes/
+---
+
+      <!-- Introduction narrative -->
+      <section>
+        <h2>Introduction</h2>
+
+        <div class="narrative">
+          <p>Le vent siffle entre les tours de la Citadelle du Savoir lorsque tu franchis les lourdes portes de la Guilde des Archivistes. Ici, des scribes s'affairent à conserver la mémoire du royaume tout entier - chaque décret royal, chaque traité de paix, chaque plan de bataille. Sans eux, l'histoire serait perdue à jamais.</p>
+          <p>Un vieil homme à la barbe argentée s'approche de toi. Ses yeux pétillent de malice derrière ses lunettes rondes. C'est le Maître Archiviste.</p>
+        </div>
+
+        <blockquote>
+          <p>« Bienvenue, jeune recrue. Je suis le Maître Archiviste, gardien de l'histoire du royaume. Tu arrives à point nommé, car nous avons <strong>un grave problème</strong>… Nos scribes <strong>perdent leur travail</strong>, écrasent les parchemins des autres, et <strong>personne ne sait plus qui a modifié quoi</strong>. Il nous faut un nouveau système d'archivage. Et toi, tu vas apprendre à le maîtriser. »</p>
+        </blockquote>
+      </section>
+
+      <hr>
+
+      <!-- Le problème sans versioning -->
+      <section>
+        <h2>Le problème : travailler sans versioning</h2>
+
+        <p>Avant de comprendre la solution, il faut comprendre le problème. Voici ce qui se passe quand on travaille <span class="highlight-red">sans système de versioning</span> :</p>
+
+        <h3>Le chaos des noms de fichiers</h3>
+
+        <p>Tu connais sûrement cette situation :</p>
+
+        <pre><code>rapport_final.txt
+rapport_final_v2.txt
+rapport_final_v2_corrigé.txt
+rapport_FINAL_VRAIMENT_FINAL.txt
+rapport_FINAL_VRAIMENT_FINAL_2.txt
+rapport_FINAL_OK_CELUI_LA.txt</code></pre>
+
+        <p>Lequel est le bon ? <span class="highlight-red">Personne ne le sait</span>. Même pas la personne qui les a créés.</p>
+
+        <h3>Le travail écrasé</h3>
+
+        <p>Imagine : deux scribes, Aldric et Bérénice, travaillent sur le même parchemin. Aldric fait ses modifications le matin et sauvegarde. Bérénice, qui avait ouvert le parchemin la veille au soir, fait ses propres modifications l'après-midi et sauvegarde aussi. Résultat : <span class="highlight-red">tout le travail d'Aldric a disparu</span>, écrasé sans avertissement. Aldric passe une très mauvaise journée.</p>
+
+        <h3>Le mystère des modifications</h3>
+
+        <blockquote>
+          <p>« Ça marchait hier ! Qu'est-ce qui a changé ? »</p>
+        </blockquote>
+
+        <p>Quelqu'un a modifié quelque chose. Mais <strong>qui</strong> ? <strong>Quand</strong> ? Et surtout, <strong>pourquoi</strong> ? Impossible de le savoir. On perd des heures à chercher, et parfois on ne retrouve jamais la version qui fonctionnait.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- La solution : le versioning -->
+      <section>
+        <h2>La solution : le versioning</h2>
+
+        <p>Le Maître Archiviste a trouvé la solution. Au lieu de sauvegarder bêtement par-dessus l'ancien fichier, on va <span class="highlight">enregistrer chaque modification</span> avec quatre informations essentielles :</p>
+
+        <ul>
+          <li><strong>Qui</strong> a fait la modification</li>
+          <li><strong>Quand</strong> elle a été faite</li>
+          <li><strong>Quoi</strong> exactement a changé (pas juste "j'ai modifié le fichier", mais quelles lignes précisément)</li>
+          <li><strong>Pourquoi</strong> - un petit message qui explique la raison du changement</li>
+        </ul>
+
+        <div class="key-message">
+          <p>Avec le versioning, tu peux <strong>revenir en arrière</strong> à tout moment, voir <strong>l'historique complet</strong> de toutes les modifications, et <strong>plusieurs personnes</strong> peuvent travailler en même temps sans s'écraser mutuellement.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Git : l'outil -->
+      <section>
+        <h2>Git : l'outil des Archivistes modernes</h2>
+
+        <p>Le système que tu vas apprendre s'appelle <span class="keyword">Git</span>. C'est l'outil de <span class="keyword">versioning</span> le plus utilisé au monde. Mais il n'est pas le premier - d'autres ont essayé avant lui.</p>
+
+        <h3>Avant Git : les anciens systèmes</h3>
+
+        <p>Le besoin de suivre les modifications de fichiers ne date pas d'hier. Plusieurs outils ont existé avant Git :</p>
+
+        <ul>
+          <li><strong>RCS</strong> (1982) - Un des premiers systèmes de versioning. Il ne gérait qu'<strong>un seul fichier à la fois</strong> - impossible de travailler sur un projet entier.</li>
+          <li><strong>CVS</strong> (1990) - Le premier outil à gérer plusieurs fichiers ensemble. Mais il reposait sur un <strong>serveur central</strong> : si le serveur tombait, plus personne ne pouvait travailler.</li>
+          <li><strong>SVN / Subversion</strong> (2000) - Une amélioration de CVS, plus fiable et plus rapide. Très populaire pendant des années, mais toujours <strong>centralisé</strong> : chaque opération nécessitait une connexion au serveur.</li>
+          <li><strong>Mercurial</strong> (2005) - Créé la même année que Git, avec la même philosophie distribuée. Un bon outil, mais Git l'a progressivement dépassé en popularité.</li>
+        </ul>
+
+        <p>Le problème commun de ces outils ? Soit ils étaient <span class="highlight-red">trop limités</span>, soit ils <span class="highlight-red">dépendaient d'un serveur central</span>, soit ils étaient <span class="highlight-red">trop lents</span> pour les très gros projets.</p>
+
+        <h3>L'arrivée de Git</h3>
+
+        <ul>
+          <li><strong>2005</strong> - Linus Torvalds (le créateur de Linux) gère le code source du noyau Linux - un projet avec <strong>des milliers de développeurs</strong> et <strong>des millions de lignes de code</strong>. Les outils existants ne tiennent pas la charge. Alors il crée le sien en quelques semaines : <span class="keyword">Git</span>.</li>
+          <li><strong>Distribué</strong> - Contrairement aux anciens systèmes, Git est <span class="highlight">distribué</span> : chaque personne qui travaille sur un projet possède une <strong>copie complète</strong> de tout l'historique. Pas besoin d'un serveur central pour consulter l'histoire du projet.</li>
+          <li><strong>Rapide</strong> - Git a été conçu pour être <strong>extrêmement rapide</strong>, même sur des projets gigantesques. Le noyau Linux lui-même - avec plus de <strong>30 ans d'historique</strong> et des millions de lignes - est géré avec Git.</li>
+          <li><strong>Aujourd'hui</strong> - Git est <span class="badge-green">gratuit</span>, <span class="badge-green">open source</span>, et utilisé par pratiquement tous les développeurs de la planète. Des plateformes comme GitHub, GitLab et Bitbucket sont construites autour de Git.</li>
+        </ul>
+
+        <div class="key-message">
+          <p>Oui, Git a <strong>beaucoup de commandes</strong> et peut sembler complexe au début. Mais c'est justement cette puissance qui lui permet de gérer aussi bien un petit projet personnel qu'un monstre comme le noyau Linux. Et dans la pratique, <strong>une poignée de commandes suffit</strong> pour 90% du travail quotidien.</p>
+        </div>
+
+        <div class="tip">
+          <p>Git n'est pas réservé aux développeurs ! Il peut servir pour tout projet composé de fichiers texte : documentation, fichiers de configuration, sites web, etc.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Installation -->
+      <section>
+        <h2>Installation de Git</h2>
+
+        <p>Avant de commencer à utiliser Git, il faut l'installer sur ta machine. Voici les instructions selon ton système d'exploitation.</p>
+
+        <h3>Windows</h3>
+
+        <ol class="steps">
+          <li>Rends-toi sur <a href="https://git-scm.com/">git-scm.com</a> et télécharge l'installateur.</li>
+          <li>Lance l'installateur et suis les étapes (les options par défaut conviennent très bien).</li>
+          <li>L'installation inclut <strong>Git Bash</strong>, un terminal qui te permettra d'utiliser les commandes Git.</li>
+          <li>Pour vérifier : ouvre Git Bash et tape <span class="git-cmd">git --version</span>.</li>
+        </ol>
+
+        <h3>Linux</h3>
+
+        <p>Ouvre un terminal et utilise le gestionnaire de paquets de ta distribution :</p>
+
+        <pre data-lang="bash"><code># Debian, Ubuntu, Mint…
+sudo apt install git
+
+# Fedora, RHEL, CentOS…
+sudo dnf install git
+
+# Arch Linux
+sudo pacman -S git</code></pre>
+
+        <p>Pour vérifier : <span class="git-cmd">git --version</span></p>
+
+        <h3>macOS</h3>
+
+        <p>Deux options :</p>
+
+        <pre data-lang="bash"><code># Option 1 : via les outils en ligne de commande Apple
+xcode-select --install
+
+# Option 2 : via Homebrew (si tu l'as installé)
+brew install git</code></pre>
+
+        <p>Pour vérifier : <span class="git-cmd">git --version</span></p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Première configuration -->
+      <section>
+        <h2>Première configuration</h2>
+
+        <p>Git a besoin de savoir <span class="highlight">qui tu es</span>. Chaque modification que tu enregistreras portera ta signature - un nom et une adresse email. C'est obligatoire.</p>
+
+        <p>Ouvre un terminal (Git Bash sur Windows) et tape ces deux commandes en remplaçant les valeurs entre guillemets par les tiennes :</p>
+
+        <pre data-lang="bash"><code>git config --global user.name "Ton Nom"
+git config --global user.email "ton@email.com"</code></pre>
+
+        <div class="tip">
+          <p>Tu n'es <strong>pas obligé d'utiliser ton vrai nom</strong>. Un pseudonyme fonctionne parfaitement. Beaucoup de contributeurs open source utilisent un pseudo et une adresse email dédiée. L'important, c'est que Git puisse <span class="highlight">identifier l'auteur</span> de chaque modification.</p>
+        </div>
+
+        <div class="tip">
+          <p>L'option <span class="git-cmd">--global</span> signifie que cette configuration s'applique à <strong>tous tes projets Git</strong> sur cette machine. Tu n'auras à le faire qu'une seule fois.</p>
+        </div>
+
+        <p>Pour vérifier que tout est bien enregistré :</p>
+
+        <pre data-lang="bash"><code>git config --global user.name
+git config --global user.email</code></pre>
+
+        <p>Ces commandes doivent afficher respectivement ton nom et ton email.</p>
+
+        <h3>Configuration par projet</h3>
+
+        <p>Tu peux vouloir utiliser un <strong>pseudo</strong> sur tes projets personnels en ligne, mais ton <strong>vrai nom</strong> (ou un trigramme) sur tes projets professionnels. Git le permet grâce à l'option <span class="git-cmd">--local</span>, qui remplace la configuration globale <strong>uniquement pour le dépôt en cours</strong> :</p>
+
+        <pre data-lang="bash"><code># Dans un dépôt professionnel
+cd mon-projet-pro/
+git config --local user.name "Jean Dupont"
+git config --local user.email "jdupont@entreprise.com"</code></pre>
+
+        <p>La priorité est simple : <span class="keyword">--local</span> (par projet) l'emporte toujours sur <span class="keyword">--global</span> (par machine). Ainsi tu peux garder ton pseudo en global et ne configurer <span class="git-cmd">--local</span> que dans les dépôts qui nécessitent une identité différente.</p>
+
+        <div class="key-message">
+          <p><span class="keyword">--global</span> = configuration par défaut pour toute la machine. <span class="keyword">--local</span> = configuration spécifique à un seul dépôt. Le local a toujours la priorité.</p>
+        </div>
+
+        <h3>Un mot sur la sécurité</h3>
+
+        <p>Tu l'auras peut-être remarqué : rien ne t'empêche de configurer <code>user.name</code> avec le nom de quelqu'un d'autre. Tu pourrais très bien écrire <code>git config user.name "Linus Torvalds"</code> et tous tes commits porteraient son nom. <span class="highlight-red">Git ne vérifie pas ton identité</span> - il se contente d'enregistrer ce que tu lui donnes.</p>
+
+        <p>C'est une limitation connue et assumée. Pour les projets où l'authenticité compte vraiment, il existe une solution : la <span class="keyword">signature cryptographique</span> des commits. En utilisant une clé <strong>GPG</strong> (ou <strong>SSH</strong>), tu peux <span class="highlight">prouver mathématiquement</span> que c'est bien toi qui as créé un commit. Les plateformes comme GitHub affichent alors un badge "Verified" à côté du commit.</p>
+
+        <div class="tip">
+          <p>La signature des commits est un sujet avancé que nous n'aborderons pas dans cette quête. Retiens simplement que <span class="git-cmd">user.name</span> et <span class="git-cmd">user.email</span> sont déclaratifs - c'est la clé cryptographique qui fait office de vraie preuve d'identité.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Exercice pratique -->
+      <section>
+        <h2>Exercice pratique - Validation de la quête</h2>
+
+        <div class="quest-objective">
+          <p>Lance le script de vérification pour valider que Git est installé et configuré correctement sur ta machine.</p>
+        </div>
+
+        <p><strong>Bash</strong> (Linux / macOS / Git Bash sur Windows) :</p>
+
+        <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+        <p><strong>PowerShell</strong> (Windows) :</p>
+
+        <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+        <p>Le script vérifie trois choses :</p>
+
+        <ol class="steps">
+          <li>Git est <span class="highlight">installé</span> sur ta machine</li>
+          <li>Ton <span class="keyword">nom</span> est configuré (<span class="git-cmd">user.name</span>)</li>
+          <li>Ton <span class="keyword">email</span> est configuré (<span class="git-cmd">user.email</span>)</li>
+        </ol>
+
+        <p>Si les trois étapes sont validées, félicitations ! Tu es officiellement membre de la Guilde des Archivistes. La prochaine quête t'attend.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Conclusion narrative -->
+      <div class="narrative">
+        <p>Le Maître Archiviste hoche la tête avec satisfaction.</p>
+        <p>« Bien. Tu as fait tes premiers pas. Tu possèdes maintenant <strong>l'outil fondamental</strong> de tout Archiviste. Dans la prochaine quête, je t'emmènerai dans les <strong>Trois Salles du Savoir</strong> - tu y découvriras comment Git organise le travail. <strong>Prépare-toi.</strong> »</p>
+      </div>

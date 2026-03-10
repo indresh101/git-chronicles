@@ -1,0 +1,524 @@
+---
+layout: layouts/quest.njk
+lang: fr
+quest_id: quest_21
+quest_number: "21"
+arc: 5
+title: "Le Client du Voyageur"
+subtitle: "Installation de Radicle, identité cryptographique et premiers pas"
+quest_slug_fr: "21-le-client-du-voyageur"
+quest_slug_en: "21-the-travelers-client"
+permalink: /fr/quetes/21-le-client-du-voyageur/
+---
+
+    <!-- Introduction narrative -->
+    <div class="narrative">
+      <p>Le lendemain de ta promenade dans les terres sauvages, le Maître Archiviste te retrouve dans l'atelier. Sur la table, un sac de voyage en cuir usé, frappé d'un symbole que tu ne reconnais pas : une graine entourée de racines qui s'étendent dans toutes les directions.</p>
+      <p>« Tu as vu les chemins libres. Tu as compris pourquoi ils existent. Maintenant, il est temps de <strong>les emprunter toi-même</strong>. Dans ce sac, tu trouveras les outils des voyageurs libres - ceux qui partagent leurs chroniques sans passer par aucune guilde. »</p>
+      <p>Il ouvre le sac et en sort un étrange compas dont l'aiguille ne pointe vers aucun nord fixe. Elle tourne doucement, comme si elle cherchait d'autres compas semblables dans le monde.</p>
+      <p>« Voici <strong>rad</strong> - le client Radicle. Ton passeport pour le réseau pair-à-pair. Apprends à t'en servir, et tu n'auras plus jamais besoin de la permission d'une guilde pour partager ton travail. »</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1 : Installation -->
+    <h2>Installer <span class="keyword">Radicle</span> (rad)</h2>
+
+    <p>Radicle est un outil en ligne de commande appelé <code>rad</code>. C'est ton interface avec le réseau pair-à-pair. Avant toute chose, il faut l'installer sur ta machine.</p>
+
+    <h3>Sur Linux</h3>
+
+    <p>La méthode recommandée utilise le script d'installation officiel :</p>
+
+    <pre data-lang="bash"><code># Méthode 1 : Script d'installation officiel
+curl -sSf https://radicle.xyz/install | sh
+
+# Méthode 2 : Via Cargo (si tu as Rust installé)
+cargo install radicle-cli
+
+# Vérifie l'installation
+rad --version</code></pre>
+
+    <p>Le binaire <code>rad</code> est installé dans <code>~/.radicle/bin/</code>. Assure-toi que ce chemin est dans ton <code>PATH</code> :</p>
+
+    <pre data-lang="bash"><code># Ajouter au PATH (dans ~/.bashrc ou ~/.zshrc)
+export PATH="$HOME/.radicle/bin:$PATH"</code></pre>
+
+    <h3>Sur macOS</h3>
+
+    <pre data-lang="bash"><code># Via le script officiel
+curl -sSf https://radicle.xyz/install | sh
+
+# Ou via Cargo (si tu as Rust installé)
+cargo install radicle-cli
+
+# Vérifie l'installation
+rad --version</code></pre>
+
+    <div class="tip">
+      <p><strong>Note :</strong> Radicle n'est pas disponible dans Homebrew core. Utilise le script d'installation officiel ou <code>cargo</code>.</p>
+    </div>
+
+    <h3>Sur Windows</h3>
+
+    <p>Radicle est principalement conçu pour Linux et macOS. Sur Windows, tu as deux options :</p>
+
+    <pre data-lang="bash"><code># Via WSL (Windows Subsystem for Linux) - seule méthode supportée
+# Dans un terminal WSL Ubuntu :
+curl -sSf https://radicle.xyz/install | sh</code></pre>
+
+    <div class="tip">
+      <p><strong>Important :</strong> Radicle ne fonctionne pas nativement sous Windows (Git Bash inclus). <strong>Seul WSL est supporté.</strong> Assure-toi que Git est configuré dans ton environnement WSL. Les commandes <code>rad</code> fonctionnent dans le même terminal que tes commandes Git.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2 : Identité cryptographique -->
+    <h2>Ton <span class="keyword">identité cryptographique</span></h2>
+
+    <p>Sur GitHub, tu as un nom d'utilisateur et un mot de passe. Sur Radicle, c'est différent. Ton identité repose sur la <strong>cryptographie</strong> - une paire de clés qui prouve que tu es bien toi, sans qu'aucun serveur n'ait besoin de le vérifier.</p>
+
+    <h3>Créer ton identité avec rad auth</h3>
+
+    <pre data-lang="bash"><code># Créer ton identité Radicle
+rad auth
+
+# Tu verras quelque chose comme :
+# Initializing your radicle 🌱 identity
+# Enter a passphrase (or leave blank):
+# Your DID is did:key:z6Mki7...
+# You're all set!</code></pre>
+
+    <p>La commande <span class="git-cmd">rad auth</span> génère :</p>
+
+    <ul>
+      <li>Une <strong>clé privée</strong> (stockée localement dans <code>~/.radicle/keys/</code>) - c'est ton secret, ne la partage jamais</li>
+      <li>Une <strong>clé publique</strong> - c'est ton identité visible par les autres</li>
+      <li>Un <strong>DID</strong> (<em>Decentralized Identifier</em>) - un identifiant unique au format <code>did:key:z6Mk...</code></li>
+    </ul>
+
+    <h3>Comprendre les clés ed25519</h3>
+
+    <p>Radicle utilise le même type de clés que SSH : <span class="keyword">ed25519</span>. C'est un algorithme de signature numérique moderne, rapide et sûr. Chaque action que tu fais sur Radicle (publier, commenter, proposer un patch) est <strong>signée cryptographiquement</strong>.</p>
+
+    <p>Cela signifie que personne ne peut usurper ton identité - même s'il n'existe aucun serveur central pour vérifier qui est qui.</p>
+
+    <h3>Le DID - ton identité décentralisée</h3>
+
+    <p>Le <span class="keyword">DID</span> (<em>Decentralized Identifier</em>) est un standard du W3C. C'est une manière universelle de s'identifier sans dépendre d'un fournisseur. Ton DID Radicle ressemble à :</p>
+
+    <pre data-lang="bash"><code>did:key:z6Mki7kFMjfQXbB2tRzpR5oSrQFkAuGhUTnKGVzE8pTo6VDB</code></pre>
+
+    <p>Ce DID est dérivé mathématiquement de ta clé publique. Il est <strong>unique au monde</strong> et tu en es le seul propriétaire.</p>
+
+    <div class="key-message">
+      <p>Pas de nom d'utilisateur, pas de mot de passe, pas de serveur d'authentification. Ton identité est une clé mathématique que tu possèdes. C'est la souveraineté numérique.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3 : Initialiser un projet -->
+    <h2>Initialiser un <span class="keyword">projet Radicle</span></h2>
+
+    <p>Radicle ne remplace pas Git - il s'appuie dessus. Tu commences toujours avec un dépôt Git normal, puis tu y ajoutes la couche Radicle.</p>
+
+    <h3>rad init - transformer un dépôt Git en projet Radicle</h3>
+
+    <pre data-lang="bash"><code># Crée un dépôt Git normal
+mkdir mon-projet
+cd mon-projet
+git init
+echo "# Mon Projet" > README.md
+git add README.md
+git commit -m "Premier commit"
+
+# Initialise Radicle dans ce dépôt
+rad init
+
+# Tu verras :
+# Initializing radicle 🌱 project in /home/user/mon-projet
+# Name: mon-projet
+# Description: (optionnel)
+# Default branch: main
+# Project rad:z2e7R... created.</code></pre>
+
+    <p>La commande <span class="git-cmd">rad init</span> crée un <strong>identifiant de projet</strong> unique (le <code>rad:z...</code>). C'est l'équivalent décentralisé d'une URL GitHub. Cet identifiant est permanent et ne changera jamais.</p>
+
+    <h3>rad inspect - examiner un projet</h3>
+
+    <pre data-lang="bash"><code># Voir les détails du projet
+rad inspect
+
+# Affiche :
+# Project: mon-projet
+# RID: rad:z2e7R...
+# Description: ...
+# Default branch: main
+# Delegates: did:key:z6Mk... (toi)</code></pre>
+
+    <p>Le champ <strong>Delegates</strong> est important : ce sont les personnes autorisées à merger des patches. Quand tu crées un projet, tu en es le seul délégué.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4 : Publier et synchroniser -->
+    <h2>Publier et <span class="keyword">synchroniser</span></h2>
+
+    <h3>rad push - publier ton code sur le réseau</h3>
+
+    <pre data-lang="bash"><code># Publie ton dépôt sur le réseau Radicle
+rad push
+
+# Le nœud Radicle local annonce ton projet aux pairs
+# Les seeds (nœuds toujours en ligne) vont le répliquer</code></pre>
+
+    <p>Contrairement à <span class="git-cmd">git push</span> qui envoie vers un serveur précis, <span class="git-cmd">rad push</span> publie sur le <strong>réseau de pairs</strong>. Il n'y a pas de destination unique - ton code est disponible pour tous ceux qui sont connectés.</p>
+
+    <h3>rad sync - synchroniser avec les pairs</h3>
+
+    <pre data-lang="bash"><code># Synchronise avec les pairs connectés (envoie et récupère les mises à jour)
+rad sync</code></pre>
+
+    <p><span class="git-cmd">rad sync</span> est l'équivalent d'un <span class="git-cmd">git fetch</span> décentralisé. Il contacte les pairs connectés et échange les dernières modifications. La récupération (fetch) est incluse par défaut.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5 : Cloner un projet -->
+    <h2>Cloner un projet avec <span class="git-cmd">rad clone</span></h2>
+
+    <pre data-lang="bash"><code># Cloner un projet Radicle
+rad clone rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA
+
+# Le clone :
+# 1. Contacte les pairs et seeds qui hébergent ce projet
+# 2. Télécharge le dépôt Git
+# 3. Configure automatiquement les remotes Radicle</code></pre>
+
+    <p>L'identifiant <code>rad:z...</code> remplace l'URL GitHub. Tu peux le partager par n'importe quel canal - email, messagerie, QR code. Tant qu'un noeud connecté possède le projet, tu peux le cloner.</p>
+
+    <div class="tip">
+      <p><strong>Astuce :</strong> Tu peux aussi trouver des projets Radicle via l'interface web <code>app.radicle.xyz</code> ou <code>radicle.zulipchat.com</code> (la communauté).</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6 : Patches -->
+    <h2>Les <span class="keyword">Patches</span> - Pull Requests décentralisées</h2>
+
+    <p>Sur GitHub, tu crées une Pull Request pour proposer des modifications. Sur Radicle, l'équivalent s'appelle un <strong>Patch</strong>. Même concept, mais sans serveur central.</p>
+
+    <h3>Créer un patch</h3>
+
+    <pre data-lang="bash"><code># 1. Crée une branche et fais tes modifications
+git switch -c ma-fonctionnalite
+echo "Nouvelle fonctionnalité" >> README.md
+git add README.md
+git commit -m "Ajouter une fonctionnalité"
+
+# 2. Propose un patch
+rad patch create
+
+# Tu seras invité à entrer :
+# - Un titre pour le patch
+# - Une description (optionnelle)
+# Le patch est signé avec ta clé et publié sur le réseau</code></pre>
+
+    <h3>Lister et consulter les patches</h3>
+
+    <pre data-lang="bash"><code># Lister tous les patches du projet
+rad patch list
+
+# Affiche :
+# ID       TITLE                    AUTHOR            STATUS
+# abc123   Ajouter une fonctionnal  did:key:z6Mk...   open
+
+# Voir les détails d'un patch
+rad patch show abc123</code></pre>
+
+    <h3>Commenter un patch</h3>
+
+    <pre data-lang="bash"><code># Ajouter un commentaire à un patch
+rad patch comment abc123 --message "Bonne idée, mais peux-tu ajouter des tests ?"</code></pre>
+
+    <h3>Merger un patch</h3>
+
+    <pre data-lang="bash"><code># Si tu es un delegate du projet, tu peux merger
+rad patch merge abc123
+
+# Le patch est fusionné dans la branche par défaut
+# L'action est signée et propagée sur le réseau</code></pre>
+
+    <h3>Fermer un patch sans merger</h3>
+
+    <pre data-lang="bash"><code># Fermer un patch (rejeté ou abandonné)
+rad patch close abc123</code></pre>
+
+    <div class="key-message">
+      <p>Les patches Radicle sont stockés <strong>dans Git lui-même</strong> (via des références spéciales), pas sur un serveur externe. Si GitHub disparaît demain, tes Pull Requests disparaissent avec. Les patches Radicle, eux, vivent dans ton dépôt.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7 : Issues -->
+    <h2>Les <span class="keyword">Issues</span> décentralisées</h2>
+
+    <p>Radicle propose aussi un système d'issues intégré - pas besoin d'un tracker externe.</p>
+
+    <h3>Créer une issue</h3>
+
+    <pre data-lang="bash"><code># Créer une issue
+rad issue create --title "Bug : le fichier de config ne se charge pas" \
+                 --description "Quand on lance l'application sans config.yaml, elle plante au lieu d'utiliser les valeurs par défaut."</code></pre>
+
+    <h3>Lister et gérer les issues</h3>
+
+    <pre data-lang="bash"><code># Lister les issues ouvertes
+rad issue list
+
+# Commenter une issue
+rad issue comment &lt;issue-id&gt; --message "Je reproduis le bug sur Linux."
+
+# Fermer une issue
+rad issue close &lt;issue-id&gt;
+
+# Rouvrir une issue (changer son état)
+rad issue state &lt;issue-id&gt; open</code></pre>
+
+    <div class="tip">
+      <p><strong>Note :</strong> La réouverture d'une issue se fait via <code>rad issue state &lt;id&gt; open</code>. Tu peux aussi commenter l'issue pour signaler qu'elle doit être rouverte.</p>
+    </div>
+
+    <p>Comme les patches, les issues sont stockées dans les données Radicle du dépôt. Elles voyagent avec le code, de pair en pair.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8 : Comparaison -->
+    <h2>Comparaison - <span class="keyword">GitHub</span> vs <span class="keyword">Radicle</span></h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>GitHub</th>
+          <th>Radicle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Créer un compte</strong></td>
+          <td>S'inscrire sur github.com</td>
+          <td><code>rad auth</code> (clé locale)</td>
+        </tr>
+        <tr>
+          <td><strong>Créer un projet</strong></td>
+          <td>New Repository sur le site</td>
+          <td><code>rad init</code> dans un dépôt Git</td>
+        </tr>
+        <tr>
+          <td><strong>Publier</strong></td>
+          <td><code>git push origin main</code></td>
+          <td><code>rad push</code></td>
+        </tr>
+        <tr>
+          <td><strong>Cloner</strong></td>
+          <td><code>git clone https://github.com/...</code></td>
+          <td><code>rad clone rad:z...</code></td>
+        </tr>
+        <tr>
+          <td><strong>Proposer des modifications</strong></td>
+          <td>Pull Request (via le site)</td>
+          <td><code>rad patch create</code></td>
+        </tr>
+        <tr>
+          <td><strong>Revue de code</strong></td>
+          <td>Commentaires sur la PR</td>
+          <td><code>rad patch comment</code></td>
+        </tr>
+        <tr>
+          <td><strong>Fusionner</strong></td>
+          <td>Bouton Merge sur le site</td>
+          <td><code>rad patch merge</code></td>
+        </tr>
+        <tr>
+          <td><strong>Signaler un bug</strong></td>
+          <td>Issue sur le site</td>
+          <td><code>rad issue create</code></td>
+        </tr>
+        <tr>
+          <td><strong>Synchroniser</strong></td>
+          <td><code>git pull</code></td>
+          <td><code>rad sync</code></td>
+        </tr>
+        <tr>
+          <td><strong>Hors ligne</strong></td>
+          <td>Lecture seule (code local)</td>
+          <td>Tout fonctionne localement</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Exercice pratique -->
+    <h2>Exercice pratique - <span class="keyword">Premiers pas avec rad</span></h2>
+
+    <div class="quest-objective">
+      <p>Dans cet exercice, tu vas créer ton premier projet Radicle et manipuler les commandes de base. Même sans connexion au réseau, tu peux pratiquer localement.</p>
+    </div>
+
+    <div class="steps">
+      <h3>Étape 1 - Créer ton identité</h3>
+
+      <pre data-lang="bash"><code># Crée ton identité Radicle
+rad auth
+
+# Note ton DID quelque part - c'est ton identité</code></pre>
+
+      <h3>Étape 2 - Créer un dépôt Git et l'initialiser avec Radicle</h3>
+
+      <pre data-lang="bash"><code># Crée un nouveau dépôt
+mkdir atelier-voyageur
+cd atelier-voyageur
+git init
+
+# Crée un premier fichier
+echo "# Atelier du Voyageur" > README.md
+echo "Mon premier projet Radicle." >> README.md
+git add README.md
+git commit -m "Initialisation du projet"
+
+# Initialise Radicle
+rad init</code></pre>
+
+      <h3>Étape 3 - Inspecter ton projet</h3>
+
+      <pre data-lang="bash"><code># Vérifie les détails du projet
+rad inspect
+
+# Note l'identifiant du projet (RID : rad:z...)</code></pre>
+
+      <h3>Étape 4 - Créer un patch</h3>
+
+      <pre data-lang="bash"><code># Crée une branche de travail
+git switch -c amelioration-readme
+
+# Modifie le README
+echo "" >> README.md
+echo "## Fonctionnalités" >> README.md
+echo "- Collaboration pair-à-pair" >> README.md
+echo "- Identité cryptographique" >> README.md
+
+git add README.md
+git commit -m "Ajouter la section fonctionnalités"
+
+# Propose un patch
+rad patch create</code></pre>
+
+      <h3>Étape 5 - Lister et examiner</h3>
+
+      <pre data-lang="bash"><code># Liste tes patches
+rad patch list
+
+# Reviens sur main et merge le patch
+git switch main
+rad patch merge &lt;id-du-patch&gt;</code></pre>
+
+      <h3>Étape 6 - Créer une issue</h3>
+
+      <pre data-lang="bash"><code># Crée une issue de test
+rad issue create --title "Ajouter un fichier CONTRIBUTING" \
+                 --description "Il faudrait expliquer comment contribuer au projet."
+
+# Liste les issues
+rad issue list</code></pre>
+    </div>
+
+    <div class="tip">
+      <p><strong>Note :</strong> Si tu n'as pas installé Radicle, tu peux quand même lire et comprendre chaque commande. L'installation est optionnelle pour cette quête d'introduction - l'important est de comprendre le workflow.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des commandes</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>rad auth</code></td>
+          <td>Créer ton identité cryptographique (clé ed25519 + DID)</td>
+        </tr>
+        <tr>
+          <td><code>rad init</code></td>
+          <td>Initialiser un projet Radicle dans un dépôt Git existant</td>
+        </tr>
+        <tr>
+          <td><code>rad inspect</code></td>
+          <td>Afficher les détails du projet (RID, delegates, branches)</td>
+        </tr>
+        <tr>
+          <td><code>rad push</code></td>
+          <td>Publier les modifications sur le réseau pair-à-pair</td>
+        </tr>
+        <tr>
+          <td><code>rad sync</code></td>
+          <td>Synchroniser avec les pairs connectés</td>
+        </tr>
+        <tr>
+          <td><code>rad clone rad:z...</code></td>
+          <td>Cloner un projet depuis le réseau</td>
+        </tr>
+        <tr>
+          <td><code>rad patch create</code></td>
+          <td>Proposer un patch (équivalent d'une Pull Request)</td>
+        </tr>
+        <tr>
+          <td><code>rad patch list</code></td>
+          <td>Lister les patches du projet</td>
+        </tr>
+        <tr>
+          <td><code>rad patch comment</code></td>
+          <td>Commenter un patch</td>
+        </tr>
+        <tr>
+          <td><code>rad patch merge</code></td>
+          <td>Fusionner un patch dans la branche principale</td>
+        </tr>
+        <tr>
+          <td><code>rad patch close</code></td>
+          <td>Fermer un patch sans le fusionner</td>
+        </tr>
+        <tr>
+          <td><code>rad issue create</code></td>
+          <td>Créer une issue décentralisée</td>
+        </tr>
+        <tr>
+          <td><code>rad issue list</code></td>
+          <td>Lister les issues du projet</td>
+        </tr>
+        <tr>
+          <td><code>rad issue comment</code></td>
+          <td>Commenter une issue</td>
+        </tr>
+        <tr>
+          <td><code>rad issue close</code></td>
+          <td>Fermer une issue</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Conclusion narrative -->
+    <div class="narrative">
+      <p>Tu ranges soigneusement le compas dans le sac de voyage. Tes premières commandes Radicle sont encore fraîches dans ta mémoire, comme les premiers pas d'un voyage qu'on n'oublie jamais.</p>
+      <p>Le Maître Archiviste hoche la tête avec satisfaction.</p>
+      <p>« Tu sais maintenant te présenter au réseau, publier tes chroniques, et collaborer sans intermédiaire. Mais un voyageur a besoin de plus qu'un sac et un compas. Il a besoin d'un <strong>point de repère</strong> - un endroit où les autres voyageurs peuvent toujours te trouver. »</p>
+      <p>Il pointe du doigt une colline au loin, où se dresse la silhouette d'une tour solitaire.</p>
+      <p>« C'est là que nous irons demain. »</p>
+    </div>
