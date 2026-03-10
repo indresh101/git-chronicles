@@ -1,0 +1,73 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "import": ["@cspell/dict-fr-fr/cspell-ext.json"],
+  "dictionaries": ["project-words"],
+  "dictionaryDefinitions": [
+    {
+      "name": "project-words",
+      "path": "./cspell-words.txt",
+      "addWords": true
+    }
+  ],
+  "ignorePaths": [
+    "node_modules",
+    "_site",
+    "package.json",
+    "package-lock.json",
+    "*.css",
+    "*.js",
+    "*.sh",
+    "*.ps1",
+    "*.yml",
+    "*.yaml",
+    ".github"
+  ],
+  "overrides": [
+    {
+      "filename": "src/fr/**",
+      "language": "fr-fr,en",
+      "dictionaries": ["project-words"]
+    },
+    {
+      "filename": "src/en/**",
+      "language": "en,fr-fr",
+      "dictionaries": ["project-words"]
+    },
+    {
+      "filename": "README.fr.md",
+      "language": "fr-fr,en",
+      "dictionaries": ["project-words"]
+    },
+    {
+      "filename": "README.md",
+      "language": "en,fr-fr",
+      "dictionaries": ["project-words"]
+    },
+    {
+      "filename": "src/_includes/**",
+      "language": "en,fr-fr",
+      "dictionaries": ["project-words"]
+    }
+  ],
+  "patterns": [
+    { "name": "html-tags", "pattern": "<[^>]+>" },
+    { "name": "nunjucks", "pattern": "\\{[%{#].*?[%}#]\\}" },
+    { "name": "frontmatter", "pattern": "/^---[\\s\\S]*?^---/gm", "description": "YAML frontmatter block" },
+    { "name": "urls", "pattern": "https?://\\S+" },
+    { "name": "css-classes", "pattern": "class=\"[^\"]*\"" },
+    { "name": "code-blocks", "pattern": "<code>[^<]*</code>" },
+    { "name": "pre-blocks", "pattern": "<pre[^>]*>[\\s\\S]*?</pre>" },
+    { "name": "html-entities", "pattern": "&\\w+;" }
+  ],
+  "ignoreRegExpList": [
+    "html-tags",
+    "nunjucks",
+    "frontmatter",
+    "urls",
+    "css-classes",
+    "code-blocks",
+    "pre-blocks",
+    "html-entities"
+  ]
+}

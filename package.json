@@ -4,12 +4,19 @@
   "description": "An interactive Git course with fantasy narrative - bilingual (FR/EN)",
   "scripts": {
     "dev": "npx eleventy --serve",
-    "build": "npx eleventy",
+    "build": "npm run spell && npx eleventy",
+    "spell": "cspell \"src/**/*.njk\" \"README*.md\"",
+    "spell:fr": "cspell \"src/fr/**/*.njk\" \"README.fr.md\"",
+    "spell:en": "cspell \"src/en/**/*.njk\" \"README.md\"",
     "check-links": "npx eleventy && lychee _site/**/*.html",
-    "check-i18n": "node scripts/check-i18n.js"
+    "check-i18n": "node scripts/check-i18n.js",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^3.0.0"
+    "@11ty/eleventy": "^3.0.0",
+    "@cspell/dict-fr-fr": "^2.3.2",
+    "cspell": "^9.7.0",
+    "husky": "^9.1.7"
   },
   "license": "SEE LICENSE IN LICENSE-CODE"
 }
