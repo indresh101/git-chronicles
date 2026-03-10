@@ -1,0 +1,169 @@
+---
+layout: layouts/cheatsheet.njk
+lang: en
+title: "Advanced Git"
+cheatsheet_slug_fr: "git-avance"
+cheatsheet_slug_en: "advanced-git"
+permalink: /en/cheatsheets/advanced-git/
+---
+
+<div class="cheatsheet">
+
+      <section>
+        <h2>Rebase - History rewriting</h2>
+<pre data-lang="bash"><code># Simple rebase
+git rebase main              # rebase current branch onto main
+git rebase --onto main A B   # rebase B onto main from A
+git rebase --abort           # abort a rebase in progress
+git rebase --continue        # continue after conflict resolution
+
+# Interactive rebase
+git rebase -i HEAD~3         # rewrite the last 3 commits
+# Available actions:
+#   pick   = keep as is
+#   reword = change the message
+#   edit   = change the content
+#   squash = merge with previous (keep message)
+#   fixup  = merge (discard message)
+#   drop   = delete the commit</code></pre>
+      </section>
+
+      <section>
+        <h2>Investigation</h2>
+<pre data-lang="bash"><code># Bisect - find the faulty commit (binary search)
+git bisect start
+git bisect bad               # current commit is broken
+git bisect good abc1234      # this commit was good
+# Git navigates automatically, for each step:
+git bisect good              # it works here
+git bisect bad               # it's broken here
+git bisect reset             # finish and return
+
+# Blame - who wrote each line
+git blame file.txt           # annotate each line
+git blame -L 10,20 file      # lines 10 to 20 only
+git blame -w file            # ignore whitespace changes
+
+# Advanced log
+git log --all --graph --decorate --oneline  # full view
+git log -S "text"            # search for text in diffs
+git log --follow file        # follow a renamed file
+git shortlog -sn             # ranking by author</code></pre>
+      </section>
+
+      <section>
+        <h2>Stash - Temporary storage</h2>
+<pre data-lang="bash"><code>git stash                    # save current changes
+git stash push -m "message"  # with a descriptive name
+git stash list               # list stashes
+git stash pop                # restore last + delete
+git stash apply              # restore without deleting
+git stash apply stash@{2}    # restore a specific stash
+git stash drop stash@{0}     # delete a stash
+git stash show               # see contents (summary)
+git stash show -p            # see contents (full diff)
+git stash branch my-branch   # create a branch from a stash
+git stash clear              # delete all stashes</code></pre>
+      </section>
+
+      <section>
+        <h2>Cherry-pick and Reflog</h2>
+<pre data-lang="bash"><code># Cherry-pick - copy a specific commit
+git cherry-pick abc1234      # apply a commit on current branch
+git cherry-pick -n abc1234   # without committing (stage only)
+git cherry-pick A..B         # range of commits
+git cherry-pick --abort      # abort
+
+# Reflog - history of ALL your actions
+git reflog                   # see HEAD history
+git reflog show my-branch    # history of a branch
+git reflog expire --expire=90.days.ago --all  # clean up
+# Use case: recover a commit after a reset --hard
+git reset --hard HEAD@{2}    # go back 2 actions</code></pre>
+      </section>
+
+      <section>
+        <h2>Tags and versioning</h2>
+<pre data-lang="bash"><code># Create tags
+git tag v1.0.0                     # lightweight tag
+git tag -a v1.0.0 -m "Release 1.0" # annotated tag (recommended)
+git tag -a v1.0.0 abc1234          # tag an older commit
+
+# List / delete
+git tag -l                    # list all tags
+git tag -l "v1.*"             # filter by pattern
+git tag -d v1.0.0             # delete locally
+git push origin --delete v1.0.0  # delete on remote
+
+# Publish
+git push --tags               # send all tags
+git push origin v1.0.0        # send a specific tag</code></pre>
+        <h3>Semver (MAJOR.MINOR.PATCH)</h3>
+        <p><strong>MAJOR</strong> = breaking change | <strong>MINOR</strong> = new feature | <strong>PATCH</strong> = bug fix</p>
+      </section>
+
+      <section>
+        <h2>Git Hooks</h2>
+        <p>Scripts in <code>.git/hooks/</code> - run automatically.</p>
+<pre data-lang="bash"><code># Most useful hooks
+pre-commit       # before commit (lint, tests, format)
+commit-msg       # verify message format
+prepare-commit-msg  # pre-fill the message
+pre-push         # before push (full tests)
+post-merge       # after a merge (npm install, etc.)
+
+# Make executable
+chmod +x .git/hooks/pre-commit
+
+# Minimal pre-commit example
+#!/bin/sh
+npm run lint || exit 1</code></pre>
+        <p>Tools: <code>husky</code> (JS), <code>pre-commit</code> (Python) to share hooks.</p>
+      </section>
+
+      <section>
+        <h2>Recommended aliases</h2>
+<pre data-lang="bash"><code>git config --global alias.st "status -s"
+git config --global alias.co "switch"
+git config --global alias.ci "commit"
+git config --global alias.br "branch"
+git config --global alias.lg "log --oneline --graph --all --decorate"
+git config --global alias.last "log -1 HEAD"
+git config --global alias.unstage "restore --staged"
+git config --global alias.undo "reset --soft HEAD~1"
+git config --global alias.amend "commit --amend --no-edit"
+git config --global alias.wip "commit -am 'WIP'"</code></pre>
+      </section>
+
+      <section>
+        <h2>Maintenance</h2>
+<pre data-lang="bash"><code>git gc                 # garbage collection (cleanup)
+git gc --aggressive    # thorough cleanup
+git fsck               # verify repository integrity
+git prune              # remove orphaned objects
+git maintenance start  # enable automatic maintenance
+git count-objects -vH  # repository size</code></pre>
+      </section>
+
+      <section>
+        <h2>Submodules</h2>
+<pre data-lang="bash"><code>git submodule add URL path       # add a submodule
+git submodule init               # initialize after clone
+git submodule update             # download content
+git submodule update --init --recursive  # all at once
+git submodule foreach git pull   # update all submodules
+git submodule deinit path        # deactivate
+# Config: .gitmodules (to be committed)</code></pre>
+      </section>
+
+      <section>
+        <h2>Worktrees</h2>
+<pre data-lang="bash"><code>git worktree add ../urgent-fix main    # new worktree
+git worktree add ../feature -b feat    # worktree + new branch
+git worktree list                      # list worktrees
+git worktree remove ../urgent-fix      # remove
+# Allows working on multiple branches in parallel
+# without stash or switch</code></pre>
+      </section>
+
+    </div>

@@ -1,0 +1,189 @@
+---
+layout: layouts/cheatsheet.njk
+lang: en
+title: "Git LFS"
+cheatsheet_slug_fr: "git-lfs"
+cheatsheet_slug_en: "git-lfs"
+permalink: /en/cheatsheets/git-lfs/
+---
+
+<div class="cheatsheet">
+
+      <section>
+        <h2>Installation</h2>
+<pre data-lang="bash"><code># Linux (apt)
+sudo apt install git-lfs
+# Linux (dnf)
+sudo dnf install git-lfs
+# macOS
+brew install git-lfs
+# Windows
+winget install GitHub.GitLFS
+
+# Enable (once per machine)
+git lfs install              # user config (~/.gitconfig)
+git lfs install --local      # repo config only
+git lfs install --system     # machine-wide config
+
+# Verify
+git lfs version
+git lfs env                  # full LFS config</code></pre>
+      </section>
+
+      <section>
+        <h2>Tracking - Track files</h2>
+<pre data-lang="bash"><code># Declare patterns to track via LFS
+git lfs track "*.psd"           # all PSDs
+git lfs track "*.png"           # all PNGs
+git lfs track "assets/**"       # entire assets folder
+git lfs track "*.fbx" "*.blend" # multiple patterns
+
+# Stop tracking
+git lfs untrack "*.png"
+
+# Check config
+cat .gitattributes              # LFS config file
+git lfs track                   # list active patterns
+
+# IMPORTANT: commit .gitattributes!
+git add .gitattributes
+git commit -m "Configure LFS tracking"</code></pre>
+      </section>
+
+      <section>
+        <h2>Common operations</h2>
+<pre data-lang="bash"><code># Normal workflow (identical to standard git)
+git add my-file.psd
+git commit -m "Add asset"
+git push                     # automatic LFS upload
+
+# LFS-specific commands
+git lfs ls-files             # list files managed by LFS
+git lfs ls-files -s          # with size and hash
+git lfs push --all origin    # force upload all files
+git lfs pull                 # download all LFS files
+git lfs fetch                # download without checkout
+git lfs fetch --all          # all files from all history
+git lfs fetch --recent       # recently modified files
+
+# Check status
+git lfs status               # files pending upload</code></pre>
+      </section>
+
+      <section>
+        <h2>Locking - File locking</h2>
+<pre data-lang="bash"><code># Lock a file (prevents others from modifying it)
+git lfs lock assets/character.psd
+git lfs lock "level/*.umap"
+
+# Unlock
+git lfs unlock assets/character.psd
+git lfs unlock --force assets/character.psd  # force (admin)
+git lfs unlock --id 123                      # by ID
+
+# List locks
+git lfs locks                # all active locks
+git lfs locks --verify       # check for conflicts
+
+# Configure automatic locking
+# In .gitattributes:
+# *.psd lockable
+# *.umap lockable</code></pre>
+      </section>
+
+      <section>
+        <h2>Migration</h2>
+<pre data-lang="bash"><code># Migrate existing files to LFS
+git lfs migrate import --include="*.psd,*.png"
+# Rewrites history! SHAs change.
+
+# Migrate ALL history
+git lfs migrate import --include="*.psd" --everything
+
+# Migrate only certain branches
+git lfs migrate import --include="*.psd" --include-ref=main
+
+# Remove files from LFS (back to normal Git)
+git lfs migrate export --include="*.txt"
+
+# Check what could be migrated
+git lfs migrate info               # large files
+git lfs migrate info --above=1mb   # above 1 MB</code></pre>
+      </section>
+
+      <section>
+        <h2>Patterns by domain</h2>
+        <h3>Video games</h3>
+<pre data-lang="bash"><code># Textures / images
+*.psd *.png *.jpg *.tga *.bmp *.tif *.exr *.hdr
+# 3D Models
+*.fbx *.blend *.obj *.dae *.3ds *.max *.ma *.mb
+# Audio
+*.wav *.mp3 *.ogg *.flac *.bank
+# Video
+*.mp4 *.mov *.avi
+# Engines
+*.uasset *.umap              # Unreal Engine
+# Unity: *.unity *.prefab *.asset are YAML text if Force Text
+# is active. LFS optional (only useful if very large).
+*.png *.ogg *.mp3 *.glb *.blend  # Godot (real binaries only)
+# Godot note: *.tscn *.tres are text (S-expression), no LFS</code></pre>
+        <h3>Data Science / ML</h3>
+<pre data-lang="bash"><code>*.pkl *.pickle               # Python serialization
+*.h5 *.hdf5                  # HDF5 (Keras, etc.)
+*.pt *.pth                   # PyTorch
+*.onnx                       # ONNX
+*.parquet *.feather           # columnar
+*.csv                        # large datasets (>10 MB)
+*.safetensors *.bin          # LLM models</code></pre>
+        <h3>Design</h3>
+<pre data-lang="bash"><code>*.psd *.psb                  # Photoshop
+*.ai                         # Illustrator
+*.sketch                     # Sketch
+*.fig                        # Figma (exports)
+*.pdf                        # documents
+*.indd                       # InDesign</code></pre>
+      </section>
+
+      <section>
+        <h2>Diagnostics</h2>
+<pre data-lang="bash"><code>git lfs env          # full config (endpoint, hooks, etc.)
+git lfs status       # pending files / issues
+git lfs logs last    # last detailed logs
+git lfs fsck         # verify integrity of LFS files
+git lfs prune        # delete obsolete local files
+git lfs prune --dry-run   # simulate cleanup</code></pre>
+      </section>
+
+      <section>
+        <h2>Complete .gitattributes example (games)</h2>
+<pre data-lang="bash"><code># -- Git LFS - Video Game Project --
+
+# Textures
+*.psd filter=lfs diff=lfs merge=lfs -text lockable
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
+*.exr filter=lfs diff=lfs merge=lfs -text
+
+# 3D Models
+*.fbx filter=lfs diff=lfs merge=lfs -text lockable
+*.blend filter=lfs diff=lfs merge=lfs -text lockable
+*.obj filter=lfs diff=lfs merge=lfs -text
+
+# Audio
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+
+# Unreal Engine
+*.uasset filter=lfs diff=lfs merge=lfs -text lockable
+*.umap filter=lfs diff=lfs merge=lfs -text lockable
+
+# Unity - *.unity and *.prefab are YAML text if Force Text is active.
+# Only put them in LFS if files are very large despite text format.
+# *.unity filter=lfs diff=lfs merge=lfs -text lockable
+# *.prefab filter=lfs diff=lfs merge=lfs -text</code></pre>
+      </section>
+
+    </div>

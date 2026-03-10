@@ -1,0 +1,297 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_12
+quest_number: "12"
+arc: 3
+title: "The Code Oracle"
+subtitle: "git blame, git bisect, git cherry-pick"
+quest_slug_fr: "12-loracle-du-code"
+quest_slug_en: "12-the-code-oracle"
+permalink: /en/quests/12-the-code-oracle/
+---
+
+    <!-- Narrative introduction -->
+    <section>
+      <h2>Introduction</h2>
+
+      <div class="narrative">
+        <p>In the depths of the Citadel of Knowledge, the Master Archivist leads you through a corridor you had never noticed. Behind a heavy oak door reinforced with black iron, a circular room opens before you. At its center, an ancient mirror floats in the air, surrounded by luminous runes. Scrolls are piled on shelves that seem to disappear into the darkness.</p>
+      </div>
+
+      <blockquote>
+        <p>"Apprentice, you have proven your mastery of the fundamentals. It is time to reveal to you the <strong>ancient arts of divination</strong>. Do you see this mirror? It is the <strong><span class="keyword">Code Oracle</span></strong>. Through it, you will be able to <strong>travel back in time to find the origin of a corruption</strong>, identify <strong><span class="highlight">who wrote each line of a scroll</span></strong>, and even <strong><span class="highlight">surgically transplant a fragment from one chronicle to another</span></strong>. These three arts are <strong>formidable in the hands of an experienced Archivist</strong>."</p>
+      </blockquote>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- git blame -->
+    <section>
+      <h2>The art of divination: <span class="git-cmd">git blame</span></h2>
+
+      <p>The Oracle's first skill is <span class="keyword">divination</span>: knowing who wrote each line of a file, and when.</p>
+
+      <pre data-lang="bash"><code>git blame &lt;file&gt;</code></pre>
+
+      <p>This command displays each line of the file with:</p>
+      <ul>
+        <li>The <strong>commit hash</strong> that last modified it</li>
+        <li>The <strong>author's name</strong></li>
+        <li>The <strong>date</strong> of the modification</li>
+        <li>The <strong>line number</strong></li>
+        <li>The <strong>content</strong> of the line</li>
+      </ul>
+
+      <p>Example output:</p>
+
+      <pre><code>a1b2c3d4 (Aldric the Scribe   2024-01-15 09:00:00 +0100  1) Creature Registry
+e5f6g7h8 (Elara the Wise      2024-02-05 16:30:00 +0100  2) Last updated: year 1024</code></pre>
+
+      <h3>Blame on a range of lines</h3>
+
+      <p>You don't always need to see the entire file. To examine only lines 10 to 20:</p>
+
+      <pre data-lang="bash"><code>git blame -L 10,20 &lt;file&gt;</code></pre>
+
+      <p>You can also use other formats:</p>
+
+      <pre data-lang="bash"><code>git blame -L 10,+5 &lt;file&gt;    # 5 lines starting from line 10</code></pre>
+
+      <div class="tip">
+        <p><strong>When to use <span class="git-cmd">git blame</span>?</strong> When you come across a strange line of code and want to know <strong>who wrote it</strong>, <strong>when</strong>, and most importantly <strong>in which commit</strong> - so you can read the commit message and understand the context.</p>
+      </div>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- git bisect -->
+    <section>
+      <h2>The binary search: <span class="git-cmd">git bisect</span></h2>
+
+      <p>The Oracle's second art is the <span class="keyword">binary search through history</span>. Imagine: your program was working 10 commits ago, but it's broken now. The bug was introduced somewhere within those 10 commits. You could test them one by one... or let the Oracle <span class="highlight">cut the history in half at each step</span>.</p>
+
+      <p>That's the principle of <span class="git-cmd">git bisect</span>: a <strong>binary search</strong> through Git's history.</p>
+
+      <h3>How does it work?</h3>
+
+      <ol class="steps">
+        <li><strong>Start the search</strong>:
+          <pre data-lang="bash"><code>git bisect start</code></pre>
+        </li>
+        <li><strong>Mark the current version as broken</strong>:
+          <pre data-lang="bash"><code>git bisect bad</code></pre>
+        </li>
+        <li><strong>Mark a commit where everything worked</strong>:
+          <pre data-lang="bash"><code>git bisect good &lt;commit&gt;</code></pre>
+        </li>
+        <li>Git automatically places you <strong>in the middle</strong> of the history. You test, then tell Git whether this version is good or bad:
+          <pre data-lang="bash"><code>git bisect good    # if it works here
+git bisect bad     # if it's broken here</code></pre>
+        </li>
+        <li>Git cuts in half again. You test again. And so on, until you find <strong>the exact commit</strong> that introduced the bug.</li>
+        <li><strong>End the search</strong> and return to your normal branch:
+          <pre data-lang="bash"><code>git bisect reset</code></pre>
+        </li>
+      </ol>
+
+      <div class="key-message">
+        <p><strong>Why is this powerful?</strong> With 10 commits, you find the culprit in <strong>3-4 tests</strong> instead of 10. With 1000 commits, you find it in <strong>about 10 tests</strong>. That's the magic of binary search!</p>
+      </div>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- git cherry-pick -->
+    <section>
+      <h2>The surgery: <span class="git-cmd">git cherry-pick</span></h2>
+
+      <p>The Oracle's third art is <span class="keyword">surgical transplantation</span>. Sometimes, you need to apply <strong>a single specific commit</strong> from one branch to another, without merging the entire branch.</p>
+
+      <pre data-lang="bash"><code>git cherry-pick &lt;commit-hash&gt;</code></pre>
+
+      <p>This command takes the changes from a specific commit and <span class="highlight">replays them on your current branch</span>, creating a new commit with the same changes (but a different hash).</p>
+
+      <h3>When to use cherry-pick?</h3>
+
+      <ul>
+        <li><strong>Urgent hotfix</strong>: a fix was made on a development branch, but you need to apply it immediately to <code>main</code> without waiting for the full merge.</li>
+        <li><strong>Porting a change</strong>: a feature developed on one branch also needs to be applied to another maintenance branch.</li>
+        <li><strong>Recovering an isolated commit</strong>: you want a specific commit from an experimental branch, not the entire branch.</li>
+      </ul>
+
+      <h3>Cherry-pick and conflicts</h3>
+
+      <p>Like a merge, a cherry-pick can cause <span class="highlight-red">conflicts</span> if the commit's changes contradict the current state of your branch.</p>
+
+      <p>In that case, Git stops and asks you to resolve the conflict manually:</p>
+
+      <ol class="steps">
+        <li>Open the conflicting file</li>
+        <li>Resolve the conflict markers (<span class="highlight-red"><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code></span>, <span class="highlight-red"><code>=======</code></span>, <span class="highlight-red"><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code></span>)</li>
+        <li>Mark as resolved and continue:
+          <pre data-lang="bash"><code>git add &lt;file&gt;
+git cherry-pick --continue</code></pre>
+        </li>
+      </ol>
+
+      <p>To abort a cherry-pick in progress:</p>
+
+      <pre data-lang="bash"><code>git cherry-pick --abort</code></pre>
+
+      <div class="warning">
+        <p><span class="git-cmd">git cherry-pick</span> creates a <strong>new commit</strong> with a different hash. This means that if you later merge the source branch, the same change will exist twice (two different commits, same modifications). Use cherry-pick judiciously - for specific cases, not as your default merging method.</p>
+      </div>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Practical exercise -->
+    <section>
+      <h2>Practical exercise - The Code Oracle</h2>
+
+      <div class="quest-objective">
+        <p>An ancient archive of the kingdom has been corrupted. A bug has crept into the <strong>Spellbook</strong> - somewhere in the history, a magic formula has been sabotaged. The Oracle will help you <strong>trace the origin of the corruption</strong>, identify the culprit, and <strong>surgically apply a fix</strong>.</p>
+      </div>
+
+      <h3>Step 1 - Retrieve the archive</h3>
+
+      <pre data-lang="bash"><code>git clone archive.bundle the-code-oracle
+cd the-code-oracle</code></pre>
+
+      <h3>Step 2 - Examine with blame</h3>
+
+      <p>Start by examining the Spellbook:</p>
+
+      <pre data-lang="bash"><code>git blame grimoire.txt</code></pre>
+
+      <p>Observe who modified each line and when. Then examine a specific section:</p>
+
+      <pre data-lang="bash"><code>git blame -L 15,25 grimoire.txt</code></pre>
+
+      <div class="tip">
+        <p><span class="git-cmd">git blame</span> shows you the commit hash responsible for each line. You can then use <span class="git-cmd">git show &lt;hash&gt;</span> to see the full commit details.</p>
+      </div>
+
+      <h3>Step 3 - Find the bug with bisect</h3>
+
+      <p>The spellbook contains an error: a formula has been corrupted (the line contains the word <code>CORRUPTED</code>). This error was not present in the first commit. Use <span class="git-cmd">git bisect</span> to find the exact commit:</p>
+
+      <pre data-lang="bash"><code>git bisect start
+git bisect bad                    # the current version contains the bug
+git bisect good &lt;first-commit&gt;   # the very first commit was good</code></pre>
+
+      <p>Replace <code>&lt;first-commit&gt;</code> with the hash of the first commit (visible with <span class="git-cmd">git log --oneline</span>).</p>
+
+      <p>At each step, check if the word <code>CORRUPTED</code> appears in <code>grimoire.txt</code>:</p>
+
+      <pre data-lang="bash"><code>grep CORRUPTED grimoire.txt</code></pre>
+
+      <ul>
+        <li>If the word appears: <code>git bisect bad</code></li>
+        <li>If the word doesn't appear: <code>git bisect good</code></li>
+      </ul>
+
+      <p>Continue until Git identifies the guilty commit. Note the hash, then finish:</p>
+
+      <pre data-lang="bash"><code>git bisect reset</code></pre>
+
+      <h3>Step 4 - Apply the fix with cherry-pick</h3>
+
+      <p>Good news: an Archivist has already prepared a fix on the <code>fix</code> branch. Since the repository was cloned from a bundle, this branch is remote - we reference it with the <code>origin/</code> prefix. Check which commit is on it:</p>
+
+      <pre data-lang="bash"><code>git log --oneline origin/fix</code></pre>
+
+      <p>The latest commit on that branch contains the fix. Apply it to <code>main</code> with cherry-pick:</p>
+
+      <pre data-lang="bash"><code>git cherry-pick &lt;fix-commit-hash&gt;</code></pre>
+
+      <p>Verify that the spellbook no longer contains the word <code>CORRUPTED</code>:</p>
+
+      <pre data-lang="bash"><code>grep CORRUPTED grimoire.txt</code></pre>
+
+      <div class="tip">
+        <p>If the cherry-pick causes a conflict, don't panic! Open the file, resolve the conflict manually by keeping the corrected version, then do <code>git add grimoire.txt</code> and <code>git cherry-pick --continue</code>.</p>
+      </div>
+
+      <h3>Step 5 - Verify</h3>
+
+      <p>Run the verification script to validate your quest:</p>
+
+      <p><strong>Bash</strong> (Linux / macOS / Git Bash on Windows):</p>
+
+      <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+      <p><strong>PowerShell</strong> (Windows):</p>
+
+      <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+      <p>The script checks:</p>
+
+      <ol class="steps">
+        <li>You are in a Git repository</li>
+        <li>You used <span class="git-cmd">git bisect</span> (trace in the reflog)</li>
+        <li>You used <span class="git-cmd">git cherry-pick</span> (trace in the reflog)</li>
+        <li>The spellbook no longer contains the word <code>CORRUPTED</code></li>
+      </ol>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Summary -->
+    <section>
+      <h2>Command summary</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Command</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>git blame &lt;file&gt;</code></td>
+            <td>See who modified each line and when</td>
+          </tr>
+          <tr>
+            <td><code>git blame -L 10,20 &lt;file&gt;</code></td>
+            <td>Blame on a specific range of lines</td>
+          </tr>
+          <tr>
+            <td><code>git bisect start</code></td>
+            <td>Start a binary search through history</td>
+          </tr>
+          <tr>
+            <td><code>git bisect bad</code></td>
+            <td>Mark the current version as broken</td>
+          </tr>
+          <tr>
+            <td><code>git bisect good &lt;commit&gt;</code></td>
+            <td>Mark a commit as working</td>
+          </tr>
+          <tr>
+            <td><code>git bisect reset</code></td>
+            <td>End the search and return to normal</td>
+          </tr>
+          <tr>
+            <td><code>git cherry-pick &lt;commit&gt;</code></td>
+            <td>Apply a specific commit to the current branch</td>
+          </tr>
+          <tr>
+            <td><code>git cherry-pick --abort</code></td>
+            <td>Abort a cherry-pick in progress</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>The Master Archivist watches the Oracle's mirror, where the reflection of the corrected history shimmers softly.</p>
+      <div class="key-message">
+        <p>"You now master the <strong>arts of divination</strong>. With <code>blame</code>, you know <strong>who wrote what and when</strong>. With <code>bisect</code>, you can <strong>track down a bug across hundreds of commits</strong> in just a few minutes. And with <code>cherry-pick</code>, you know how to <strong>surgically transplant a fix</strong> wherever it is needed. These tools make you much more than a simple Archivist - you are now a <strong>code investigator</strong>."</p>
+      </div>
+    </div>

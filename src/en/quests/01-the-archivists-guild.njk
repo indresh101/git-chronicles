@@ -1,0 +1,255 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_01
+quest_number: "01"
+arc: 1
+title: "The Archivists' Guild"
+subtitle: "Installing and configuring Git"
+quest_slug_fr: "01-la-guilde-des-archivistes"
+quest_slug_en: "01-the-archivists-guild"
+permalink: /en/quests/01-the-archivists-guild/
+---
+
+      <!-- Narrative introduction -->
+      <section>
+        <h2>Introduction</h2>
+
+        <div class="narrative">
+          <p>The wind whistles between the towers of the Citadel of Knowledge as you pass through the heavy doors of the Archivists' Guild. Here, scribes bustle about preserving the memory of the entire kingdom - every royal decree, every peace treaty, every battle plan. Without them, history would be lost forever.</p>
+          <p>An old man with a silver beard approaches you. His eyes sparkle with mischief behind his round spectacles. He is the Master Archivist.</p>
+        </div>
+
+        <blockquote>
+          <p>"Welcome, young recruit. I am the Master Archivist, guardian of the kingdom's history. You've arrived at just the right time, because we have <strong>a serious problem</strong>... Our scribes <strong>keep losing their work</strong>, overwriting each other's scrolls, and <strong>nobody knows who changed what anymore</strong>. We need a new archiving system. And you are going to learn to master it."</p>
+        </blockquote>
+      </section>
+
+      <hr>
+
+      <!-- The problem without versioning -->
+      <section>
+        <h2>The problem: working without versioning</h2>
+
+        <p>Before understanding the solution, you need to understand the problem. Here's what happens when you work <span class="highlight-red">without a versioning system</span>:</p>
+
+        <h3>The chaos of file names</h3>
+
+        <p>You probably know this situation:</p>
+
+        <pre><code>final_report.txt
+final_report_v2.txt
+final_report_v2_corrected.txt
+FINAL_report_REALLY_FINAL.txt
+FINAL_report_REALLY_FINAL_2.txt
+FINAL_report_OK_THIS_ONE.txt</code></pre>
+
+        <p>Which one is the right one? <span class="highlight-red">Nobody knows</span>. Not even the person who created them.</p>
+
+        <h3>Overwritten work</h3>
+
+        <p>Imagine: two scribes, Aldric and Berenice, are working on the same scroll. Aldric makes his changes in the morning and saves. Berenice, who had opened the scroll the previous evening, makes her own changes in the afternoon and saves too. Result: <span class="highlight-red">all of Aldric's work has vanished</span>, overwritten without warning. Aldric has a very bad day.</p>
+
+        <h3>The mystery of modifications</h3>
+
+        <blockquote>
+          <p>"It was working yesterday! What changed?"</p>
+        </blockquote>
+
+        <p>Someone changed something. But <strong>who</strong>? <strong>When</strong>? And most importantly, <strong>why</strong>? Impossible to tell. You waste hours searching, and sometimes you never find the version that was working.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- The solution: versioning -->
+      <section>
+        <h2>The solution: versioning</h2>
+
+        <p>The Master Archivist has found the solution. Instead of blindly saving over the old file, we're going to <span class="highlight">record every modification</span> with four essential pieces of information:</p>
+
+        <ul>
+          <li><strong>Who</strong> made the modification</li>
+          <li><strong>When</strong> it was made</li>
+          <li><strong>What</strong> exactly changed (not just "I modified the file", but which lines precisely)</li>
+          <li><strong>Why</strong> - a short message explaining the reason for the change</li>
+        </ul>
+
+        <div class="key-message">
+          <p>With versioning, you can <strong>go back in time</strong> at any moment, see the <strong>complete history</strong> of all modifications, and <strong>multiple people</strong> can work simultaneously without overwriting each other.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Git: the tool -->
+      <section>
+        <h2>Git: the tool of modern Archivists</h2>
+
+        <p>The system you're going to learn is called <span class="keyword">Git</span>. It's the most widely used <span class="keyword">versioning</span> tool in the world. But it wasn't the first - others tried before it.</p>
+
+        <h3>Before Git: the old systems</h3>
+
+        <p>The need to track file changes is nothing new. Several tools existed before Git:</p>
+
+        <ul>
+          <li><strong>RCS</strong> (1982) - One of the first versioning systems. It could only manage <strong>one file at a time</strong> - impossible to work on an entire project.</li>
+          <li><strong>CVS</strong> (1990) - The first tool to manage multiple files together. But it relied on a <strong>central server</strong>: if the server went down, nobody could work.</li>
+          <li><strong>SVN / Subversion</strong> (2000) - An improvement over CVS, more reliable and faster. Very popular for years, but still <strong>centralized</strong>: every operation required a connection to the server.</li>
+          <li><strong>Mercurial</strong> (2005) - Created the same year as Git, with the same distributed philosophy. A good tool, but Git gradually overtook it in popularity.</li>
+        </ul>
+
+        <p>The common problem with these tools? Either they were <span class="highlight-red">too limited</span>, or they <span class="highlight-red">depended on a central server</span>, or they were <span class="highlight-red">too slow</span> for very large projects.</p>
+
+        <h3>The arrival of Git</h3>
+
+        <ul>
+          <li><strong>2005</strong> - Linus Torvalds (the creator of Linux) manages the Linux kernel source code - a project with <strong>thousands of developers</strong> and <strong>millions of lines of code</strong>. Existing tools can't handle the load. So he creates his own in just a few weeks: <span class="keyword">Git</span>.</li>
+          <li><strong>Distributed</strong> - Unlike older systems, Git is <span class="highlight">distributed</span>: every person working on a project has a <strong>complete copy</strong> of the entire history. No need for a central server to consult the project's history.</li>
+          <li><strong>Fast</strong> - Git was designed to be <strong>extremely fast</strong>, even on gigantic projects. The Linux kernel itself - with over <strong>30 years of history</strong> and millions of lines - is managed with Git.</li>
+          <li><strong>Today</strong> - Git is <span class="badge-green">free</span>, <span class="badge-green">open source</span>, and used by practically every developer on the planet. Platforms like GitHub, GitLab, and Bitbucket are built around Git.</li>
+        </ul>
+
+        <div class="key-message">
+          <p>Yes, Git has <strong>a lot of commands</strong> and can seem complex at first. But it's precisely this power that allows it to manage everything from a small personal project to a monster like the Linux kernel. And in practice, <strong>a handful of commands is enough</strong> for 90% of daily work.</p>
+        </div>
+
+        <div class="tip">
+          <p>Git isn't just for developers! It can be used for any project made up of text files: documentation, configuration files, websites, etc.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Installation -->
+      <section>
+        <h2>Installing Git</h2>
+
+        <p>Before you start using Git, you need to install it on your machine. Here are the instructions depending on your operating system.</p>
+
+        <h3>Windows</h3>
+
+        <ol class="steps">
+          <li>Go to <a href="https://git-scm.com/">git-scm.com</a> and download the installer.</li>
+          <li>Run the installer and follow the steps (the default options work perfectly fine).</li>
+          <li>The installation includes <strong>Git Bash</strong>, a terminal that will let you use Git commands.</li>
+          <li>To verify: open Git Bash and type <span class="git-cmd">git --version</span>.</li>
+        </ol>
+
+        <h3>Linux</h3>
+
+        <p>Open a terminal and use your distribution's package manager:</p>
+
+        <pre data-lang="bash"><code># Debian, Ubuntu, Mint...
+sudo apt install git
+
+# Fedora, RHEL, CentOS...
+sudo dnf install git
+
+# Arch Linux
+sudo pacman -S git</code></pre>
+
+        <p>To verify: <span class="git-cmd">git --version</span></p>
+
+        <h3>macOS</h3>
+
+        <p>Two options:</p>
+
+        <pre data-lang="bash"><code># Option 1: via Apple command line tools
+xcode-select --install
+
+# Option 2: via Homebrew (if you have it installed)
+brew install git</code></pre>
+
+        <p>To verify: <span class="git-cmd">git --version</span></p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- First configuration -->
+      <section>
+        <h2>First configuration</h2>
+
+        <p>Git needs to know <span class="highlight">who you are</span>. Every modification you record will carry your signature - a name and an email address. This is mandatory.</p>
+
+        <p>Open a terminal (Git Bash on Windows) and type these two commands, replacing the values in quotes with your own:</p>
+
+        <pre data-lang="bash"><code>git config --global user.name "Your Name"
+git config --global user.email "your@email.com"</code></pre>
+
+        <div class="tip">
+          <p>You <strong>don't have to use your real name</strong>. A pseudonym works perfectly fine. Many open source contributors use a nickname and a dedicated email address. What matters is that Git can <span class="highlight">identify the author</span> of each modification.</p>
+        </div>
+
+        <div class="tip">
+          <p>The <span class="git-cmd">--global</span> option means this configuration applies to <strong>all your Git projects</strong> on this machine. You only need to do it once.</p>
+        </div>
+
+        <p>To verify that everything is properly saved:</p>
+
+        <pre data-lang="bash"><code>git config --global user.name
+git config --global user.email</code></pre>
+
+        <p>These commands should display your name and email respectively.</p>
+
+        <h3>Per-project configuration</h3>
+
+        <p>You might want to use a <strong>nickname</strong> on your personal online projects, but your <strong>real name</strong> (or a trigram) on your professional projects. Git allows this thanks to the <span class="git-cmd">--local</span> option, which overrides the global configuration <strong>only for the current repository</strong>:</p>
+
+        <pre data-lang="bash"><code># In a professional repository
+cd my-pro-project/
+git config --local user.name "Jane Smith"
+git config --local user.email "jsmith@company.com"</code></pre>
+
+        <p>The priority is simple: <span class="keyword">--local</span> (per project) always wins over <span class="keyword">--global</span> (per machine). This way you can keep your nickname as the global default and only configure <span class="git-cmd">--local</span> in repositories that require a different identity.</p>
+
+        <div class="key-message">
+          <p><span class="keyword">--global</span> = default configuration for the entire machine. <span class="keyword">--local</span> = configuration specific to a single repository. Local always takes priority.</p>
+        </div>
+
+        <h3>A word about security</h3>
+
+        <p>You may have noticed: nothing prevents you from configuring <code>user.name</code> with someone else's name. You could very well type <code>git config user.name "Linus Torvalds"</code> and all your commits would bear his name. <span class="highlight-red">Git does not verify your identity</span> - it simply records what you give it.</p>
+
+        <p>This is a known and deliberate limitation. For projects where authenticity truly matters, there's a solution: <span class="keyword">cryptographic signing</span> of commits. By using a <strong>GPG</strong> (or <strong>SSH</strong>) key, you can <span class="highlight">mathematically prove</span> that it was really you who created a commit. Platforms like GitHub then display a "Verified" badge next to the commit.</p>
+
+        <div class="tip">
+          <p>Commit signing is an advanced topic that we won't cover in this quest. Just remember that <span class="git-cmd">user.name</span> and <span class="git-cmd">user.email</span> are declarative - it's the cryptographic key that serves as real proof of identity.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Practical exercise -->
+      <section>
+        <h2>Practical exercise - Quest validation</h2>
+
+        <div class="quest-objective">
+          <p>Run the verification script to confirm that Git is installed and configured correctly on your machine.</p>
+        </div>
+
+        <p><strong>Bash</strong> (Linux / macOS / Git Bash on Windows):</p>
+
+        <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+        <p><strong>PowerShell</strong> (Windows):</p>
+
+        <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+        <p>The script checks three things:</p>
+
+        <ol class="steps">
+          <li>Git is <span class="highlight">installed</span> on your machine</li>
+          <li>Your <span class="keyword">name</span> is configured (<span class="git-cmd">user.name</span>)</li>
+          <li>Your <span class="keyword">email</span> is configured (<span class="git-cmd">user.email</span>)</li>
+        </ol>
+
+        <p>If all three steps pass, congratulations! You are officially a member of the Archivists' Guild. The next quest awaits.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Narrative conclusion -->
+      <div class="narrative">
+        <p>The Master Archivist nods with satisfaction.</p>
+        <p>"Good. You've taken your first steps. You now possess <strong>the fundamental tool</strong> of every Archivist. In the next quest, I'll take you to the <strong>Three Halls of Knowledge</strong> - there you'll discover how Git organizes work. <strong>Prepare yourself.</strong>"</p>
+      </div>

@@ -1,0 +1,694 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_16
+quest_number: "16"
+arc: 4
+title: "The Kingdom's Actions"
+subtitle: "GitHub Actions, YAML workflows and automation"
+quest_slug_fr: "16-les-actions-du-royaume"
+quest_slug_en: "16-the-kingdoms-actions"
+permalink: /en/quests/16-the-kingdoms-actions/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>The Master Archivist guides you into the depths of the Great Forge. Around you, immense machines turn without rest, powered by streams of blue magic. Scrolls descend on conveyor belts, pass under automatic stamps, then are sorted and stored in luminous alcoves. Not a single blacksmith in sight - everything runs on its own.</p>
+      <p>"In your last quest, you discovered the Eternal Forges and understood the principles of continuous integration and deployment. Today, you will learn to <strong>program the Forges yourself</strong>. Every Forge obeys <strong>Actions</strong> - enchanted instruction scrolls that tell it exactly what to do when new chronicles arrive. You are going to write your first Action."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: What is a GitHub Action? -->
+    <h2>What is a <span class="keyword">GitHub Action</span>?</h2>
+
+    <p>A <strong>GitHub Action</strong> is an automated workflow that runs directly on GitHub's servers. You don't need to install anything, configure anything on your machine - GitHub takes care of everything.</p>
+
+    <p>The principle is simple: you describe in a file <strong>what you want to happen</strong> and <strong>when you want it to happen</strong>. GitHub executes these instructions automatically.</p>
+
+    <p>For example:</p>
+    <ul>
+      <li>On every <code>push</code>, run the tests</li>
+      <li>On every <code>pull request</code>, check the code style</li>
+      <li>Every night at midnight, generate a report</li>
+      <li>When a version is tagged, deploy the application</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"Imagine a tireless scribe waiting in the Forge, day and night. As soon as a new scroll arrives, he <strong>reads the instructions you wrote</strong> and executes them to the letter. That is exactly what Actions do."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: Key concepts -->
+    <h2>Key concepts</h2>
+
+    <p>Before writing your first Action, you need to understand the vocabulary. GitHub Actions uses five fundamental concepts:</p>
+
+    <h3><span class="keyword">Workflow</span> - the instruction scroll</h3>
+
+    <p>A <strong>workflow</strong> is a YAML file describing a complete automated process. It is the scroll you write for the Forge. A repository can contain multiple workflows.</p>
+
+    <h3><span class="keyword">Job</span> - the task</h3>
+
+    <p>A <strong>job</strong> is a set of steps that run on the same machine. A workflow can contain multiple jobs. By default, jobs run <strong>in parallel</strong> (at the same time).</p>
+
+    <h3><span class="keyword">Step</span> - the individual action</h3>
+
+    <p>A <strong>step</strong> is an individual action inside a job. Each step is either a shell command (<code>run:</code>) or a reusable action (<code>uses:</code>).</p>
+
+    <h3><span class="keyword">Action</span> - the reusable component</h3>
+
+    <p>An <strong>action</strong> (with a lowercase "a") is a prefabricated component you can use in your steps. Thousands exist on the GitHub marketplace. The most common is <code>actions/checkout@v4</code> which retrieves your code.</p>
+
+    <h3><span class="keyword">Runner</span> - the execution machine</h3>
+
+    <p>A <strong>runner</strong> is the virtual machine on which your job runs. GitHub offers free runners on Ubuntu, Windows and macOS.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Forge analogy</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Workflow</strong></td>
+          <td>The instruction scroll</td>
+          <td>YAML file describing the complete process</td>
+        </tr>
+        <tr>
+          <td><strong>Job</strong></td>
+          <td>A task in the Forge</td>
+          <td>Set of steps on the same machine</td>
+        </tr>
+        <tr>
+          <td><strong>Step</strong></td>
+          <td>A blacksmith's gesture</td>
+          <td>An individual action (command or action)</td>
+        </tr>
+        <tr>
+          <td><strong>Action</strong></td>
+          <td>A prefabricated tool</td>
+          <td>Reusable component from the marketplace</td>
+        </tr>
+        <tr>
+          <td><strong>Runner</strong></td>
+          <td>The Forge's anvil</td>
+          <td>Virtual machine that runs the job</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="narrative">
+      <p>"An instruction scroll (workflow) contains one or more tasks (jobs). Each task is a series of gestures (steps). Some gestures use <strong>prefabricated tools</strong> (actions) forged by other Masters. And the whole thing runs on a magical anvil (runner) that GitHub lends you for free."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: Where to place workflows -->
+    <h2>Where to place workflows?</h2>
+
+    <p>GitHub looks for workflows in a very specific folder:</p>
+
+    <pre data-lang="bash"><code>your-repo/
+  .github/
+    workflows/
+      my-workflow.yml
+      another-workflow.yml</code></pre>
+
+    <p>The path is <strong>always</strong> <code>.github/workflows/</code>. If you place your file elsewhere, GitHub will ignore it.</p>
+
+    <div class="warning">
+      <p><strong>Important:</strong> The <code>.github</code> folder starts with a dot - it's a hidden folder. On Linux/macOS, use <code>ls -a</code> to see it. On Windows, enable hidden file display.</p>
+    </div>
+
+    <p>Files must have the <code>.yml</code> or <code>.yaml</code> extension.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: YAML basics -->
+    <h2><span class="keyword">YAML</span> basics</h2>
+
+    <p>GitHub Actions workflows are written in <strong>YAML</strong> (YAML Ain't Markup Language). It's a data format readable by humans. Here are the essential rules:</p>
+
+    <h3>Indentation is crucial</h3>
+
+    <p>In YAML, <strong>indentation defines the structure</strong>. We use <strong>spaces</strong> (never tabs!). Each nesting level adds 2 spaces.</p>
+
+    <pre data-lang="yaml"><code># Correct
+parent:
+  child:
+    grandchild: value
+
+# INCORRECT - mixed indentation
+parent:
+  child:
+      grandchild: value   # 6 spaces instead of 4!</code></pre>
+
+    <div class="highlight-red">
+      <p><strong>Warning:</strong> <strong>Never</strong> use tabs in YAML! Only spaces. This is the most common mistake for beginners.</p>
+    </div>
+
+    <h3>Key-value pairs</h3>
+
+    <pre data-lang="yaml"><code>name: Tests
+version: 1.0
+active: true</code></pre>
+
+    <h3>Lists</h3>
+
+    <p>List items start with a dash followed by a space:</p>
+
+    <pre data-lang="yaml"><code>fruits:
+  - apple
+  - banana
+  - cherry</code></pre>
+
+    <h3>Multi-line text</h3>
+
+    <p>The <code>|</code> character allows writing text on multiple lines:</p>
+
+    <pre data-lang="yaml"><code>script: |
+  echo "First line"
+  echo "Second line"
+  echo "Third line"</code></pre>
+
+    <div class="narrative">
+      <p>"YAML is like the calligraphy of enchanted scrolls. Every space counts, every indentation has meaning. One space too many or too few, and <strong>the enchantment fails</strong>. Rigor is the key."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: First workflow -->
+    <h2>Your first workflow</h2>
+
+    <p>Here is the simplest possible workflow. It runs on every push and displays a message:</p>
+
+    <pre data-lang="yaml"><code>name: Tests
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Tests pass!"</code></pre>
+
+    <p>Let's break down each line:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Line</th>
+          <th>Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>name: Tests</code></td>
+          <td>The workflow name (displayed in GitHub)</td>
+        </tr>
+        <tr>
+          <td><code>on: push</code></td>
+          <td>Trigger: runs on every push</td>
+        </tr>
+        <tr>
+          <td><code>jobs:</code></td>
+          <td>Start of the task list</td>
+        </tr>
+        <tr>
+          <td><code>test:</code></td>
+          <td>Job name (you choose the name)</td>
+        </tr>
+        <tr>
+          <td><code>runs-on: ubuntu-latest</code></td>
+          <td>Ubuntu virtual machine</td>
+        </tr>
+        <tr>
+          <td><code>steps:</code></td>
+          <td>Start of the step list</td>
+        </tr>
+        <tr>
+          <td><code>- uses: actions/checkout@v4</code></td>
+          <td>Step 1: retrieve the repository code</td>
+        </tr>
+        <tr>
+          <td><code>- run: echo "..."</code></td>
+          <td>Step 2: execute a shell command</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <p>The <code>actions/checkout@v4</code> action is almost always the first step. Without it, your code is not available on the runner - the job runs on a blank machine!</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: Triggers -->
+    <h2>Triggers</h2>
+
+    <p>The <code>on:</code> keyword defines <strong>when</strong> the workflow starts. Here are the most common triggers:</p>
+
+    <h3>On every push</h3>
+
+    <pre data-lang="yaml"><code>on: push</code></pre>
+
+    <h3>On every pull request</h3>
+
+    <pre data-lang="yaml"><code>on: pull_request</code></pre>
+
+    <h3>On multiple events</h3>
+
+    <pre data-lang="yaml"><code>on: [push, pull_request]</code></pre>
+
+    <h3>On specific branches</h3>
+
+    <pre data-lang="yaml"><code>on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]</code></pre>
+
+    <p>This workflow only triggers for pushes to <code>main</code> or <code>develop</code>, and for pull requests targeting <code>main</code>.</p>
+
+    <h3>On a schedule (cron)</h3>
+
+    <pre data-lang="yaml"><code>on:
+  schedule:
+    - cron: '0 0 * * *'   # Every day at midnight UTC</code></pre>
+
+    <h3>Manually</h3>
+
+    <pre data-lang="yaml"><code>on: workflow_dispatch</code></pre>
+
+    <p>This trigger adds a "Run workflow" button in the GitHub interface. Very handy for manual deployments.</p>
+
+    <div class="narrative">
+      <p>"Triggers are the <strong>sentinels of the Forge</strong>. They keep watch at all times and wake the machines at the right moment. A push? Tests launch. A pull request? The automatic review starts. Midnight? The report is generated. Everything is orchestrated."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7: Complete workflow -->
+    <h2>A more complete workflow</h2>
+
+    <p>Here is a realistic workflow for a project with tests:</p>
+
+    <pre data-lang="yaml"><code>name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Check style
+        run: npm run lint</code></pre>
+
+    <div class="tip">
+      <p>Each step can have a <code>name</code> that appears in the logs. It's optional but highly recommended for readability.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8: Multiple jobs -->
+    <h2>Multiple jobs and dependencies</h2>
+
+    <p>By default, jobs run <strong>in parallel</strong>. To create dependencies between jobs, use the <span class="keyword"><code>needs:</code></span> keyword.</p>
+
+    <pre data-lang="yaml"><code>jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Deploying..."</code></pre>
+
+    <p>In this example:</p>
+    <ul>
+      <li><code>test</code> runs first</li>
+      <li><code>build</code> waits for <code>test</code> to finish successfully</li>
+      <li><code>deploy</code> waits for <code>build</code> to finish successfully</li>
+    </ul>
+
+    <p>If <code>test</code> fails, neither <code>build</code> nor <code>deploy</code> will run. That's exactly the desired behavior - no deployment if tests fail!</p>
+
+    <p>A job can also depend on multiple jobs:</p>
+
+    <pre data-lang="yaml"><code>  deploy:
+    needs: [test, build, lint]</code></pre>
+
+    <div class="narrative">
+      <p>"In the Forge, certain operations must be done <strong>in order</strong>. You don't quench the sword before forging it, and you don't polish it before quenching. The <code>needs</code> keyword enforces this <strong>sacred order</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 9: The marketplace -->
+    <h2>The marketplace - <span class="keyword">Tools from other Masters</span></h2>
+
+    <p>GitHub has a <strong>marketplace</strong> with thousands of prefabricated actions. Instead of writing everything yourself, you can reuse the work of others.</p>
+
+    <p>Some popular actions:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>actions/checkout@v4</code></td>
+          <td>Retrieve the repository code</td>
+        </tr>
+        <tr>
+          <td><code>actions/setup-node@v4</code></td>
+          <td>Install Node.js</td>
+        </tr>
+        <tr>
+          <td><code>actions/setup-python@v5</code></td>
+          <td>Install Python</td>
+        </tr>
+        <tr>
+          <td><code>actions/upload-artifact@v4</code></td>
+          <td>Save produced files</td>
+        </tr>
+        <tr>
+          <td><code>actions/cache@v4</code></td>
+          <td>Cache dependencies</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Example with Node.js:</p>
+
+    <pre data-lang="yaml"><code>steps:
+  - uses: actions/checkout@v4
+
+  - uses: actions/setup-node@v4
+    with:
+      node-version: '20'
+
+  - run: npm install
+  - run: npm test</code></pre>
+
+    <p>The <code>with:</code> keyword passes parameters to an action. Here, we request Node.js version 20.</p>
+
+    <div class="narrative">
+      <p>"The marketplace is the <strong>great library of the Forges</strong>. Thousands of Master Blacksmiths have deposited their tools there for others to use. Why reinvent the anvil when someone else has already forged it perfectly?"</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 10: Secrets -->
+    <h2>Secrets and environment variables</h2>
+
+    <p>Some information must <strong>never</strong> appear in your code: passwords, API keys, access tokens. GitHub lets you store them as <span class="keyword">secrets</span>.</p>
+
+    <h3>Using a secret in a workflow</h3>
+
+    {% raw %}<pre data-lang="yaml"><code>steps:
+  - name: Deploy
+    run: ./deploy.sh
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}</code></pre>{% endraw %}
+
+    <p>Secrets are configured in the repository's <strong>Settings</strong> on GitHub, under "Secrets and variables" > "Actions".</p>
+
+    <h3>Simple environment variables</h3>
+
+    <p>For non-sensitive values, you can define environment variables directly:</p>
+
+    <pre data-lang="yaml"><code>env:
+  NODE_ENV: production
+  APP_NAME: my-application
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Application: $APP_NAME"</code></pre>
+
+    <p>Variables defined at root level are available in all jobs. You can also define them at the job or step level.</p>
+
+    <div class="narrative">
+      <p>"Secrets are like the <strong>protected formulas</strong> of the Master Blacksmiths. You never write them on an ordinary scroll - you lock them in a magic chest and reference them by name. Even if someone steals the scroll, <strong>they will only see the name, never the formula</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 11: Checking results -->
+    <h2>Checking results</h2>
+
+    <p>When a workflow runs, you can follow its progress in the <strong>Actions</strong> tab of your GitHub repository.</p>
+
+    <h3>Logs</h3>
+
+    <p>Each step produces logs you can view by clicking on it. This is where you'll see error messages if something fails.</p>
+
+    <h3>Statuses</h3>
+
+    <p>Each run has a status:</p>
+    <ul>
+      <li><strong>Green (success)</strong>: all jobs passed</li>
+      <li><strong>Red (failure)</strong>: at least one job failed</li>
+      <li><strong>Yellow (in progress)</strong>: the workflow is currently running</li>
+      <li><strong>Grey (cancelled)</strong>: the workflow was cancelled</li>
+    </ul>
+
+    <h3>Status badges</h3>
+
+    <p>You can add a badge to your README that displays the status of the latest workflow:</p>
+
+    <pre data-lang="bash"><code>![CI](https://github.com/USERNAME/REPO/actions/workflows/FILENAME.yml/badge.svg)</code></pre>
+
+    <p>This badge updates automatically. Green if tests pass, red otherwise. It's a trust signal for everyone who visits your repository.</p>
+
+    <div class="narrative">
+      <p>"Badges are the <strong>emblems of the Forge</strong>. They show everyone that your code is tested, verified, approved by the machines. A repository without a badge is a castle without a flag - you don't know if it's inhabited or abandoned."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Hands-on exercise -->
+    <h2>Hands-on exercise - Write your first Action</h2>
+
+    <div class="quest-objective">
+      <p>Write your first instruction scroll for the Forge:</p>
+      <ol>
+        <li>Create a <code>forge-actions</code> repository</li>
+        <li>Create the <code>.github/workflows/</code> folder</li>
+        <li>Create a test script <code>test.sh</code></li>
+        <li>Create a <code>README.md</code></li>
+        <li>Write a <code>verification.yml</code> workflow that triggers on push, retrieves the code and runs the tests</li>
+        <li>Commit everything</li>
+        <li>Run the verification script</li>
+      </ol>
+    </div>
+
+    <h3>Step 1 - Create the repository</h3>
+
+    <pre data-lang="bash"><code>mkdir forge-actions
+cd forge-actions
+git init</code></pre>
+
+    <h3>Step 2 - Create the workflow structure</h3>
+
+    <pre data-lang="bash"><code>mkdir -p .github/workflows</code></pre>
+
+    <p>This is the magic folder that GitHub watches. Any <code>.yml</code> file placed here will be treated as a workflow.</p>
+
+    <h3>Step 3 - Create a test script</h3>
+
+    <p>Before writing the workflow, create a small script the workflow can execute:</p>
+
+    <pre data-lang="bash"><code>cat > test.sh &lt;&lt; 'EOF'
+#!/bin/bash
+echo "=== Chronicle verification ==="
+echo "Test 1: The README file exists..."
+if [ -f "README.md" ]; then
+    echo "  SUCCESS"
+else
+    echo "  FAILURE"
+    exit 1
+fi
+echo "Test 2: The README is not empty..."
+if [ -s "README.md" ]; then
+    echo "  SUCCESS"
+else
+    echo "  FAILURE"
+    exit 1
+fi
+echo "=== All tests pass ==="
+EOF</code></pre>
+
+    <pre data-lang="bash"><code>chmod +x test.sh</code></pre>
+
+    <h3>Step 4 - Create the README</h3>
+
+    <pre data-lang="bash"><code>cat > README.md &lt;&lt; 'EOF'
+# Forge Actions
+
+My first repository with GitHub Actions.
+
+![Tests](https://github.com/USERNAME/REPO/actions/workflows/verification.yml/badge.svg)
+EOF</code></pre>
+
+    <h3>Step 5 - Write the workflow</h3>
+
+    <p>This is the crucial moment. Create the file <code>.github/workflows/verification.yml</code>:</p>
+
+    <pre data-lang="yaml"><code>name: Chronicle verification
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retrieve the code
+        uses: actions/checkout@v4
+
+      - name: Make the script executable
+        run: chmod +x test.sh
+
+      - name: Run the tests
+        run: ./test.sh</code></pre>
+
+    <p>Verify the file is correct:</p>
+
+    <pre data-lang="bash"><code>cat .github/workflows/verification.yml</code></pre>
+
+    <h3>Step 6 - Commit everything</h3>
+
+    <pre data-lang="bash"><code>git add .
+git commit -m "Add the chronicle verification workflow"</code></pre>
+
+    <h3>Step 7 - Run the verification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Summary -->
+    <h2>Concept summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Workflow</strong></td>
+          <td>YAML file describing an automated process</td>
+        </tr>
+        <tr>
+          <td><strong>Job</strong></td>
+          <td>Set of steps executed on the same machine</td>
+        </tr>
+        <tr>
+          <td><strong>Step</strong></td>
+          <td>Individual action within a job</td>
+        </tr>
+        <tr>
+          <td><strong>Action</strong></td>
+          <td>Reusable marketplace component</td>
+        </tr>
+        <tr>
+          <td><strong>Runner</strong></td>
+          <td>Virtual machine that runs the jobs</td>
+        </tr>
+        <tr>
+          <td><code>name:</code></td>
+          <td>Workflow name</td>
+        </tr>
+        <tr>
+          <td><code>on:</code></td>
+          <td>Workflow trigger(s)</td>
+        </tr>
+        <tr>
+          <td><code>jobs:</code></td>
+          <td>List of tasks to execute</td>
+        </tr>
+        <tr>
+          <td><code>runs-on:</code></td>
+          <td>Virtual machine type</td>
+        </tr>
+        <tr>
+          <td><code>steps:</code></td>
+          <td>List of steps in a job</td>
+        </tr>
+        <tr>
+          <td><code>uses:</code></td>
+          <td>Use a prefabricated action</td>
+        </tr>
+        <tr>
+          <td><code>run:</code></td>
+          <td>Execute a shell command</td>
+        </tr>
+        <tr>
+          <td><code>needs:</code></td>
+          <td>Dependency between jobs</td>
+        </tr>
+        <tr>
+          <td><code>with:</code></td>
+          <td>Parameters passed to an action</td>
+        </tr>
+        <tr>
+          <td><code>env:</code></td>
+          <td>Environment variables</td>
+        </tr>
+        <tr>
+          <td><code>secrets.*</code></td>
+          <td>Access to repository secrets</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>The Master Archivist observes the instruction scroll you just wrote. He holds it up to the light, scans every line with his eyes, then slowly nods his head.</p>
+      <p>"Your first scroll for the Forge is impeccable. The triggers are well defined, the steps are clear, and the structure follows the rules of YAML. When you push these instructions to a remote Forge, <strong>they will execute automatically</strong>, without you needing to lift a finger."</p>
+      <p>He carefully stores the scroll in a leather case marked with the seal of the Forges.</p>
+      <p>"You now know how to program the Forges. But a single Action is not enough for a true Master. In your next quest, you will learn to <strong>create complex pipelines</strong> - chains of Actions that test, build and deploy your code in a single fluid motion. The Forges will soon hold no more secrets for you."</p>
+    </div>

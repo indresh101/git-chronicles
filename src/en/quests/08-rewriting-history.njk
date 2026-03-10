@@ -1,0 +1,391 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_08
+quest_number: "08"
+arc: 2
+title: "Rewriting History"
+subtitle: "Amend, rebase, reset and reflog"
+quest_slug_fr: "08-reecrire-lhistoire"
+quest_slug_en: "08-rewriting-history"
+permalink: /en/quests/08-rewriting-history/
+---
+
+      <!-- Narrative introduction -->
+      <section>
+        <h2>Introduction</h2>
+
+        <div class="narrative">
+          <p>You enter a secret wing of the Archives, hidden behind an ancient tapestry. The room is dimly lit by floating candles. Scratched-out, scraped, and rewritten scrolls pile up on the shelves. The Master Archivist closes the door behind you with a solemn gesture.</p>
+        </div>
+
+        <blockquote>
+          <p>"Apprentice, you now master branches and the merging of chronicles. But there exists an older, more powerful - and more <strong>dangerous</strong> - art. Certain elite Archivists knew how to <strong><span class="highlight">rewrite History itself</span></strong> - modify a past entry, reorganize the chronology, erase an event as if it had never happened. This art is useful, but it obeys one <strong><span class="highlight-red">absolute golden rule</span></strong>: you never rewrite a chronicle that has already been shared with other guilds."</p>
+        </blockquote>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- git commit --amend -->
+      <section>
+        <h2>Modify the last commit - <span class="git-cmd">git commit --amend</span></h2>
+
+        <p>You just recorded an entry in the archives, but you notice a mistake. No need to create a new entry - you can <span class="highlight">modify the last one</span>:</p>
+
+        <h3>Fix the last commit message</h3>
+
+        <pre data-lang="bash"><code>git commit --amend -m "New corrected message"</code></pre>
+
+        <h3>Add a forgotten file to the last commit</h3>
+
+        <pre data-lang="bash"><code>git add forgotten-file.txt
+git commit --amend --no-edit</code></pre>
+
+        <p>The <code>--no-edit</code> option keeps the original message. The commit is <strong>replaced</strong> by a new one (with a different hash).</p>
+
+        <h3>When to use <code>--amend</code>?</h3>
+
+        <ul>
+          <li>You made a typo in the message</li>
+          <li>You forgot to add a file</li>
+          <li>You want to adjust the content of the last commit</li>
+        </ul>
+
+        <div class="tip">
+          <p><span class="git-cmd">--amend</span> does not modify the existing commit - it <strong>replaces</strong> it. The old commit disappears from the visible history (but remains recoverable via <span class="git-cmd">git reflog</span>).</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- git rebase -->
+      <section>
+        <h2>Rebase - Rewriting the chronology</h2>
+
+        <p><span class="git-cmd">git rebase</span> is one of the most powerful tools in Git. It allows you to <strong>replay your commits on a different base</strong>, as if you had started your work from a more recent point.</p>
+
+        <h3>Principle</h3>
+
+        <p>Imagine you are working on a <code>feature</code> branch created from <code>main</code>. In the meantime, other commits have been added to <code>main</code>. Rebase takes your commits and <span class="highlight">replays them one by one</span> on top of <code>main</code>:</p>
+
+        <p><strong>Before the rebase:</strong></p>
+
+        <pre><code>      C---D  (feature)
+     /
+A---B---E---F  (main)</code></pre>
+
+        <p><strong>After <span class="git-cmd">git rebase main</span> (from feature):</strong></p>
+
+        <pre><code>              C'---D'  (feature)
+             /
+A---B---E---F  (main)</code></pre>
+
+        <p>Commits C and D become C' and D' - these are <strong>new commits</strong> (new hashes) with the same content, but repositioned.</p>
+
+        <h3>How to rebase</h3>
+
+        <pre data-lang="bash"><code># Switch to the branch to rebase
+git checkout feature
+
+# Rebase onto main
+git rebase main</code></pre>
+
+        <p>Your commits from <code>feature</code> are now on top of the latest commits from <code>main</code>. The history is <span class="highlight">linear and clean</span>.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Rebase vs Merge -->
+      <section>
+        <h2>Rebase vs Merge - The great debate</h2>
+
+        <p>Both allow you to integrate changes from one branch into another, but in very different ways.</p>
+
+        <h3>Merge (fusion)</h3>
+
+        <pre data-lang="bash"><code>git checkout main
+git merge feature</code></pre>
+
+        <pre><code>      C---D  (feature)
+     /     \
+A---B---E---F---G  (main, merge commit)</code></pre>
+
+        <ul>
+          <li>Creates a <span class="keyword">merge commit</span></li>
+          <li>Preserves the history as it actually happened</li>
+          <li>The history can become complex with many branches</li>
+        </ul>
+
+        <h3>Rebase</h3>
+
+        <pre data-lang="bash"><code>git checkout feature
+git rebase main</code></pre>
+
+        <pre><code>              C'---D'  (feature)
+             /
+A---B---E---F  (main)</code></pre>
+
+        <ul>
+          <li><strong>No merge commit</strong> - linear history</li>
+          <li>Rewrites the history (new hashes)</li>
+          <li>Easier to read</li>
+        </ul>
+
+        <h3>When to use which?</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Situation</th>
+              <th>Recommendation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Update your branch with the latest changes from <code>main</code></td><td><strong>Rebase</strong></td></tr>
+            <tr><td>Integrate a completed branch into <code>main</code></td><td><strong>Merge</strong></td></tr>
+            <tr><td>Branch already shared (pushed)</td><td><strong>Merge</strong> (never rebase!)</td></tr>
+            <tr><td>Clean up history before sharing</td><td><strong>Rebase</strong></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Golden rule -->
+      <section>
+        <h2>The Golden Rule</h2>
+
+        <div class="key-message">
+          <p><span class="highlight-red"><strong>ABSOLUTE RULE: Never rebase commits that have been pushed to a shared repository.</strong></span></p>
+          <p>Rebase <strong>rewrites history</strong> by creating new commits. If other people have based their work on the old commits, you create total chaos - duplicates, impossible conflicts, and very unhappy colleagues.</p>
+          <p><strong>In summary:</strong></p>
+          <ul>
+            <li>Local commits only? <strong>Rebase</strong> as much as you want.</li>
+            <li>Already pushed? <strong>Do not touch</strong> - use merge.</li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Interactive rebase -->
+      <section>
+        <h2>Interactive rebase - A preview</h2>
+
+        <p>Interactive rebase (<span class="git-cmd">git rebase -i</span>) allows you to manipulate multiple commits at once: reorder, squash, edit, drop. It is an extremely powerful tool that we will not practice in this exercise, but you should know about:</p>
+
+        <pre data-lang="bash"><code>git rebase -i HEAD~3</code></pre>
+
+        <p>This command opens an editor with the last 3 commits and options like:</p>
+
+        <ul>
+          <li><code>pick</code> - keep the commit as is</li>
+          <li><code>reword</code> - change the message</li>
+          <li><code>squash</code> - merge with the previous commit</li>
+          <li><code>drop</code> - delete the commit</li>
+        </ul>
+
+        <p>It is the ultimate tool for cleaning up a history before sharing it.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Git Reset -->
+      <section>
+        <h2>Git Reset - Going back in time</h2>
+
+        <p><span class="git-cmd">git reset</span> allows you to <strong>move HEAD</strong> (and potentially the branch) to a previous commit. There are three modes, increasingly destructive:</p>
+
+        <h3><span class="git-cmd">git reset --soft HEAD~1</span></h3>
+
+        <pre data-lang="bash"><code>git reset --soft HEAD~1</code></pre>
+
+        <ul>
+          <li>Undoes the last commit</li>
+          <li>Files remain in the <span class="keyword">staging area</span> (ready to be re-committed)</li>
+          <li>Useful for: rephrasing a commit or changing its content</li>
+        </ul>
+
+        <h3><span class="git-cmd">git reset --mixed HEAD~1</span> (default)</h3>
+
+        <pre data-lang="bash"><code>git reset HEAD~1</code></pre>
+
+        <ul>
+          <li>Undoes the last commit</li>
+          <li>Files return to the <span class="keyword">working directory</span> (unstaged)</li>
+          <li>This is the default behavior (no need for <code>--mixed</code>)</li>
+          <li>Useful for: reworking modifications before re-committing them</li>
+        </ul>
+
+        <h3><span class="git-cmd">git reset --hard HEAD~1</span></h3>
+
+        <pre data-lang="bash"><code>git reset --hard HEAD~1</code></pre>
+
+        <div class="warning">
+          <p><strong>WARNING - DANGER!</strong> This command is <strong>destructive and irreversible</strong> (except via reflog). It removes the commit AND all associated modifications. Modified files are <span class="highlight-red"><strong>permanently lost</strong></span>. Use it only if you are absolutely sure you want to erase everything.</p>
+        </div>
+
+        <h3>Visual summary</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Mode</th>
+              <th>Commit</th>
+              <th>Staging</th>
+              <th>Files</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>--soft</code></td><td>Undone</td><td>Preserved</td><td>Preserved</td></tr>
+            <tr><td><code>--mixed</code> (default)</td><td>Undone</td><td>Cleared</td><td>Preserved</td></tr>
+            <tr><td><code>--hard</code></td><td>Undone</td><td>Cleared</td><td><span class="highlight-red"><strong>Deleted</strong></span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Git Reflog -->
+      <section>
+        <h2>Git Reflog - The safety net</h2>
+
+        <p>Made a mistake? One too many <span class="git-cmd">reset --hard</span>? Don't panic. Git keeps a secret record of <strong>all HEAD movements</strong> in the <span class="keyword">reflog</span>:</p>
+
+        <pre data-lang="bash"><code>git reflog</code></pre>
+
+        <p>The reflog displays every action that modified HEAD: commits, rebase, reset, checkout... Even "deleted" commits appear there for at least 30 days.</p>
+
+        <h3>Recovering a lost commit</h3>
+
+        <pre data-lang="bash"><code># 1. Find the hash of the lost commit in the reflog
+git reflog
+
+# 2. Return to that commit
+git reset --hard &lt;hash-of-lost-commit&gt;</code></pre>
+
+        <p>The reflog is your <span class="highlight">ultimate safety net</span>. As long as a commit has existed, you can find it again.</p>
+
+        <div class="tip">
+          <p>Before any risky operation (rebase, reset --hard), note the hash of the current commit with <span class="git-cmd">git log --oneline -1</span>. In case of trouble, you can always go back to it.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Practical exercise -->
+      <section>
+        <h2>Practical exercise - Cleaning the chronicles</h2>
+
+        <div class="quest-objective">
+          <p>The Master Archivist entrusts you with a poorly maintained register. Entries contain errors, the chronology is confused. Your mission: restore order using <span class="git-cmd">--amend</span> and <span class="git-cmd">rebase</span>.</p>
+        </div>
+
+        <blockquote>
+          <p>"These chronicles are a disaster. Mistakes in the entries, events in the wrong order... <strong>Clean it all up</strong>. Show me that you have mastered the art of rewriting History."</p>
+        </blockquote>
+
+        <h3>Step 1 - Create the register</h3>
+
+        <p>Create a new folder and initialize a Git repository:</p>
+
+        <pre data-lang="bash"><code>mkdir chroniques-nettoyees
+cd chroniques-nettoyees
+git init</code></pre>
+
+        <h3>Step 2 - Record three entries (with an error)</h3>
+
+        <p>Create a file <code>registre.txt</code> and make 3 commits:</p>
+
+        <pre data-lang="bash"><code>echo "Jour 1 : Fondation du royaume" > registre.txt
+git add registre.txt
+git commit -m "Ajouter l'entrée du Jour 1"
+
+echo "Jour 2 : Alliance avec les elfes" >> registre.txt
+git add registre.txt
+git commit -m "Ajouter l'entrée du Jour 2"
+
+echo "Jour 3 : Découverte de la mine d'or" >> registre.txt
+git add registre.txt
+git commit -m "Ajoouter l'entrée du Jour 3"</code></pre>
+
+        <p>Oops! The message of the last commit contains a typo: "Ajoouter" instead of "Ajouter".</p>
+
+        <h3>Step 3 - Fix with <span class="git-cmd">--amend</span></h3>
+
+        <p>Fix the last commit message:</p>
+
+        <pre data-lang="bash"><code>git commit --amend -m "Ajouter l'entrée du Jour 3"</code></pre>
+
+        <p>Verify with <span class="git-cmd">git log --oneline</span> that the message is corrected.</p>
+
+        <h3>Step 4 - Create a parallel branch</h3>
+
+        <p>Create a <code>refonte-archives</code> branch and add entries to it:</p>
+
+        <pre data-lang="bash"><code>git checkout -b refonte-archives
+
+echo "Jour 4 : Construction de la forteresse" >> registre.txt
+git add registre.txt
+git commit -m "Ajouter l'entrée du Jour 4"
+
+echo "Jour 5 : Traité de paix avec les nains" >> registre.txt
+git add registre.txt
+git commit -m "Ajouter l'entrée du Jour 5"</code></pre>
+
+        <h3>Step 5 - Add a commit on main</h3>
+
+        <p>Return to <code>main</code> and add a commit:</p>
+
+        <pre data-lang="bash"><code>git checkout main
+
+echo "Annexe : Liste des rois" >> annexes.txt
+git add annexes.txt
+git commit -m "Ajouter la liste des rois en annexe"</code></pre>
+
+        <h3>Step 6 - Rebase the branch</h3>
+
+        <p>Rebase <code>refonte-archives</code> onto <code>main</code> to get a linear history:</p>
+
+        <pre data-lang="bash"><code>git checkout refonte-archives
+git rebase main</code></pre>
+
+        <h3>Step 7 - Verify the result</h3>
+
+        <p>Admire the clean, linear history:</p>
+
+        <pre data-lang="bash"><code>git log --oneline --graph --all</code></pre>
+
+        <p>You should see all commits aligned on a single line, with no forks or merge commits.</p>
+
+        <h3>Step 8 - Run the verification</h3>
+
+        <p>Run the verification script to validate your quest:</p>
+
+        <p><strong>Bash</strong> (Linux / macOS / Git Bash on Windows):</p>
+
+        <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+        <p><strong>PowerShell</strong> (Windows):</p>
+
+        <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+        <p>The script checks:</p>
+
+        <ol class="steps">
+          <li>You are in a Git repository</li>
+          <li>You have used <span class="git-cmd">--amend</span> (visible in the reflog)</li>
+          <li>You have performed a rebase (visible in the reflog)</li>
+          <li>At least 3 commits exist in the history</li>
+        </ol>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Narrative conclusion -->
+      <div class="narrative">
+        <p>The Master Archivist examines the rewritten chronicles, running his finger along the carefully reorganized lines.</p>
+        <div class="key-message">
+          <p>"Impressive, Apprentice. The history is <strong>clean, linear, readable</strong>. You corrected the errors without leaving traces, and reorganized the chronology with elegance. But never forget the golden rule: <strong><span class="highlight-red">you only rewrite what has not yet been shared</span></strong>. Breaking this rule means sowing chaos across all guilds."</p>
+        </div>
+      </div>

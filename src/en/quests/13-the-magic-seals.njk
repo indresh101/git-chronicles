@@ -1,0 +1,405 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_13
+quest_number: "13"
+arc: 3
+title: "The Magic Seals"
+subtitle: "Tags and semantic versioning"
+quest_slug_fr: "13-les-sceaux-magiques"
+quest_slug_en: "13-the-magic-seals"
+permalink: /en/quests/13-the-magic-seals/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>The Master Archivist leads you into the Hall of Seals, a circular chamber whose walls are covered with ancient scrolls. Each one bears a wax seal at a specific spot - some golden, others scarlet. You notice that these seals are not placed randomly: they mark the most important moments in the kingdom's History.</p>
+      <p>"Archivist, you now know how to set aside your work, track down bugs through History, and pluck commits from one branch to another. But you are missing an essential art: <strong>placing Magic Seals on the key moments of your chronicles</strong>. A seal is a permanent mark, a bookmark placed on a precise instant so it can be found forever. <strong>The founding of a guild, a great victory, the rebuilding after a siege</strong> - every major event deserves its seal."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: What is a tag? -->
+    <h2>What is a <span class="keyword">tag</span>?</h2>
+
+    <p>A <strong>tag</strong> in Git is like a <strong>wax seal</strong> placed on an important scroll. Unlike branches that move with each new commit, a tag is <span class="highlight">fixed</span> - it always points to the same commit.</p>
+
+    <p>Tags are used to mark <strong>important moments</strong> in a project's history:</p>
+
+    <ul>
+      <li>The release of a <strong>stable version</strong> (v1.0.0, v2.0.0)</li>
+      <li>An important project <strong>milestone</strong> (MVP, beta)</li>
+      <li>A <strong>reference point</strong> to easily return to a known state</li>
+    </ul>
+
+    <div class="key-message">
+      <p>A branch is a living path that grows with every step. A seal, however, is <strong>carved in stone</strong>. It doesn't move. It says: here, something important happened.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: Lightweight vs Annotated -->
+    <h2>Lightweight tags vs annotated tags</h2>
+
+    <p>Git offers two types of tags, like two types of seals.</p>
+
+    <h3>Lightweight tag (<span class="keyword">lightweight</span>)</h3>
+
+    <p>A lightweight tag is simply a <strong>pointer</strong> to a commit. No extra metadata - just a name associated with a commit.</p>
+
+    <pre data-lang="bash"><code>git tag v0.1.0</code></pre>
+
+    <p>It's like writing a number in pencil in the margin of a scroll. It's quick, but there's no additional information.</p>
+
+    <h3>Annotated tag (<span class="keyword">annotated</span>)</h3>
+
+    <p>An annotated tag contains <strong>much more information</strong>:</p>
+
+    <ul>
+      <li>The tag <strong>name</strong></li>
+      <li>The <strong>date</strong> of creation</li>
+      <li>The <strong>author's name</strong></li>
+      <li>An explanatory <strong>message</strong></li>
+    </ul>
+
+    <pre data-lang="bash"><code>git tag -a v1.0.0 -m "First stable version of the kingdom"</code></pre>
+
+    <p>It's a proper official wax seal: it bears the Archivist's mark, the date, and a description of why this moment is important.</p>
+
+    <div class="narrative">
+      <p>"Lightweight Seals are useful for personal, temporary use. But for everything that matters - official releases, shared milestones - always use an <strong>Annotated Seal</strong>. It's the difference between a scribbled note and a royal decree."</p>
+    </div>
+
+    <div class="tip">
+      <p><strong>Recommendation:</strong> In practice, <strong>always use annotated tags</strong> for versions and milestones. Lightweight tags are reserved for temporary bookmarks.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: Creating a tag -->
+    <h2>Creating a tag</h2>
+
+    <h3>Lightweight tag</h3>
+
+    <pre data-lang="bash"><code># Tag the current commit (HEAD)
+git tag v0.1.0</code></pre>
+
+    <h3>Annotated tag (recommended)</h3>
+
+    <pre data-lang="bash"><code># Tag the current commit with a message
+git tag -a v1.0.0 -m "First stable version"</code></pre>
+
+    <p>The <span class="git-cmd">-a</span> option means "annotated" and <span class="git-cmd">-m</span> lets you add a message, exactly like <span class="git-cmd">git commit -m</span>.</p>
+
+    <h3>Tagging a past commit</h3>
+
+    <p>You can also place a seal on an old commit. Just specify the commit hash:</p>
+
+    <pre data-lang="bash"><code># Find the hash of the commit to tag
+git log --oneline
+
+# Tag that commit
+git tag -a v0.1.0 abc1234 -m "Founding of the guild"</code></pre>
+
+    <p>It's like going back through the archives to stamp a seal on a past event that no one had thought to mark at the time.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: Exploring tags -->
+    <h2>Exploring tags</h2>
+
+    <h3>List all tags</h3>
+
+    <pre data-lang="bash"><code>git tag</code></pre>
+
+    <p>Displays the list of all tags, sorted alphabetically.</p>
+
+    <h3>Filter tags by pattern</h3>
+
+    <pre data-lang="bash"><code># All tags starting with "v1."
+git tag -l "v1.*"
+
+# All tags starting with "v"
+git tag -l "v*"</code></pre>
+
+    <p>The <span class="git-cmd">-l</span> (list) option accepts a pattern with wildcard characters (<code>*</code>).</p>
+
+    <h3>View tag details</h3>
+
+    <pre data-lang="bash"><code>git show v1.0.0</code></pre>
+
+    <p>For an <strong>annotated</strong> tag, <span class="git-cmd">git show</span> displays:</p>
+
+    <ul>
+      <li>The tag author and date</li>
+      <li>The tag message</li>
+      <li>The associated commit details (author, date, message, diff)</li>
+    </ul>
+
+    <p>For a <strong>lightweight</strong> tag, <span class="git-cmd">git show</span> only displays the commit details (no additional tag information).</p>
+
+    <div class="narrative">
+      <p>"That is how you tell a true Seal from a simple pencil mark. The Annotated Seal bears <strong>the signature of its creator</strong> and the reason it was placed."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: Sharing tags -->
+    <h2>Sharing tags</h2>
+
+    <p>By default, <span class="git-cmd">git push</span> <span class="highlight-red">does not push tags</span>. You must send them explicitly.</p>
+
+    <h3>Push a specific tag</h3>
+
+    <pre data-lang="bash"><code>git push origin v1.0.0</code></pre>
+
+    <h3>Push all tags</h3>
+
+    <pre data-lang="bash"><code>git push origin --tags</code></pre>
+
+    <div class="warning">
+      <p><span class="git-cmd">--tags</span> pushes <strong>all</strong> local tags. If you have temporary tags you don't want to share, push them one by one.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: Deleting a tag -->
+    <h2>Deleting a tag</h2>
+
+    <h3>Delete a local tag</h3>
+
+    <pre data-lang="bash"><code>git tag -d v0.1.0</code></pre>
+
+    <p>The tag is deleted locally. If you had already pushed it to a remote repository, you must also delete it there:</p>
+
+    <pre data-lang="bash"><code>git push origin --delete v0.1.0</code></pre>
+
+    <div class="narrative">
+      <p>"One only breaks a Seal with good reason. A Seal placed by mistake can be removed, but a Seal shared with other guilds requires <strong>more work</strong> to erase."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7: Semantic Versioning -->
+    <h2><span class="keyword">Semantic versioning</span></h2>
+
+    <p>Tags often follow a convention called <strong>Semantic Versioning</strong> (SemVer). The format is:</p>
+
+    <pre data-lang="bash"><code>vMAJOR.MINOR.PATCH</code></pre>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Part</th>
+          <th>When to increment</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MAJOR</strong></td>
+          <td>Incompatible change (breaking change)</td>
+          <td>v1.0.0 to v2.0.0</td>
+        </tr>
+        <tr>
+          <td><strong>MINOR</strong></td>
+          <td>New backward-compatible feature</td>
+          <td>v1.0.0 to v1.1.0</td>
+        </tr>
+        <tr>
+          <td><strong>PATCH</strong></td>
+          <td>Backward-compatible bug fix</td>
+          <td>v1.0.0 to v1.0.1</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Concrete examples</h3>
+
+    <ul>
+      <li><code>v0.1.0</code> - first development version, not yet stable</li>
+      <li><code>v1.0.0</code> - first stable version, ready for production</li>
+      <li><code>v1.0.1</code> - bug fix in v1.0.0</li>
+      <li><code>v1.1.0</code> - new feature added to v1.0</li>
+      <li><code>v2.0.0</code> - major overhaul, not backward-compatible</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"Semantic versioning is the <strong>common language</strong> of guilds. When an Archivist sees <code>v2.0.0</code> go by, they know that major changes have occurred. When they see <code>v1.0.1</code>, they know it's a simple repair. <strong>The numbers speak for themselves.</strong>"</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8: When to tag -->
+    <h2>When to place a seal?</h2>
+
+    <p>Here are the moments when you should tag:</p>
+
+    <ul>
+      <li><strong>Release</strong>: every version delivered to users (v1.0.0, v1.1.0)</li>
+      <li><strong>Milestone</strong>: every important project step (v0.1.0 for the MVP)</li>
+      <li><strong>Stable version</strong>: a reliable reference point for other developers</li>
+      <li><strong>Before a risky change</strong>: so you can easily roll back if something goes wrong</li>
+    </ul>
+
+    <div class="tip">
+      <p>Don't tag everything. A tag should mark a <strong>significant moment</strong>. If you tag every commit, tags lose their value - like placing a seal on every page of a book.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Practical exercise -->
+    <h2>Practical exercise - Seal the Kingdom's Chronicles</h2>
+
+    <div class="quest-objective">
+      <p>Create the kingdom's chronicles and mark the three most important moments in its history:</p>
+      <ol>
+        <li>Create a repository with a first commit and tag it <code>v0.1.0</code> (lightweight tag)</li>
+        <li>Add commits to develop the kingdom</li>
+        <li>Mark the first great victory with an annotated tag <code>v1.0.0</code></li>
+        <li>Add repair commits after a siege</li>
+        <li>Mark the repair with an annotated tag <code>v1.0.1</code></li>
+        <li>Explore and inspect your tags</li>
+        <li>Run the verification script</li>
+      </ol>
+    </div>
+
+    <h3>Step 1 - Create the repository and the guild's founding</h3>
+
+    <pre data-lang="bash"><code>mkdir magic-seals
+cd magic-seals
+git init</code></pre>
+
+    <p>Create the first scroll and make the first commit:</p>
+
+    <pre data-lang="bash"><code>echo "# Chronicles of the Kingdom" > chronicles.txt
+echo "" >> chronicles.txt
+echo "Year 1 - The Guild of Archivists is founded." >> chronicles.txt
+git add chronicles.txt
+git commit -m "Found the Guild of Archivists"</code></pre>
+
+    <p>Place a <strong>lightweight tag</strong> on this founding moment:</p>
+
+    <pre data-lang="bash"><code>git tag v0.1.0</code></pre>
+
+    <h3>Step 2 - Develop the kingdom</h3>
+
+    <pre data-lang="bash"><code>echo "Year 2 - The first apprentices join the guild." >> chronicles.txt
+git add chronicles.txt
+git commit -m "Welcome the first apprentices"
+
+echo "Year 3 - The guild explores the Northern lands." >> chronicles.txt
+git add chronicles.txt
+git commit -m "Explore the Northern lands"</code></pre>
+
+    <h3>Step 3 - The first great victory</h3>
+
+    <pre data-lang="bash"><code>echo "Year 4 - The guild wins the Battle of Frostfort." >> chronicles.txt
+git add chronicles.txt
+git commit -m "Win the Battle of Frostfort"</code></pre>
+
+    <p>Place an <strong>annotated tag</strong> to mark this major victory:</p>
+
+    <pre data-lang="bash"><code>git tag -a v1.0.0 -m "First great victory - Battle of Frostfort"</code></pre>
+
+    <h3>Step 4 - Repair after the siege</h3>
+
+    <pre data-lang="bash"><code>echo "Year 5 - The siege of the Citadel causes heavy damage." >> chronicles.txt
+git add chronicles.txt
+git commit -m "Suffer the siege of the Citadel"
+
+echo "Year 6 - The walls are rebuilt stronger." >> chronicles.txt
+git add chronicles.txt
+git commit -m "Rebuild the Citadel walls"</code></pre>
+
+    <p>Place an <strong>annotated tag</strong> to mark the repair:</p>
+
+    <pre data-lang="bash"><code>git tag -a v1.0.1 -m "Repair after the siege - Walls rebuilt"</code></pre>
+
+    <h3>Step 5 - Explore your seals</h3>
+
+    <p>List all tags:</p>
+
+    <pre data-lang="bash"><code>git tag</code></pre>
+
+    <p>Filter version 1 tags:</p>
+
+    <pre data-lang="bash"><code>git tag -l "v1.*"</code></pre>
+
+    <p>Inspect an annotated tag:</p>
+
+    <pre data-lang="bash"><code>git show v1.0.0</code></pre>
+
+    <p>Compare with a lightweight tag:</p>
+
+    <pre data-lang="bash"><code>git show v0.1.0</code></pre>
+
+    <p>Notice the difference: the annotated tag shows the author, date, and tag message, while the lightweight tag directly shows the commit.</p>
+
+    <h3>Step 6 - Run the verification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Summary -->
+    <h2>Command summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Command</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git tag &lt;name&gt;</code></td>
+          <td>Create a lightweight tag</td>
+        </tr>
+        <tr>
+          <td><code>git tag -a &lt;name&gt; -m "msg"</code></td>
+          <td>Create an annotated tag (recommended)</td>
+        </tr>
+        <tr>
+          <td><code>git tag</code></td>
+          <td>List all tags</td>
+        </tr>
+        <tr>
+          <td><code>git tag -l "v1.*"</code></td>
+          <td>Filter tags by pattern</td>
+        </tr>
+        <tr>
+          <td><code>git show &lt;tag&gt;</code></td>
+          <td>View tag details</td>
+        </tr>
+        <tr>
+          <td><code>git tag &lt;name&gt; &lt;commit&gt;</code></td>
+          <td>Tag a past commit</td>
+        </tr>
+        <tr>
+          <td><code>git push origin &lt;tag&gt;</code></td>
+          <td>Push a specific tag</td>
+        </tr>
+        <tr>
+          <td><code>git push origin --tags</code></td>
+          <td>Push all tags</td>
+        </tr>
+        <tr>
+          <td><code>git tag -d &lt;name&gt;</code></td>
+          <td>Delete a local tag</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>The Master Archivist contemplates the seals you have placed on the chronicles. He nods with satisfaction.</p>
+      <p>"You now master the art of Magic Seals. You know how to mark the important moments of History, distinguish a quick seal from an official seal, and find any milestone in an instant. <strong>This is a power that the best Archivists use with discernment</strong> - each seal must have a reason to exist."</p>
+      <p>He points to a final golden tag, hanging on the wall above the exit door.</p>
+      <p>"Remember: <strong>a good seal tells a story all by itself</strong>. Its name, its message, its placement - everything must be chosen with care. The Archivists who come after you will be grateful."</p>
+    </div>

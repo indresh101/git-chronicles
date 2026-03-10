@@ -1,0 +1,719 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_18
+quest_number: "18"
+arc: 4
+title: "The Sacred Deployment"
+subtitle: "Deployment strategies, GitHub Pages and semantic versioning"
+quest_slug_fr: "18-le-deploiement-sacre"
+quest_slug_en: "18-the-sacred-deployment"
+permalink: /en/quests/18-the-sacred-deployment/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>The Master Archivist leads you into the largest hall of the Forge - an immense circular library, connected by bridges of light to distant towers. Each bridge leads to a different destination: the Testing Halls, the Preparation Outposts, and at the center, the Great Library of the Kingdom - the one all citizens consult. Automatic mechanisms transport scrolls along these bridges, but some paths are sealed by protective wards.</p>
+      <p>"The Automated Forges are useless if the chronicles remain locked in the workshop. <strong>Deployment</strong> is the sacred act of making your work <strong>accessible to the world</strong>. It is the final step in a scroll's journey - from the scribe's inkwell to the shelves of the Great Library. But beware: deploying without method is like sending troops into battle <strong>without a battle formation</strong>. Today, you will learn deployment strategies."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: What is deployment? -->
+    <h2>What is <span class="keyword">deployment</span>?</h2>
+
+    <p><strong>Deployment</strong> is the process that makes your application <strong>available to users</strong>. As long as your code stays in a Git repository, nobody can use it. Deployment takes that code and puts it online, on a server, on a website - where people can access it.</p>
+
+    <p>If CI (continuous integration) verifies that your code <strong>works correctly</strong>, CD (continuous deployment) ensures it <strong>reaches its destination</strong>.</p>
+
+    <div class="narrative">
+      <p>"Writing a perfect chronicle is pointless if it stays locked in your drawer. Deployment is <strong>the act of publishing</strong> - transforming private work into a public good."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: Environments -->
+    <h2><span class="keyword">Deployment</span> environments</h2>
+
+    <p>Before deploying directly to production, we use several <strong>environments</strong> that serve as safety nets. Think of these as successive rooms a scroll passes through before reaching the Great Library.</p>
+
+    <h3>Development (dev)</h3>
+
+    <p>This is <strong>your</strong> local environment. Where you write, test and experiment. Nothing you do here is visible to others.</p>
+
+    <pre data-lang="bash"><code># You work locally - this is the development environment
+git add .
+git commit -m "New feature"</code></pre>
+
+    <h3>Staging (pre-production)</h3>
+
+    <p>An environment that <strong>mimics production</strong> but isn't public. It's the preparation outpost - where you verify everything works under real conditions before the big day.</p>
+
+    <ul>
+      <li>Same configuration as production</li>
+      <li>Test data (no real user data)</li>
+      <li>Accessible only to the team</li>
+    </ul>
+
+    <h3>Production (live)</h3>
+
+    <p>The <strong>real</strong> environment, the one users see and use. This is the Great Library. Every error here is visible to everyone.</p>
+
+    <div class="narrative">
+      <p>"The development room is your private office. Staging is the rehearsal hall. Production is the <strong>stage in front of the entire kingdom</strong>. You don't go on stage without rehearsing."</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Environment</th>
+          <th>Analogy</th>
+          <th>Visible to</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Development</td>
+          <td>Your private office</td>
+          <td>You only</td>
+        </tr>
+        <tr>
+          <td>Staging</td>
+          <td>Rehearsal hall</td>
+          <td>The team</td>
+        </tr>
+        <tr>
+          <td>Production</td>
+          <td>The Great Library</td>
+          <td>Everyone</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: Deployment strategies -->
+    <h2><span class="keyword">Deployment</span> strategies</h2>
+
+    <p>Like a general choosing a battle formation, an engineer chooses a <strong>deployment strategy</strong>. Each has its advantages and risks.</p>
+
+    <h3>1. Manual deployment</h3>
+
+    <p>The simplest method: you connect to the server and copy the files yourself.</p>
+
+    <pre data-lang="bash"><code># Simplified example - copying files to a server
+scp -r ./my-site/ user@server:/var/www/html/</code></pre>
+
+    <ul>
+      <li><strong>Advantage:</strong> Simple to understand</li>
+      <li><strong>Disadvantage:</strong> Prone to human error, not reproducible</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"Manual deployment is like a messenger carrying scrolls on horseback. It works, but it's <strong>slow, risky and exhausting</strong>."</p>
+    </div>
+
+    <h3>2. Automatic deployment on merge</h3>
+
+    <p>Every time a merge is done on the <code>main</code> branch, deployment launches <strong>automatically</strong>. This is the foundation of continuous deployment (CD).</p>
+
+    <pre data-lang="yaml"><code># Deployment triggers when pushing to main
+on:
+  push:
+    branches: [main]</code></pre>
+
+    <ul>
+      <li><strong>Advantage:</strong> Fast, reliable, reproducible</li>
+      <li><strong>Disadvantage:</strong> Requires a good test suite (otherwise you deploy bugs)</li>
+    </ul>
+
+    <h3>3. <span class="keyword">Blue-Green</span></h3>
+
+    <p>You maintain <strong>two identical production environments</strong>: Blue (current) and Green (new). You deploy to Green, test, then switch traffic from Blue to Green.</p>
+
+    <pre data-lang="bash"><code>                    +----------------+
+Users -------------->|    Blue        |  (current version)
+                    +----------------+
+                    +----------------+
+   (standby)        |    Green       |  (new version)
+                    +----------------+
+
+After validation:
+
+                    +----------------+
+   (standby)        |    Blue        |  (old version)
+                    +----------------+
+                    +----------------+
+Users -------------->|    Green       |  (new version)
+                    +----------------+</code></pre>
+
+    <ul>
+      <li><strong>Advantage:</strong> Instant rollback (switch back to Blue)</li>
+      <li><strong>Disadvantage:</strong> Doubled cost (two environments)</li>
+    </ul>
+
+    <h3>4. <span class="keyword">Canary</span></h3>
+
+    <p>You deploy the new version to <strong>a small percentage of users</strong> first. If everything goes well, you gradually increase to 100%.</p>
+
+    <pre data-lang="bash"><code>Canary deployment - progression:
+
+  5% --> New version    (initial test)
+ 95% --> Old version
+
+ 25% --> New version    (going well)
+ 75% --> Old version
+
+100% --> New version    (full deployment)</code></pre>
+
+    <ul>
+      <li><strong>Advantage:</strong> Minimal risk, early problem detection</li>
+      <li><strong>Disadvantage:</strong> More complex to set up</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"The canary in the coal mine - if the little bird survives, the miners can enter safely. If the new version <strong>works for 5% of users</strong>, it will work for everyone."</p>
+    </div>
+
+    <h3>5. <span class="keyword">Rolling</span></h3>
+
+    <p>You update servers <strong>one by one</strong> instead of all at once. During the update, some servers run the old version and others the new one.</p>
+
+    <pre data-lang="bash"><code>Server 1: v2 +  (updated)
+Server 2: v2 +  (updated)
+Server 3: v1    (waiting)
+Server 4: v1    (waiting)</code></pre>
+
+    <ul>
+      <li><strong>Advantage:</strong> No downtime</li>
+      <li><strong>Disadvantage:</strong> Two versions coexist temporarily</li>
+    </ul>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Strategy</th>
+          <th>Downtime</th>
+          <th>Rollback</th>
+          <th>Complexity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Manual</td>
+          <td>Yes</td>
+          <td>Slow</td>
+          <td>Low</td>
+        </tr>
+        <tr>
+          <td>Auto on merge</td>
+          <td>No</td>
+          <td>Medium</td>
+          <td>Low</td>
+        </tr>
+        <tr>
+          <td>Blue-Green</td>
+          <td>No</td>
+          <td>Instant</td>
+          <td>Medium</td>
+        </tr>
+        <tr>
+          <td>Canary</td>
+          <td>No</td>
+          <td>Fast</td>
+          <td>High</td>
+        </tr>
+        <tr>
+          <td>Rolling</td>
+          <td>No</td>
+          <td>Medium</td>
+          <td>Medium</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: GitHub Pages -->
+    <h2><span class="keyword">GitHub Pages</span> - Deploy a site from Git</h2>
+
+    <p><strong>GitHub Pages</strong> is the simplest way to deploy a static website directly from a Git repository. It's free and built into GitHub.</p>
+
+    <h3>How does it work?</h3>
+
+    <p>GitHub takes the content of your repository (HTML, CSS, JavaScript) and publishes it at a URL like:</p>
+
+    <pre data-lang="bash"><code>https://your-username.github.io/repo-name/</code></pre>
+
+    <h3>Enable GitHub Pages</h3>
+
+    <div class="steps">
+      <ol>
+        <li>Go to the <strong>Settings</strong> of your repository on GitHub</li>
+        <li>In the sidebar, click <strong>Pages</strong></li>
+        <li>Choose the source:
+          <ul>
+            <li><strong>Deploy from a branch</strong>: deploy directly from a branch (e.g.: <code>main</code>)</li>
+            <li><strong>GitHub Actions</strong>: use a workflow to build and deploy</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+
+    <h3>Deploy from a branch</h3>
+
+    <p>The simplest. Select the <code>main</code> branch and the root folder <code>/</code> (or <code>/docs</code> if you prefer to isolate the site files).</p>
+
+    <h3>Deploy with GitHub Actions</h3>
+
+    <p>More powerful. You write a workflow that builds the site and deploys it. This is what we'll do in the exercise.</p>
+
+    <h3>Custom domain</h3>
+
+    <p>You can even use your own domain name instead of <code>github.io</code>. You just need to configure a <code>CNAME</code> file in your repository and update your domain's DNS records. For now, this is not necessary.</p>
+
+    <div class="key-message">
+      <p>GitHub Pages is the <strong>gateway to the Great Library</strong>. You place your scrolls there and they become instantly accessible to the entire kingdom. No server needed, no complex magic needed.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: Protection rules -->
+    <h2><span class="keyword">Environment protection</span> rules</h2>
+
+    <p>Production environments are precious. GitHub lets you define <strong>protection rules</strong> to prevent accidental deployments.</p>
+
+    <h3>Configure a protected environment</h3>
+
+    <p>In the <strong>Settings</strong> of your repository, section <strong>Environments</strong>:</p>
+
+    <ul>
+      <li><strong>Required reviewers</strong>: one or more team members must approve the deployment</li>
+      <li><strong>Wait timer</strong>: mandatory delay before deployment (e.g.: 5 minutes)</li>
+      <li><strong>Deployment branches</strong>: only certain branches can trigger deployment</li>
+    </ul>
+
+    <h3>Use an environment in a workflow</h3>
+
+    <pre data-lang="yaml"><code>jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production    # <-- protected environment
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: echo "Deploying to production..."</code></pre>
+
+    <p>When the workflow reaches this job, it <strong>waits for approval</strong> before continuing (if reviewers are required).</p>
+
+    <div class="narrative">
+      <p>"You don't deploy to production <strong>on a whim</strong>. Protection rules are the guards posted at the Great Library. They verify that every delivery is <strong>authorized and expected</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: Rollback -->
+    <h2><span class="keyword">Rollback</span> - Going back</h2>
+
+    <p>Sometimes, despite all precautions, a deployment introduces a bug. You need to be able to <strong>return to the previous version</strong> quickly. That's a rollback.</p>
+
+    <h3>Strategy 1 - Revert commit</h3>
+
+    <p>Create a new commit that <strong>undoes the changes</strong> of the problematic commit:</p>
+
+    <pre data-lang="bash"><code># Identify the problematic commit
+git log --oneline
+
+# Create a commit that undoes its changes
+git revert abc1234
+
+# Push the revert - the pipeline redeploys automatically
+git push</code></pre>
+
+    <p>The advantage: the history stays clean and you can clearly see that a rollback happened.</p>
+
+    <h3>Strategy 2 - Redeploy a previous version</h3>
+
+    <p>If you use version tags, you can simply redeploy the previous tag:</p>
+
+    <pre data-lang="bash"><code># Go back to tag v1.0.0
+git checkout v1.0.0
+
+# Or in a workflow, trigger deployment of a specific tag</code></pre>
+
+    <h3>Strategy 3 - Blue-Green rollback</h3>
+
+    <p>With the Blue-Green strategy, rollback is instant: just switch traffic back to the old environment.</p>
+
+    <div class="narrative">
+      <p>"A good general always plans for retreat. Rollback is not an admission of failure - it's a <strong>proof of wisdom</strong>. Better to go back quickly than to let the kingdom suffer from a flawed scroll."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7: Complete workflow -->
+    <h2>Complete <span class="keyword">deployment</span> workflow</h2>
+
+    <p>Here is an example GitHub Actions workflow that deploys a static site to GitHub Pages when pushing to <code>main</code>:</p>
+
+    <pre data-lang="yaml"><code>name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Retrieve the code
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4</code></pre>
+
+    <h3>Workflow anatomy</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Element</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>on: push: branches: [main]</code></td>
+          <td>Triggers deployment on push to main</td>
+        </tr>
+        <tr>
+          <td><code>permissions</code></td>
+          <td>Authorizes the workflow to write to Pages</td>
+        </tr>
+        <tr>
+          <td><code>environment: production</code></td>
+          <td>Uses the protected environment</td>
+        </tr>
+        <tr>
+          <td><code>actions/checkout@v4</code></td>
+          <td>Retrieves the repository code</td>
+        </tr>
+        <tr>
+          <td><code>actions/configure-pages@v4</code></td>
+          <td>Configures GitHub Pages</td>
+        </tr>
+        <tr>
+          <td><code>actions/upload-pages-artifact@v3</code></td>
+          <td>Prepares files for deployment</td>
+        </tr>
+        <tr>
+          <td><code>actions/deploy-pages@v4</code></td>
+          <td>Actually deploys to GitHub Pages</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="narrative">
+      <p>"Observe the structure of this workflow: it retrieves the code, prepares it, and <strong>deploys it to the Great Library</strong>. Each step is clear, each action is documented. This is the work of a <strong>methodical Archivist</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8: Semantic versioning -->
+    <h2><span class="keyword">Semantic versioning</span> and tags for releases</h2>
+
+    <p>When you deploy, it is essential to <strong>number your versions</strong> to know exactly what is in production.</p>
+
+    <h3>Semantic versioning (SemVer)</h3>
+
+    <p>The format is <code>vMAJOR.MINOR.PATCH</code>:</p>
+
+    <pre data-lang="bash"><code>v1.0.0
+| | |
+| | +-- PATCH: bug fix (backward compatible)
+| +---- MINOR: new feature (backward compatible)
++------ MAJOR: incompatible change (breaking change)</code></pre>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Version</th>
+          <th>What changed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>v1.0.0</code></td>
+          <td>First stable version</td>
+        </tr>
+        <tr>
+          <td><code>v1.1.0</code></td>
+          <td>Added a new feature</td>
+        </tr>
+        <tr>
+          <td><code>v1.1.1</code></td>
+          <td>Bug fix</td>
+        </tr>
+        <tr>
+          <td><code>v2.0.0</code></td>
+          <td>Major overhaul, not backward compatible</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Create a version tag</h3>
+
+    <pre data-lang="bash"><code># Lightweight tag
+git tag v1.0.0
+
+# Annotated tag (recommended for releases)
+git tag -a v1.0.0 -m "First stable version"
+
+# Push tags to GitHub
+git push --tags</code></pre>
+
+    <h3>Create a release on GitHub</h3>
+
+    <div class="steps">
+      <ol>
+        <li>Go to the <strong>Releases</strong> tab of your repository</li>
+        <li>Click <strong>Create a new release</strong></li>
+        <li>Select your tag</li>
+        <li>Add a title and release notes</li>
+        <li>Publish</li>
+      </ol>
+    </div>
+
+    <p>Releases are useful for users: they offer a clear download point and a changelog.</p>
+
+    <div class="narrative">
+      <p>"Each version is an <strong>official seal</strong> stamped on your chronicles. Semantic versioning is the universal language that lets everyone understand what changed. Without it, chaos reigns."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Hands-on exercise -->
+    <h2>Hands-on exercise - Prepare the sacred deployment</h2>
+
+    <div class="quest-objective">
+      <p>Prepare your chronicles for the Great Library:</p>
+      <ol>
+        <li>Create a <code>sacred-deployment</code> repository</li>
+        <li>Create a static site (<code>index.html</code>)</li>
+        <li>Write a GitHub Pages deployment workflow</li>
+        <li>Tag the first version (<code>v1.0.0</code>)</li>
+        <li>Run the verification script</li>
+      </ol>
+    </div>
+
+    <h3>Step 1 - Create the repository</h3>
+
+    <pre data-lang="bash"><code>mkdir sacred-deployment
+cd sacred-deployment
+git init</code></pre>
+
+    <h3>Step 2 - Create the static site</h3>
+
+    <p>Create an <code>index.html</code> file:</p>
+
+    <pre data-lang="bash"><code>cat > index.html << 'EOF'
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;The Kingdom's Chronicles&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: Georgia, serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+    h1 { color: #2c3e50; }
+    .version { color: #7f8c8d; font-size: 0.9em; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;The Kingdom's Chronicles&lt;/h1&gt;
+  &lt;p&gt;Welcome to the Great Library.&lt;/p&gt;
+  &lt;p class="version"&gt;Version 1.0.0&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+EOF</code></pre>
+
+    <pre data-lang="bash"><code>git add index.html
+git commit -m "Create the site homepage"</code></pre>
+
+    <h3>Step 3 - Write the deployment workflow</h3>
+
+    <p>Create the folder structure for GitHub Actions:</p>
+
+    <pre data-lang="bash"><code>mkdir -p .github/workflows</code></pre>
+
+    <p>Create the workflow file:</p>
+
+    <pre data-lang="bash"><code>cat > .github/workflows/deploy.yml << 'EOF'
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Retrieve the code
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+EOF</code></pre>
+
+    <pre data-lang="bash"><code>git add .github/workflows/deploy.yml
+git commit -m "Add the GitHub Pages deployment workflow"</code></pre>
+
+    <h3>Step 4 - Tag the first version</h3>
+
+    <pre data-lang="bash"><code>git tag -a v1.0.0 -m "First stable version - initial deployment"</code></pre>
+
+    <p>Verify the tag exists:</p>
+
+    <pre data-lang="bash"><code>git tag</code></pre>
+
+    <p>You should see <code>v1.0.0</code> in the list.</p>
+
+    <h3>Step 5 - Run the verification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Command summary -->
+    <h2>Command summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Command</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git tag v1.0.0</code></td>
+          <td>Create a lightweight tag</td>
+        </tr>
+        <tr>
+          <td><code>git tag -a v1.0.0 -m "message"</code></td>
+          <td>Create an annotated tag</td>
+        </tr>
+        <tr>
+          <td><code>git push --tags</code></td>
+          <td>Push tags to the remote repository</td>
+        </tr>
+        <tr>
+          <td><code>git revert &lt;hash&gt;</code></td>
+          <td>Undo a commit (rollback)</td>
+        </tr>
+        <tr>
+          <td><code>git checkout v1.0.0</code></td>
+          <td>Go back to a tagged version</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Concept summary -->
+    <h2>Concept summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Deployment</strong></td>
+          <td>Making an application accessible to users</td>
+        </tr>
+        <tr>
+          <td><strong>Dev environment</strong></td>
+          <td>Your local workspace</td>
+        </tr>
+        <tr>
+          <td><strong>Staging environment</strong></td>
+          <td>Copy of production for testing</td>
+        </tr>
+        <tr>
+          <td><strong>Production environment</strong></td>
+          <td>The application visible to users</td>
+        </tr>
+        <tr>
+          <td><strong>Blue-Green</strong></td>
+          <td>Two identical environments, instant switch</td>
+        </tr>
+        <tr>
+          <td><strong>Canary</strong></td>
+          <td>Progressive deployment by user percentage</td>
+        </tr>
+        <tr>
+          <td><strong>Rolling</strong></td>
+          <td>Server by server update</td>
+        </tr>
+        <tr>
+          <td><strong>GitHub Pages</strong></td>
+          <td>Free static site hosting from GitHub</td>
+        </tr>
+        <tr>
+          <td><strong>SemVer</strong></td>
+          <td>MAJOR.MINOR.PATCH version format</td>
+        </tr>
+        <tr>
+          <td><strong>Rollback</strong></td>
+          <td>Return to a previous version</td>
+        </tr>
+        <tr>
+          <td><strong>Protection rules</strong></td>
+          <td>Rules that secure production environments</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>The Master Archivist stands before the immense door of the Great Library. The Forge mechanisms hum behind you, and through the half-open door, you glimpse infinite shelves bathed in golden light.</p>
+      <p>"You now understand the complete journey of a chronicle. From inkwell to shelf. From your private office to the Great Library of the Kingdom. You have learned <strong>deployment strategies</strong> - how to choose the right formation for each battle. You have prepared your first <strong>automated deployment ritual</strong>. And you have stamped your first <strong>official version</strong> with a versioning seal."</p>
+      <p>He places a hand on your shoulder.</p>
+      <p>"But the Forge has not yet revealed all its secrets. The machines you have built - automated tests, deployment - are just the first stones. The Automated Forges can do much more. The next step will take you even further in <strong>mastering continuous delivery</strong>."</p>
+    </div>

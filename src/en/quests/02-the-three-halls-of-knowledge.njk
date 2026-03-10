@@ -1,0 +1,296 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_02
+quest_number: "02"
+arc: 1
+title: "The Three Halls of Knowledge"
+subtitle: "Git's 3-tree model"
+quest_slug_fr: "02-les-trois-salles-du-savoir"
+quest_slug_en: "02-the-three-halls-of-knowledge"
+permalink: /en/quests/02-the-three-halls-of-knowledge/
+---
+
+      <!-- Narrative introduction -->
+      <div class="narrative">
+        <p>The Master Archivist looks at you with a solemn expression.</p>
+        <p>"You've joined the Guild, apprentice. But before you touch a single
+          scroll, you must understand <strong>how our Archive works</strong>.
+          Follow me... I'm going to show you the <strong>Three Halls</strong>."</p>
+        <p>He opens a heavy oak door and guides you down a long corridor
+          lit by torches. Three immense halls open up before you.</p>
+      </div>
+
+      <!-- Objective -->
+      <div class="quest-objective">
+        <p>Understand Git's <span class="keyword">3-tree model</span>: the three zones
+          your files pass through before being archived.</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- The Three Halls -->
+      <h2>The Three Halls of the Archive</h2>
+
+      <p>Every Git repository is built on <strong>three distinct zones</strong>. The
+        Master Archivist calls them the <strong>Three Halls</strong>:</p>
+
+      <!-- Visual diagram -->
+      <div class="three-rooms">
+
+        <div class="room-box room-working">
+          <span class="room-icon">🏠</span>
+          <span class="room-name">Working Hall</span>
+          <span class="room-git-name"><span class="keyword">Working Directory</span></span>
+          <span class="room-desc">You write, modify, and create your files here.
+            It's the folder on your disk.</span>
+        </div>
+
+        <div class="room-arrow">
+          <span class="arrow-symbol">→</span>
+          <span class="arrow-label">git add</span>
+        </div>
+
+        <div class="room-box room-staging">
+          <span class="room-icon">📋</span>
+          <span class="room-name">Preparation Hall</span>
+          <span class="room-git-name"><span class="keyword">Staging Area</span> / Index</span>
+          <span class="room-desc">You place the scrolls you want to archive here.
+            It's the "basket" before sending.</span>
+        </div>
+
+        <div class="room-arrow">
+          <span class="arrow-symbol">→</span>
+          <span class="arrow-label">git commit</span>
+        </div>
+
+        <div class="room-box room-repository">
+          <span class="room-icon">📚</span>
+          <span class="room-name">Grand Archive</span>
+          <span class="room-git-name"><span class="keyword">Repository</span> / .git</span>
+          <span class="room-desc">Scrolls sealed permanently.
+            The complete and permanent history.</span>
+        </div>
+
+      </div>
+
+      <div class="key-message">
+        <p>Every file passes through three zones: <span class="keyword">Working Directory</span> →
+          <span class="keyword">Staging Area</span> → <span class="keyword">Repository</span>.
+          Understanding this flow is the key to mastering Git.</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Why 3 steps? -->
+      <h2>Why three steps?</h2>
+
+      <div class="narrative">
+        <p>"Why not archive directly?" you ask.</p>
+        <p>The Master Archivist smiles. "Imagine you've written ten letters.
+          Would you want to <strong>post them all at once</strong>, without rereading, without sorting?"</p>
+      </div>
+
+      <h3>Analogy: The letter</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>Action</th>
+            <th>Git equivalent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Write the letter</td>
+            <td>You draft it at your desk</td>
+            <td>Edit in the <span class="keyword">Working Directory</span></td>
+          </tr>
+          <tr>
+            <td>Put it in the envelope</td>
+            <td>You choose what to send</td>
+            <td><code class="command">git add</code> → <span class="keyword">Staging Area</span></td>
+          </tr>
+          <tr>
+            <td>Post the letter</td>
+            <td>It's sent, it's archived</td>
+            <td><code class="command">git commit</code> → <span class="keyword">Repository</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>The real power of <span class="keyword">staging</span></h3>
+
+      <p><span class="keyword">Staging</span> lets you <span class="highlight">choose WHAT to archive</span> - not
+        everything at once!</p>
+
+      <ul>
+        <li>You modify <strong>10 files</strong></li>
+        <li>But only <strong>3</strong> are ready</li>
+        <li>You run <code class="command">git add</code> on just those 3 files</li>
+        <li>You run <code class="command">git commit</code>: only those 3 are archived</li>
+        <li>The other 7 stay quietly in the Working Hall</li>
+      </ul>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Key commands -->
+      <h2>Key commands</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Command</th>
+            <th>Role</th>
+            <th>Transition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="command">git status</code></td>
+            <td>See which hall your files are in</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><code class="command">git add &lt;file&gt;</code></td>
+            <td>Working Hall → Preparation Hall</td>
+            <td><span class="keyword">Working Directory</span> → <span class="keyword">Staging Area</span></td>
+          </tr>
+          <tr>
+            <td><code class="command">git commit</code></td>
+            <td>Preparation Hall → Grand Archive</td>
+            <td><span class="keyword">Staging Area</span> → <span class="keyword">Repository</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>The colors of <code class="command">git status</code></h3>
+
+      <ul>
+        <li><span class="status-red"><span class="highlight-red">Red</span></span> = the file is in the
+          <strong>Working Hall</strong> (modified or untracked)</li>
+        <li><span class="status-green"><span class="highlight-green">Green</span></span> = the file is in the
+          <strong>Preparation Hall</strong> (ready to be archived)</li>
+      </ul>
+
+      <div class="tip">
+        <p>Use <code class="command">git status</code> often!
+          It's your compass in the Archive.</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Practical exercise -->
+      <h2>Practical exercise</h2>
+
+      <p>Time to get your hands on the scrolls! Follow these steps
+        one by one.</p>
+
+      <!-- Step 1 -->
+      <div class="step">
+        <h3><span class="step-number">1</span> Create your workshop</h3>
+        <p>Open a terminal and create a new folder, then initialize a Git repository:</p>
+        <pre data-lang="bash"><code>mkdir atelier-archiviste
+cd atelier-archiviste
+git init</code></pre>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <h3><span class="step-number">2</span> Create a scroll</h3>
+        <p>Create a file called <code class="command">parchemin.txt</code> with some content:</p>
+        <pre data-lang="bash"><code>echo "Ceci est mon premier parchemin dans l'Archive." > parchemin.txt</code></pre>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <h3><span class="step-number">3</span> Observe the Working Hall</h3>
+        <p>Run the command:</p>
+        <pre data-lang="bash"><code>git status</code></pre>
+        <p>You should see <code class="command">parchemin.txt</code> in
+          <span class="status-red"><span class="highlight-red">red</span></span> under the heading
+          <em>Untracked files</em>. The file is in the <strong>Working
+          Hall</strong> - Git can see it, but isn't tracking it yet.</p>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step">
+        <h3><span class="step-number">4</span> Prepare the scroll</h3>
+        <p>Move the file into the Preparation Hall:</p>
+        <pre data-lang="bash"><code>git add parchemin.txt</code></pre>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step">
+        <h3><span class="step-number">5</span> Observe the Preparation Hall</h3>
+        <p>Run again:</p>
+        <pre data-lang="bash"><code>git status</code></pre>
+        <p>This time, <code class="command">parchemin.txt</code> appears in
+          <span class="status-green"><span class="highlight-green">green</span></span> under
+          <em>Changes to be committed</em>. The scroll is in the
+          <strong>Preparation Hall</strong>, ready to be sealed.</p>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="step">
+        <h3><span class="step-number">6</span> Do NOT commit!</h3>
+        <div class="warning">
+          <p>For this exercise, <strong>do NOT</strong> run
+            <code class="command">git commit</code>. The goal is to understand
+            the flow between the first two halls. The commit will come in the
+            next quest!</p>
+        </div>
+      </div>
+
+      <!-- Step 7 -->
+      <div class="step">
+        <h3><span class="step-number">7</span> Check your progress</h3>
+        <p>Run the verification script from the
+          <code class="command">atelier-archiviste</code> folder:</p>
+        <p><strong>Linux / macOS:</strong></p>
+        <pre data-lang="bash"><code>bash chemin/vers/quetes/02-les-trois-salles-du-savoir/verifier.sh</code></pre>
+        <p><strong>Windows (PowerShell):</strong></p>
+        <pre data-lang="powershell"><code>& chemin\vers\quetes\02-les-trois-salles-du-savoir\verifier.ps1</code></pre>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Summary -->
+      <h2>Summary</h2>
+
+      <div class="three-rooms" style="margin-bottom: var(--spacing-lg);">
+        <div class="room-box room-working">
+          <span class="room-icon">🏠</span>
+          <span class="room-name">Working Hall</span>
+          <span class="room-git-name">you modify</span>
+          <span class="room-desc"><span class="status-red"><span class="highlight-red">red</span></span> in git status</span>
+        </div>
+        <div class="room-arrow">
+          <span class="arrow-symbol">→</span>
+          <span class="arrow-label">git add</span>
+        </div>
+        <div class="room-box room-staging">
+          <span class="room-icon">📋</span>
+          <span class="room-name">Preparation Hall</span>
+          <span class="room-git-name">git add</span>
+          <span class="room-desc"><span class="status-green"><span class="highlight-green">green</span></span> in git status</span>
+        </div>
+        <div class="room-arrow">
+          <span class="arrow-symbol">→</span>
+          <span class="arrow-label">git commit</span>
+        </div>
+        <div class="room-box room-repository">
+          <span class="room-icon">📚</span>
+          <span class="room-name">Grand Archive</span>
+          <span class="room-git-name">git commit</span>
+          <span class="room-desc">permanent history</span>
+        </div>
+      </div>
+
+      <div class="narrative">
+        <p>The Master Archivist nods with satisfaction.</p>
+        <p>"You now understand <strong>the path of the scroll</strong>. In the next
+          quest, you'll learn to <strong>seal your first entry</strong> into the Grand
+          Archive."</p>
+      </div>

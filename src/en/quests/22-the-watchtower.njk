@@ -1,0 +1,581 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_22
+quest_number: "22"
+arc: 5
+title: "The Watchtower"
+subtitle: "Seed nodes, configuration, systemd and monitoring"
+quest_slug_fr: "22-la-tour-de-guet"
+quest_slug_en: "22-the-watchtower"
+permalink: /en/quests/22-the-watchtower/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>The trail climbs through a forest of ancient oaks. As you ascend, the trees grow sparser and the wind stronger. At the summit of the hill stands a tower of grey stone, massive and solitary. No flag, no sign. Just a lantern burning at its top, visible for leagues around.</p>
+      <p>A man with white hair greets you at the door. His eyes are tired but sharp - the eyes of someone who never truly sleeps.</p>
+      <p>"I am the <strong>Watcher</strong>. My tower watches over the network day and night. When a traveler publishes their chronicles, it is I who keep them accessible for those who seek them. Without the watchtowers, the free chronicles would be like messages in bottles - cast into the ocean, hoping someone finds them."</p>
+      <p>He leads you inside, where dozens of luminous crystals float in a circle, each pulsing gently.</p>
+      <p>"Each crystal is a project I watch over. Today, you will learn to <strong>build your own tower</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: Seed node architecture -->
+    <h2>Architecture of a <span class="keyword">seed node</span></h2>
+
+    <p>In the Radicle network, not all participants are equal in terms of <strong>availability</strong>. When you turn off your laptop, your projects are no longer accessible to others. That is where <strong>seed nodes</strong> come in.</p>
+
+    <h3>The role of a seed in the P2P network</h3>
+
+    <p>A <span class="keyword">seed node</span> is a computer that stays <strong>permanently connected</strong> to the Radicle network. Its role:</p>
+
+    <ul>
+      <li><strong>Availability</strong>: it keeps a copy of the projects it follows, even when the authors are offline</li>
+      <li><strong>Discovery</strong>: it helps new peers find projects and other peers</li>
+      <li><strong>Relay</strong>: it transmits updates between peers that are not directly connected</li>
+    </ul>
+
+    <pre data-lang="bash"><code># Without seed node:
+Alice (online) <--> Bob (online)     OK!
+Alice (offline) <--> Bob (online)   Bob can't access Alice's project
+
+# With seed node:
+Alice (offline)
+    |
+    v (Alice published before going offline)
+  Seed Node (always online) <--> Bob (online)   Bob accesses the project!</code></pre>
+
+    <h3>Peer vs Seed - what's the difference?</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Characteristic</th>
+          <th>Peer (regular node)</th>
+          <th>Seed (seed node)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Connectivity</strong></td>
+          <td>Intermittent (laptop, desktop)</td>
+          <td>Permanent (24/7 server)</td>
+        </tr>
+        <tr>
+          <td><strong>IP address</strong></td>
+          <td>Often dynamic, behind NAT</td>
+          <td>Fixed, publicly accessible</td>
+        </tr>
+        <tr>
+          <td><strong>Role</strong></td>
+          <td>Works on its projects</td>
+          <td>Replicates and serves others' projects</td>
+        </tr>
+        <tr>
+          <td><strong>Resources</strong></td>
+          <td>Uses what it has</td>
+          <td>Dedicated, sufficient storage and bandwidth</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="key-message">
+      <p>A seed node is <strong>optional</strong> but strongly recommended for any serious project. It's like a lighthouse for sailors - the network works without one, but it's much more reliable with.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: Server prerequisites -->
+    <h2>Prerequisites for a <span class="keyword">seed node</span></h2>
+
+    <p>To set up a seed node, you need a machine that is permanently connected. Here are the options:</p>
+
+    <h3>The server</h3>
+
+    <ul>
+      <li><strong>VPS</strong> (<em>Virtual Private Server</em>): the most common solution. Providers like Hetzner, OVH, Scaleway or DigitalOcean offer VPS starting at 3-5 euros per month</li>
+      <li><strong>Raspberry Pi</strong>: a small computer at home, connected to your router. Economical but requires a static IP or dynamic DNS</li>
+      <li><strong>Dedicated server</strong>: for ambitious projects with lots of traffic</li>
+    </ul>
+
+    <h3>Minimum configuration</h3>
+
+    <ul>
+      <li><strong>OS</strong>: Linux (Debian, Ubuntu, Fedora) - recommended</li>
+      <li><strong>RAM</strong>: 512 MB minimum, 1 GB recommended</li>
+      <li><strong>Disk</strong>: 10 GB minimum (depends on number of tracked projects)</li>
+      <li><strong>Network</strong>: public IP, port <strong>8776</strong> accessible</li>
+    </ul>
+
+    <div class="tip">
+      <p><strong>Tip:</strong> For this exercise, you don't need a real server. We will do everything locally on your machine to understand the mechanics.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: Installation -->
+    <h2>Install <span class="keyword">radicle-node</span></h2>
+
+    <p>The Radicle node is included in the <code>rad</code> installation you did in the previous quest. The component that runs the node is called <span class="git-cmd">radicle-node</span>.</p>
+
+    <pre data-lang="bash"><code># If rad is already installed, the node is available
+rad node --help
+
+# Otherwise, install Radicle (see Quest 21)
+curl -sSf https://radicle.xyz/install | sh</code></pre>
+
+    <h3>Verify components</h3>
+
+    <pre data-lang="bash"><code># Verify all components are present
+rad --version
+rad node --version
+
+# The binaries are located in:
+ls ~/.radicle/bin/
+# radicle-node  rad  ...
+</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: Configuration -->
+    <h2>Node <span class="keyword">configuration</span></h2>
+
+    <p>Your Radicle node's configuration file is located in <code>~/.radicle/config.json</code>. This is where you define the behavior of your watchtower.</p>
+
+    <h3>The configuration file</h3>
+
+    <pre data-lang="bash"><code># Display current configuration
+rad config
+
+# The file is located here:
+cat ~/.radicle/config.json</code></pre>
+
+    <p>Here are the important parameters:</p>
+
+    <pre data-lang="json"><code>{
+  "node": {
+    "alias": "my-watchtower",
+    "listen": ["0.0.0.0:8776"],
+    "peers": {
+      "type": "dynamic"
+    },
+    "connect": [],
+    "externalAddresses": ["my-server.example.com:8776"],
+    "policy": "allow",
+    "scope": "all"
+  }
+}</code></pre>
+
+    <h3>Parameter details</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>alias</code></td>
+          <td>A readable name for your node (visible to peers)</td>
+        </tr>
+        <tr>
+          <td><code>listen</code></td>
+          <td>Listen address and port. <code>0.0.0.0:8776</code> listens on all interfaces</td>
+        </tr>
+        <tr>
+          <td><code>externalAddresses</code></td>
+          <td>The public address of your node (IP or domain)</td>
+        </tr>
+        <tr>
+          <td><code>policy</code></td>
+          <td><code>allow</code> (accept connections) or <code>block</code> (deny by default)</td>
+        </tr>
+        <tr>
+          <td><code>scope</code></td>
+          <td><code>all</code> (replicate everything) or <code>followed</code> (only tracked projects)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Policies: track and block</h3>
+
+    <p><span class="keyword">Policies</span> control which projects your node agrees to replicate:</p>
+
+    <pre data-lang="bash"><code># Track a specific project (replicate it on your node)
+rad track rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA
+
+# Stop tracking a project
+rad untrack rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA</code></pre>
+
+    <div class="tip">
+      <p><strong>Note:</strong> There is no <code>rad block</code> command. Blocking projects is configured via the <strong>policy</strong> in the <code>~/.radicle/config.json</code> file. Use <code>"policy": "block"</code> to deny by default, then explicitly allow the projects you want to follow with <code>rad track</code>.</p>
+    </div>
+
+    <div class="tip">
+      <p><strong>Advice:</strong> For a personal seed node, use <code>scope: "followed"</code> and only follow projects that interest you. A public seed can use <code>scope: "all"</code>, but watch your disk space.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: Firewall -->
+    <h2>Open the <span class="keyword">firewall</span></h2>
+
+    <p>For other peers to connect to your node, port <strong>8776</strong> (TCP) must be accessible from outside.</p>
+
+    <h3>With UFW (Ubuntu / Debian)</h3>
+
+    <pre data-lang="bash"><code># Open port 8776
+sudo ufw allow 8776/tcp
+
+# Check the rules
+sudo ufw status</code></pre>
+
+    <h3>With firewalld (Fedora / RHEL)</h3>
+
+    <pre data-lang="bash"><code># Open port 8776
+sudo firewall-cmd --add-port=8776/tcp --permanent
+sudo firewall-cmd --reload
+
+# Verify
+sudo firewall-cmd --list-ports</code></pre>
+
+    <h3>With iptables (advanced)</h3>
+
+    <pre data-lang="bash"><code># Open port 8776
+sudo iptables -A INPUT -p tcp --dport 8776 -j ACCEPT</code></pre>
+
+    <div class="key-message">
+      <p>Port <strong>8776</strong> is the default port for the Radicle protocol. It's the equivalent of port 22 for SSH or port 443 for HTTPS. If your node is behind a router (Raspberry Pi at home), also remember to configure port forwarding on your router.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: Starting -->
+    <h2>Start and <span class="keyword">monitor</span> the node</h2>
+
+    <h3>Start the node</h3>
+
+    <pre data-lang="bash"><code># Start the Radicle node
+rad node start
+
+# The node starts and connects to the network
+# You will see connection messages to peers</code></pre>
+
+    <h3>Check the status</h3>
+
+    <pre data-lang="bash"><code># Node status
+rad node status
+
+# Displays:
+# Node is running
+# Listening on 0.0.0.0:8776
+# Connected peers: 3
+# Tracked repos: 5</code></pre>
+
+    <h3>Stop the node</h3>
+
+    <pre data-lang="bash"><code># Stop gracefully
+rad node stop</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7: Tracking -->
+    <h2><span class="keyword">Track</span> projects</h2>
+
+    <p>A seed node is only useful if it replicates projects. Here's how to manage tracked projects:</p>
+
+    <pre data-lang="bash"><code># Track a project by its identifier
+rad track rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA
+
+# List tracked / known projects
+rad inspect
+
+# Stop tracking a project
+rad untrack rad:z2e7RaGkMUjH3dMhiKd5dm2E3pCXA</code></pre>
+
+    <p>When you track a project, your node:</p>
+
+    <ol>
+      <li>Downloads all project data (code, patches, issues)</li>
+      <li>Automatically synchronizes when updates arrive</li>
+      <li>Serves this data to other peers who request it</li>
+    </ol>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8: Monitoring -->
+    <h2><span class="keyword">Monitoring</span> and diagnostics</h2>
+
+    <h3>Node logs</h3>
+
+    <pre data-lang="bash"><code># View logs in real time
+rad node logs
+
+# Filter logs by level
+rad node logs --level info
+rad node logs --level debug</code></pre>
+
+    <div class="tip">
+      <p><strong>Tip:</strong> Logs are also available directly in the file <code>~/.radicle/node.log</code>. You can view them with <code>tail -f ~/.radicle/node.log</code> without going through <code>rad</code>.</p>
+    </div>
+
+    <h3>Common diagnostics</h3>
+
+    <pre data-lang="bash"><code># Check connectivity
+rad node status
+
+# View connected peers
+rad node peers
+
+# Test connection to a specific peer
+rad node connect &lt;node-id&gt;@&lt;address&gt;:8776</code></pre>
+
+    <h3>Common problems</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Symptom</th>
+          <th>Probable cause</th>
+          <th>Solution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0 connected peers</td>
+          <td>Firewall blocked or port closed</td>
+          <td>Check UFW/firewalld, port forwarding</td>
+        </tr>
+        <tr>
+          <td>Node won't start</td>
+          <td>No identity created</td>
+          <td>Run <code>rad auth</code> first</td>
+        </tr>
+        <tr>
+          <td>Slow synchronization</td>
+          <td>Few peers on the network</td>
+          <td>Add known seeds in <code>connect</code></td>
+        </tr>
+        <tr>
+          <td>Disk space full</td>
+          <td>Too many tracked projects</td>
+          <td>Use <code>rad untrack</code> on unnecessary projects</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 9: Systemd -->
+    <h2><span class="keyword">systemd</span> service - a persistent seed</h2>
+
+    <p>For a seed node to run permanently (even after a server reboot), you need to configure it as a systemd service.</p>
+
+    <h3>Create the service file</h3>
+
+    <pre data-lang="bash"><code># Create the systemd service file
+sudo nano /etc/systemd/system/radicle-node.service</code></pre>
+
+    <p>File contents:</p>
+
+    <pre data-lang="ini"><code>[Unit]
+Description=Radicle Node
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=radicle
+ExecStart=/home/radicle/.radicle/bin/radicle-node
+Restart=on-failure
+RestartSec=5
+Environment=RADICLE_HOME=/home/radicle/.radicle
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+    <h3>Enable and start the service</h3>
+
+    <pre data-lang="bash"><code># Reload systemd configuration
+sudo systemctl daemon-reload
+
+# Enable the service at boot
+sudo systemctl enable radicle-node
+
+# Start the service
+sudo systemctl start radicle-node
+
+# Check the status
+sudo systemctl status radicle-node</code></pre>
+
+    <h3>Manage the service</h3>
+
+    <pre data-lang="bash"><code># View service logs
+sudo journalctl -u radicle-node -f
+
+# Restart the service
+sudo systemctl restart radicle-node
+
+# Stop the service
+sudo systemctl stop radicle-node</code></pre>
+
+    <div class="tip">
+      <p><strong>Best practice:</strong> Create a dedicated <code>radicle</code> user for the service, rather than running it under <code>root</code>. This is a basic security principle: each service has its own user with minimal permissions.</p>
+    </div>
+
+    <pre data-lang="bash"><code># Create a dedicated user
+sudo useradd -m -s /bin/bash radicle
+
+# Log in as radicle to initialize
+sudo -u radicle bash
+curl -sSf https://radicle.xyz/install | sh
+rad auth
+exit</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Hands-on exercise -->
+    <h2>Hands-on exercise - <span class="keyword">Launch a local node</span></h2>
+
+    <div class="quest-objective">
+      <p>In this exercise, you will configure and launch a Radicle node on your own machine. No VPS needed - we simulate seed behavior locally.</p>
+    </div>
+
+    <div class="steps">
+      <h3>Step 1 - Check prerequisites</h3>
+
+      <pre data-lang="bash"><code># Verify rad is installed and you have an identity
+rad --version
+rad self
+
+# If you don't have an identity, create one
+rad auth</code></pre>
+
+      <h3>Step 2 - Examine the configuration</h3>
+
+      <pre data-lang="bash"><code># Display your current configuration
+rad config
+
+# Note the parameters: listen, policy, scope</code></pre>
+
+      <h3>Step 3 - Start the node</h3>
+
+      <pre data-lang="bash"><code># Launch the node
+rad node start
+
+# Verify it's running
+rad node status</code></pre>
+
+      <h3>Step 4 - Track a project</h3>
+
+      <pre data-lang="bash"><code># If you created a project in Quest 21, note its RID
+# Otherwise, create one quickly:
+mkdir test-seed && cd test-seed
+git init
+echo "test" > file.txt
+git add file.txt
+git commit -m "test"
+rad init
+
+# Note the displayed RID
+
+# In another terminal, track this project
+rad track rad:&lt;your-project-rid&gt;</code></pre>
+
+      <h3>Step 5 - Observe the logs</h3>
+
+      <pre data-lang="bash"><code># Watch what the node is doing
+rad node logs
+
+# You should see connection and replication messages</code></pre>
+
+      <h3>Step 6 - Stop gracefully</h3>
+
+      <pre data-lang="bash"><code># Stop the node
+rad node stop
+
+# Verify it's stopped
+rad node status</code></pre>
+    </div>
+
+    <div class="tip">
+      <p><strong>Going further:</strong> If you have access to a VPS, you can reproduce this exercise on a real server and create the systemd service. Your seed will then be accessible 24/7 by all peers on the Radicle network.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Summary -->
+    <h2>Command summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Command</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>rad node start</code></td>
+          <td>Start the Radicle node</td>
+        </tr>
+        <tr>
+          <td><code>rad node stop</code></td>
+          <td>Stop the node</td>
+        </tr>
+        <tr>
+          <td><code>rad node status</code></td>
+          <td>Display node state (peers, projects)</td>
+        </tr>
+        <tr>
+          <td><code>rad node logs</code></td>
+          <td>View node logs in real time</td>
+        </tr>
+        <tr>
+          <td><code>rad node peers</code></td>
+          <td>List connected peers</td>
+        </tr>
+        <tr>
+          <td><code>rad node connect</code></td>
+          <td>Manually connect to a peer</td>
+        </tr>
+        <tr>
+          <td><code>rad track</code></td>
+          <td>Track (replicate) a project</td>
+        </tr>
+        <tr>
+          <td><code>rad untrack</code></td>
+          <td>Stop tracking a project</td>
+        </tr>
+        <tr>
+          <td><code>rad config</code></td>
+          <td>Display the node configuration</td>
+        </tr>
+        <tr>
+          <td><code>systemctl start radicle-node</code></td>
+          <td>Start the systemd service</td>
+        </tr>
+        <tr>
+          <td><code>systemctl status radicle-node</code></td>
+          <td>Check the service status</td>
+        </tr>
+        <tr>
+          <td><code>journalctl -u radicle-node</code></td>
+          <td>Read the service logs</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>The Watcher approaches his tower's window. From up there, the network of paths connecting the free villages is clearly visible - winding lines traced by generations of travelers.</p>
+      <p>"Your tower is ready. Perhaps it will only watch over your own projects for now. But one day, other travelers will find it, and they will be grateful it was there."</p>
+      <p>He hands you an ancient map, covered in symbols representing other towers, other nodes, other peers scattered across the kingdom.</p>
+      <p>"You have the tools and you have your tower. There is one last thing left to learn: how to <strong>forge connections</strong> with other travelers. For a tower alone in the mist serves no purpose - it is the <strong>network</strong> that makes the strength."</p>
+    </div>

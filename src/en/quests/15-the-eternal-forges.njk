@@ -1,0 +1,558 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_15
+quest_number: "15"
+arc: 4
+title: "The Eternal Forges"
+subtitle: "CI/CD, Git platforms and first steps toward automation"
+quest_slug_fr: "15-les-forges-eternelles"
+quest_slug_en: "15-the-eternal-forges"
+permalink: /en/quests/15-the-eternal-forges/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>The heavy metal door opens with a rumble of gears. A blast of hot air strikes your face, laden with the scent of molten metal and ancient magic. Before you stretches the Valley of the Eternal Forges - a titanic landscape of chimneys spewing blue flames, enchanted conveyors transporting scrolls from one workshop to another, and iron golems hammering, testing and assembling without rest. Every forge is linked to the others by luminous conduits, forming a pulsing network of energy.</p>
+      <p>The Master Archivist contemplates the spectacle with undisguised admiration.</p>
+      <p>"Welcome to the <strong>Eternal Forges</strong>, Master Archivist. Here, scrolls are no longer verified by hand. <strong>Enchanted constructs</strong> test them automatically as soon as they arrive. If a scroll contains an error, the forge rejects it before it can corrupt the Archives. If it is perfect, the forge <strong>deploys</strong> it directly to the halls of the kingdom. This system is called <strong>CI/CD</strong> - Continuous Integration and Continuous Deployment. It is the next step of your journey."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: What is CI/CD? -->
+    <h2>What is <span class="keyword">CI/CD</span>?</h2>
+
+    <p><strong>CI/CD</strong> is a set of practices that automate the verification and delivery of code. Imagine an enchanted forge: as soon as an Archivist sends a scroll, the forge takes over automatically.</p>
+
+    <h3>CI - <span class="keyword">Continuous Integration</span></h3>
+
+    <p><strong>Continuous Integration</strong> means that every change is <strong>integrated frequently</strong> into the shared repository, and that with each integration, <strong>automated tests</strong> verify that nothing is broken.</p>
+
+    <p>In practice:</p>
+    <ul>
+      <li>You make a commit and push it</li>
+      <li>An automated system retrieves your code</li>
+      <li>It runs the tests</li>
+      <li>It tells you whether everything is fine or something is broken</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"In the Eternal Forges, every scroll deposited is <strong>immediately inspected</strong> by the tester golems. If a word is malformed, if an incantation is incorrect, <strong>you know within minutes</strong>, not weeks. That is Continuous Integration."</p>
+    </div>
+
+    <h3>CD - <span class="keyword">Continuous Delivery/Deployment</span></h3>
+
+    <p><strong>CD</strong> has two closely related meanings:</p>
+    <ul>
+      <li><strong>Continuous Delivery</strong>: tested code is <strong>ready to be deployed</strong> at any time, but a human decides when</li>
+      <li><strong>Continuous Deployment</strong>: tested code is <strong>automatically deployed</strong> to production, without human intervention</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"<strong>Continuous Delivery</strong> is when the forge prepares the scroll for shipment and awaits your command. <strong>Continuous Deployment</strong> is when the forge sends the scroll directly to the kingdom's libraries as soon as it passes the tests. Both approaches have their place depending on the level of trust you have in your tests."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: Why CI/CD matters -->
+    <h2>Why CI/CD matters</h2>
+
+    <p>Without CI/CD, here is what often happens:</p>
+    <ul>
+      <li>You work for weeks on a feature</li>
+      <li>You integrate your code with everyone else's</li>
+      <li>Everything is broken</li>
+      <li>You spend days figuring out which change caused the problem</li>
+    </ul>
+
+    <p>With CI/CD:</p>
+    <ul>
+      <li>You integrate <strong>often</strong> (multiple times per day)</li>
+      <li>Tests run <strong>on every push</strong></li>
+      <li>If something breaks, you know <strong>immediately</strong></li>
+      <li>The culprit is necessarily in the latest changes (a few lines, not thousands)</li>
+    </ul>
+
+    <div class="key-message">
+      <p>An Archivist who waits weeks to send scrolls to the Forges accumulates errors the way dust accumulates on an old grimoire. An Archivist who sends <strong>every day</strong> detects problems when they are <strong>still small and easy to fix</strong>.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: The pipeline concept -->
+    <h2>The <span class="keyword">pipeline</span> concept</h2>
+
+    <p>A <strong>pipeline</strong> is a series of automated steps that your code passes through. Think of it as a chain of forges, each specialized in a task.</p>
+
+    <h3>The classic stages</h3>
+
+    <pre data-lang="bash"><code>Code --&gt; [Build] --&gt; [Test] --&gt; [Deploy]</code></pre>
+
+    <ol>
+      <li><strong>Build</strong>: the code is compiled or assembled</li>
+      <li><strong>Test</strong>: automated tests are executed</li>
+      <li><strong>Deploy</strong>: validated code is put into production</li>
+    </ol>
+
+    <p>Each stage must succeed for the next one to begin. If the <strong>Build</strong> fails, we don't test. If <strong>Tests</strong> fail, we don't deploy.</p>
+
+    <h3>A more realistic pipeline</h3>
+
+    <p>In practice, a pipeline can have more stages:</p>
+
+    <pre data-lang="bash"><code>Code --&gt; [Lint] --&gt; [Build] --&gt; [Unit tests] --&gt; [Integration tests] --&gt; [Staging] --&gt; [Production]</code></pre>
+
+    <ul>
+      <li><strong>Lint</strong>: verification of code style and syntax</li>
+      <li><strong>Unit tests</strong>: fast tests on individual functions</li>
+      <li><strong>Integration tests</strong>: tests that verify components work together</li>
+      <li><strong>Staging</strong>: deployment to a pre-production environment</li>
+      <li><strong>Production</strong>: final deployment for users</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"Each forge in the Valley has its specialty. The first checks the shape of the runes. The second tests their power. The third assembles them. The fourth sends them to the libraries. If <strong>a single forge rejects</strong> the scroll, everything stops. This is the <strong>chain of trust</strong> of the Eternal Forges."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: Git platforms -->
+    <h2>Git platforms - The great Forges of the kingdom</h2>
+
+    <p>To use CI/CD, you need a <strong>platform</strong> that hosts your code and runs the pipelines. These are the <strong>great Forges</strong> of the kingdom, each with its own characteristics.</p>
+
+    <h3><span class="keyword">GitHub</span> - The People's Forge</h3>
+
+    <p><strong>GitHub</strong> is the most popular platform in the world for hosting code.</p>
+    <ul>
+      <li><strong>Owner</strong>: Microsoft (since 2018)</li>
+      <li><strong>CI/CD</strong>: GitHub Actions (integrated, powerful, free for open source projects)</li>
+      <li><strong>Strengths</strong>: enormous community, actions marketplace, GitHub Pages, Copilot</li>
+      <li><strong>Ideal for</strong>: open source projects, public collaboration, developer portfolios</li>
+    </ul>
+
+    <div class="tip">
+      <p>This is the platform we will use in the upcoming quests.</p>
+    </div>
+
+    <h3><span class="keyword">GitLab</span> - The Autonomous Forge</h3>
+
+    <p><strong>GitLab</strong> is a complete platform with a very powerful built-in CI/CD.</p>
+    <ul>
+      <li><strong>CI/CD</strong>: GitLab CI/CD (natively integrated, very mature)</li>
+      <li><strong>Strengths</strong>: self-hostable (you can install your own Forge), all-in-one (issues, CI/CD, Docker registry, monitoring)</li>
+      <li><strong>Ideal for</strong>: companies that want full control, private projects, complete DevOps</li>
+    </ul>
+
+    <h3><span class="keyword">Bitbucket</span> - The Atlassian Guild's Forge</h3>
+
+    <p><strong>Bitbucket</strong> is the Git platform of the Atlassian ecosystem (Jira, Confluence, Trello).</p>
+    <ul>
+      <li><strong>CI/CD</strong>: Bitbucket Pipelines</li>
+      <li><strong>Strengths</strong>: native integration with Jira, good for small teams</li>
+      <li><strong>Ideal for</strong>: teams already using Jira/Confluence</li>
+    </ul>
+
+    <h3>Quick comparison</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>GitHub</th>
+          <th>GitLab</th>
+          <th>Bitbucket</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Built-in CI/CD</td>
+          <td>GitHub Actions</td>
+          <td>GitLab CI/CD</td>
+          <td>Pipelines</td>
+        </tr>
+        <tr>
+          <td>Self-hostable</td>
+          <td>Enterprise (paid)</td>
+          <td>Yes (free)</td>
+          <td>Data Center (paid)</td>
+        </tr>
+        <tr>
+          <td>Free private repos</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes (5 users max)</td>
+        </tr>
+        <tr>
+          <td>Community</td>
+          <td>The largest</td>
+          <td>Large</td>
+          <td>Medium</td>
+        </tr>
+        <tr>
+          <td>Ecosystem</td>
+          <td>Actions Marketplace</td>
+          <td>All integrated</td>
+          <td>Atlassian (Jira, etc.)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="narrative">
+      <p>"There are several great Forges in the kingdom. The <strong>People's Forge</strong> (GitHub) is the most popular - that's where most Archivists of the world gather. The <strong>Autonomous Forge</strong> (GitLab) lets you build your own independent forge. The <strong>Atlassian Forge</strong> (Bitbucket) integrates perfectly with the management tools of the great guilds. Choose your forge according to your needs, but <strong>learn at least one thoroughly</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: Create a GitHub account -->
+    <h2>Create a <span class="keyword">GitHub</span> account</h2>
+
+    <p>GitHub will be our reference forge for the rest of the course. Here's how to create your account.</p>
+
+    <div class="steps">
+      <ol>
+        <li>Go to <a href="https://github.com" target="_blank">github.com</a></li>
+        <li>Click on <strong>Sign up</strong></li>
+        <li>Enter your email address</li>
+        <li>Choose a strong password</li>
+        <li>Choose a username (this will be your public developer identity!)</li>
+        <li>Verify your email</li>
+      </ol>
+    </div>
+
+    <div class="tip">
+      <p>Choose a <strong>professional</strong> username - it will appear on your public profile and is what recruiters will see!</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: Create a repository on GitHub -->
+    <h2>Create a repository on GitHub</h2>
+
+    <p>Once logged into GitHub:</p>
+
+    <div class="steps">
+      <ol>
+        <li>Click the <strong>+</strong> in the top right, then <strong>New repository</strong></li>
+        <li>Give your repository a name (e.g.: <code>my-chronicles</code>)</li>
+        <li>Add a description (optional but recommended)</li>
+        <li>Choose <strong>Public</strong> or <strong>Private</strong></li>
+        <li>You can check "Add a README file", "Add .gitignore", "Choose a license"</li>
+        <li>Click <strong>Create repository</strong></li>
+      </ol>
+    </div>
+
+    <h3>GitHub's special files</h3>
+
+    <ul>
+      <li><strong>README.md</strong>: the homepage of your repository. It is the first file visitors see. Write it in Markdown</li>
+      <li><strong>LICENSE</strong>: defines the usage rights of your code (MIT, GPL, Apache, etc.)</li>
+      <li><strong>.gitignore</strong>: lists the files Git should ignore (you already know this from the magical seals quest!)</li>
+    </ul>
+
+    <div class="key-message">
+      <p>A repository without a README is like a library without a catalogue. Visitors don't know what they'll find inside. <strong>Always</strong> add a README.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7: Connect local to GitHub -->
+    <h2>Connect a local repository to GitHub</h2>
+
+    <p>You have a local Git repository and you want to send it to GitHub? Here's how to link the two.</p>
+
+    <h3>Add a remote</h3>
+
+    <pre data-lang="bash"><code>git remote add origin https://github.com/YOUR-NAME/my-repo.git</code></pre>
+
+    <p>You already know <span class="git-cmd">git remote</span> from Quest 09 (The Distant Portals). Here, <code>origin</code> points to GitHub instead of a local repository.</p>
+
+    <h3>Push for the first time</h3>
+
+    <pre data-lang="bash"><code>git push -u origin main</code></pre>
+
+    <p>The <code>-u</code> option (or <code>--set-upstream</code>) creates a <strong>tracking link</strong> between your local branch <code>main</code> and the remote branch <code>origin/main</code>. After this first push, you can simply type <span class="git-cmd">git push</span> without specifying the destination.</p>
+
+    <h3>Verify the connection</h3>
+
+    <pre data-lang="bash"><code>git remote -v</code></pre>
+
+    <p>You should see something like:</p>
+
+    <pre data-lang="bash"><code>origin  https://github.com/YOUR-NAME/my-repo.git (fetch)
+origin  https://github.com/YOUR-NAME/my-repo.git (push)</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8: SSH vs HTTPS -->
+    <h2>Authentication: <span class="keyword">SSH</span> vs <span class="keyword">HTTPS</span></h2>
+
+    <p>To communicate with GitHub, you have two authentication methods.</p>
+
+    <h3>HTTPS - The simple method</h3>
+
+    <pre data-lang="bash"><code>git remote add origin https://github.com/YOUR-NAME/my-repo.git</code></pre>
+
+    <ul>
+      <li>You use your username and a <strong>Personal Access Token</strong></li>
+      <li>Easy to set up</li>
+      <li>GitHub no longer supports classic passwords since 2021 - you need a token</li>
+    </ul>
+
+    <h3>SSH - The key-based method</h3>
+
+    <pre data-lang="bash"><code>git remote add origin git@github.com:YOUR-NAME/my-repo.git</code></pre>
+
+    <ul>
+      <li>You generate a <strong>key pair</strong> (public + private) on your machine</li>
+      <li>You add the public key to your GitHub account</li>
+      <li>No need to type anything for each push/pull</li>
+    </ul>
+
+    <h3>Generate an SSH key</h3>
+
+    <pre data-lang="bash"><code># Generate the key pair
+ssh-keygen -t ed25519 -C "your@email.com"
+
+# Display the public key (to copy to GitHub)
+cat ~/.ssh/id_ed25519.pub</code></pre>
+
+    <p>Then, on GitHub: <strong>Settings</strong> &gt; <strong>SSH and GPG keys</strong> &gt; <strong>New SSH key</strong> &gt; paste your public key.</p>
+
+    <h3>Which method to choose?</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Criterion</th>
+          <th>HTTPS</th>
+          <th>SSH</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ease of setup</td>
+          <td>Simpler</td>
+          <td>Initial configuration needed</td>
+        </tr>
+        <tr>
+          <td>Authentication</td>
+          <td>Token each time (or credential manager)</td>
+          <td>Automatic after setup</td>
+        </tr>
+        <tr>
+          <td>Daily use</td>
+          <td>May ask for the token</td>
+          <td>Seamless</td>
+        </tr>
+        <tr>
+          <td>Recommended for</td>
+          <td>Getting started quickly</td>
+          <td>Regular use</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="narrative">
+      <p>"SSH keys are like <strong>personal seals</strong> - once engraved, they identify you without needing to state your name at every passage. For an Archivist who pushes scrolls several times a day, it's a considerable time saver."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Hands-on exercise -->
+    <h2>Hands-on exercise - Send your chronicles to the Forge</h2>
+
+    <div class="quest-objective">
+      <p>Send your chronicles to the Eternal Forge:</p>
+      <ol>
+        <li>Create a <code>chronicles-forge</code> repository with <span class="git-cmd">git init</span></li>
+        <li>Create a <code>README.md</code> and make a first commit</li>
+        <li>Add two more files with one commit each (at least 3 commits total)</li>
+        <li>Create a bare repository <code>eternal-forge.git</code> (your local Forge)</li>
+        <li>Add it as remote <code>origin</code></li>
+        <li>Push your chronicles to the Forge with <span class="git-cmd">git push -u origin main</span></li>
+        <li>Run the verification script</li>
+      </ol>
+    </div>
+
+    <h3>Step 1 - Create your chronicles</h3>
+
+    <pre data-lang="bash"><code>mkdir chronicles-forge
+cd chronicles-forge
+git init</code></pre>
+
+    <h3>Step 2 - Write the first scroll</h3>
+
+    <pre data-lang="bash"><code>cat > README.md << 'EOF'
+# Chronicles of the Forge
+
+Welcome to my chronicles - a collection of scrolls
+sent to the Eternal Forges for verification and archiving.
+
+## Contents
+
+- Chronicle of the first day
+- Apprentice blacksmith's notes
+EOF
+
+git add README.md
+git commit -m "Create the README for the Forge chronicles"</code></pre>
+
+    <h3>Step 3 - Add more scrolls</h3>
+
+    <pre data-lang="bash"><code>cat > chronicle-01.txt << 'EOF'
+Chronicle of the First Day at the Forges
+
+Today I discovered the Eternal Forges.
+The enchanted constructs test each scroll automatically.
+CI verifies, CD deploys. The chain never stops.
+EOF
+
+git add chronicle-01.txt
+git commit -m "Add the chronicle of the first day at the Forges"</code></pre>
+
+    <pre data-lang="bash"><code>cat > blacksmith-notes.txt << 'EOF'
+Apprentice Blacksmith's Notes
+
+The three great Forges of the kingdom:
+- GitHub: the People's Forge
+- GitLab: the Autonomous Forge
+- Bitbucket: the Atlassian Forge
+
+A CI/CD pipeline:
+Build -> Test -> Deploy
+EOF
+
+git add blacksmith-notes.txt
+git commit -m "Add notes about the forges and the CI/CD pipeline"</code></pre>
+
+    <h3>Step 4 - Create the Forge (bare repository)</h3>
+
+    <pre data-lang="bash"><code>cd ..
+git init --bare eternal-forge.git</code></pre>
+
+    <div class="tip">
+      <p>A <strong>bare repository</strong> is a Git repository without a working directory - exactly like a GitHub or GitLab server. It only contains Git data, not the working files.</p>
+    </div>
+
+    <h3>Step 5 - Connect and push</h3>
+
+    <pre data-lang="bash"><code>cd chronicles-forge
+git remote add origin ../eternal-forge.git
+git push -u origin main</code></pre>
+
+    <h3>Step 6 - Verify</h3>
+
+    <pre data-lang="bash"><code># See the configured remote
+git remote -v
+
+# See the log with remote references
+git log --oneline --all</code></pre>
+
+    <p>You should see <code>origin/main</code> next to your latest commit.</p>
+
+    <h3>Step 7 - Run the verification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Command summary -->
+    <h2>Command summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Command</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git remote add origin &lt;url&gt;</code></td>
+          <td>Add a remote repository named <code>origin</code></td>
+        </tr>
+        <tr>
+          <td><code>git push -u origin main</code></td>
+          <td>Push and create the tracking link</td>
+        </tr>
+        <tr>
+          <td><code>git push</code></td>
+          <td>Push (after the first push with <code>-u</code>)</td>
+        </tr>
+        <tr>
+          <td><code>git remote -v</code></td>
+          <td>Display configured remotes</td>
+        </tr>
+        <tr>
+          <td><code>git init --bare name.git</code></td>
+          <td>Create a bare repository (server)</td>
+        </tr>
+        <tr>
+          <td><code>ssh-keygen -t ed25519</code></td>
+          <td>Generate an SSH key pair</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Concept summary -->
+    <h2>Concept summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="keyword">CI</span> (Continuous Integration)</td>
+          <td>Automatically integrate and test on every push</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">CD</span> (Continuous Delivery/Deployment)</td>
+          <td>Automatically deploy validated code</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">Pipeline</span></td>
+          <td>Chain of automated steps (build, test, deploy)</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">GitHub</span></td>
+          <td>Most popular Git platform, with GitHub Actions</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">GitLab</span></td>
+          <td>Platform with built-in CI/CD, self-hostable</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">Bitbucket</span></td>
+          <td>Git platform in the Atlassian ecosystem</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">Bare repository</span></td>
+          <td>Repository without a working directory (server)</td>
+        </tr>
+        <tr>
+          <td><span class="keyword">SSH vs HTTPS</span></td>
+          <td>Two authentication methods for platforms</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>You watch your chronicles travel through the luminous conduit and land in the Eternal Forge. The metal golems spring into action immediately - they inspect, sort and archive each scroll with mechanical precision.</p>
+      <p>The Master Archivist places a hand on your shoulder.</p>
+      <p>"You have just completed your <strong>first shipment to the Forges</strong>. Your scrolls are now safe, duplicated and accessible from any outpost in the kingdom. This is the foundation of everything that follows."</p>
+      <p>He points to the deepest forges in the valley, where more intense flames illuminate even more complex mechanisms.</p>
+      <p>"Now that you know how to <strong>send</strong> your chronicles to the Forges, it is time to learn how to <strong>command the constructs</strong> that work within. In the next quest, you will write your first <strong>forge blueprints</strong> - what the modern world calls <strong>pipeline files</strong>. The Forges await your orders."</p>
+    </div>

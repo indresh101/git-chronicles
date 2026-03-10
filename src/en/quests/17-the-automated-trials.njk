@@ -1,0 +1,615 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_17
+quest_number: "17"
+arc: 4
+title: "The Automated Trials"
+subtitle: "Automated tests, matrix, cache and artifacts"
+quest_slug_fr: "17-les-epreuves-automatiques"
+quest_slug_en: "17-the-automated-trials"
+permalink: /en/quests/17-the-automated-trials/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>You advance into the Automated Forges. After understanding how Pipelines (the enchanted assembly chains) work, you discover an immense hall filled with magic mirrors and precision scales. Scrolls hang in the air, slowly rotating while colored flames inspect them from every angle. Some glow a brilliant green. Others turn red and fall into a rejection bin.</p>
+      <p>"Welcome to the <strong>Hall of Trials</strong>. Here, every chronicle undergoes automated tests before being accepted into the Great Archive. The Trials check the <strong>form</strong> of the text, the <strong>correctness</strong> of every calculation, the <strong>coherence</strong> between chapters, and the <strong>complete functioning</strong> of the whole. No document passes without having <strong>survived every trial</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: Why automate -->
+    <h2>Why automate tests?</h2>
+
+    <p>Imagine a world without automated tests: every code change must be verified <strong>manually</strong> by a human. It's slow, error-prone, and doesn't scale.</p>
+
+    <p>Automated tests bring several crucial advantages:</p>
+
+    <ul>
+      <li><strong>Early detection</strong>: errors are caught before a human reviews the code</li>
+      <li><strong>Confidence</strong>: you can modify existing code without fearing you'll break everything</li>
+      <li><strong>Speed</strong>: hundreds of checks in a few seconds</li>
+      <li><strong>Consistency</strong>: the same tests run every time, without human oversight</li>
+      <li><strong>Living documentation</strong>: tests show how the code is supposed to work</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"An Archivist who checks each scroll by hand eventually grows exhausted and <strong>lets errors slip through</strong>. The Automated Trials never tire. They are the infallible guardians of quality."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: Types of trials -->
+    <h2>Types of automated trials</h2>
+
+    <p>There are several levels of tests, from fastest to most thorough. Each has a specific role.</p>
+
+    <h3><span class="keyword">Linting</span> - The trial of form</h3>
+
+    <p><strong>Linting</strong> checks that the code follows <strong>style and formatting rules</strong>. It doesn't test whether the code works - it checks that it's well written.</p>
+
+    <p>Example checks:</p>
+    <ul>
+      <li>Does the script start with a shebang (<code>#!/usr/bin/env bash</code>)?</li>
+      <li>Is the indentation consistent?</li>
+      <li>Are there missing or extra spaces?</li>
+      <li>Are variables properly named?</li>
+    </ul>
+
+    <p>Linting is <strong>ultra-fast</strong> and catches the simplest errors. It always runs first.</p>
+
+    <h3><span class="keyword">Unit tests</span> - The trial of correctness</h3>
+
+    <p><strong>Unit tests</strong> verify that each <strong>individual function</strong> produces the correct result. You isolate a small part of the code and test its inputs/outputs.</p>
+
+    <p>Example: if you have a function that adds two numbers, a unit test verifies that <code>add 2 3</code> returns <code>5</code>.</p>
+
+    <pre data-lang="bash"><code># Simple unit test example
+result=$(./calculate.sh addition 2 3)
+if [ "$result" = "5" ]; then
+    echo "PASS: addition 2 + 3 = 5"
+else
+    echo "FAIL: expected 5, got $result"
+fi</code></pre>
+
+    <h3><span class="keyword">Integration tests</span> - The trial of coherence</h3>
+
+    <p><strong>Integration tests</strong> verify that multiple components work <strong>together</strong>. A unit test checks a function in isolation. An integration test verifies that functions collaborate correctly.</p>
+
+    <p>Example: checking that the calculation function and the display function produce the correct result when combined.</p>
+
+    <h3><span class="keyword">End-to-end tests</span> - The complete trial</h3>
+
+    <p><strong>End-to-end</strong> tests simulate the <strong>complete journey</strong> of a user. They test the entire application, from input to output.</p>
+
+    <p>Example: running the complete script with arguments, checking that the output file is correct, that error messages are appropriate, etc.</p>
+
+    <div class="key-message">
+      <p>The trials follow a <strong>natural order</strong>: first form (linting), then correctness of each piece (unit), then coherence between pieces (integration), and finally complete functioning (end-to-end). Each level catches errors the previous one misses.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: Matrix -->
+    <h2>The test matrix - <span class="keyword">Test everywhere at once</span></h2>
+
+    <p>Your code must work on different operating systems and different tool versions. The <strong>test matrix</strong> lets you run the same tests on <strong>all combinations</strong> in parallel.</p>
+
+    <pre data-lang="yaml"><code>strategy:
+  matrix:
+    os: [ubuntu-latest, windows-latest, macos-latest]
+    node-version: [18, 20, 22]</code></pre>
+
+    <p>With this configuration, GitHub Actions creates <strong>9 jobs</strong> (3 OS x 3 versions). Each combination is tested independently.</p>
+
+    <p>You use the matrix values in the workflow:</p>
+
+    {% raw %}<pre data-lang="yaml"><code>jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm test</code></pre>{% endraw %}
+
+    <div class="narrative">
+      <p>"The Trials in the Hall of Mirrors test each chronicle from <strong>every possible angle</strong>. A scroll that works in one mirror but not another is a flawed scroll. The matrix guarantees <strong>total coverage</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: Cache -->
+    <h2>The cache - <span class="keyword">Speed up the trials</span></h2>
+
+    <p>Downloading dependencies on every workflow run is slow and wastes resources. The <code>actions/cache</code> action lets you <strong>save</strong> these files between runs.</p>
+
+    {% raw %}<pre data-lang="yaml"><code>steps:
+  - uses: actions/checkout@v4
+
+  - name: Cache dependencies
+    uses: actions/cache@v4
+    with:
+      path: ~/.npm
+      key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+      restore-keys: |
+        ${{ runner.os }}-npm-
+
+  - run: npm install
+  - run: npm test</code></pre>{% endraw %}
+
+    <p>How it works:</p>
+    <ul>
+      <li><code>path</code>: the folder to cache</li>
+      <li><code>key</code>: a unique identifier based on the system and the dependency file</li>
+      <li><code>restore-keys</code>: fallback keys if the exact key is not found</li>
+    </ul>
+
+    <p>If the <code>package-lock.json</code> file hasn't changed, dependencies are restored from cache instead of being re-downloaded. That's <strong>much faster</strong>.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: Artifacts -->
+    <h2>Artifacts - <span class="keyword">Keep the results</span></h2>
+
+    <p><strong>Artifacts</strong> are files produced during the workflow that you want to <strong>save</strong> after execution. Most common use cases: test reports, coverage files, logs.</p>
+
+    <pre data-lang="yaml"><code>steps:
+  - run: npm test -- --coverage
+
+  - name: Save coverage report
+    uses: actions/upload-artifact@v4
+    with:
+      name: coverage-report
+      path: coverage/
+      retention-days: 30</code></pre>
+
+    <p>After the workflow runs, you'll find the artifacts in the "Actions" tab of GitHub, downloadable directly.</p>
+
+    <p>To <strong>retrieve</strong> an artifact in a later job:</p>
+
+    <pre data-lang="yaml"><code>  - uses: actions/download-artifact@v4
+    with:
+      name: coverage-report</code></pre>
+
+    <div class="narrative">
+      <p>"The results of the Trials don't vanish into thin air. They are <strong>archived</strong> - the reports, the evidence, the measurements. A good Archivist always keeps a <strong>record of the checks</strong> performed."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: Status checks -->
+    <h2>Required status checks - <span class="keyword">Protect the main branch</span></h2>
+
+    <p>The true power of automated tests is making them <strong>mandatory</strong>. With <strong>required status checks</strong>, you can prevent any merge into <span class="git-cmd">main</span> if tests don't pass.</p>
+
+    <p>Configuration on GitHub:</p>
+    <ol>
+      <li>Go to <strong>Settings</strong> &gt; <strong>Branches</strong></li>
+      <li>Add a <strong>Branch protection rule</strong> for <code>main</code></li>
+      <li>Check <strong>Require status checks to pass before merging</strong></li>
+      <li>Select the required checks (your workflow job names)</li>
+    </ol>
+
+    <pre data-lang="yaml"><code># Example: the "tests" job must pass before any merge
+name: CI
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test</code></pre>
+
+    <p>With this configuration, if someone opens a Pull Request to <span class="git-cmd">main</span> and the tests fail, the "Merge" button will be <span class="highlight-red">blocked</span>. Nobody can merge broken code.</p>
+
+    <div class="key-message">
+      <p>The Great Archive is protected by a <strong>quality seal</strong>. No scroll may enter without passing all the Trials. This is the most important rule of the Forges: <strong>what fails the tests does not merge</strong>.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7: Coverage -->
+    <h2>Test coverage</h2>
+
+    <p><strong>Test coverage</strong> measures the percentage of your code that is actually tested. It's a useful but imperfect indicator.</p>
+
+    <ul>
+      <li><strong>100% coverage</strong> doesn't mean your code is perfect - it means every line is executed at least once</li>
+      <li><strong>Low coverage</strong> is a warning sign - entire parts of your code are never tested</li>
+      <li>A good target: aim for <strong>70-80%</strong> for a standard project</li>
+    </ul>
+
+    <p>Coverage tools generate reports showing which lines are tested (in <span class="highlight">green</span>) and which are not (in <span class="highlight-red">red</span>).</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8: Common patterns -->
+    <h2>Common patterns in test workflows</h2>
+
+    <h3>Run the linter before the tests</h3>
+
+    <p>Linting is fast. If the code is poorly formatted, there's no point running expensive tests. Put the linter first:</p>
+
+    <pre data-lang="yaml"><code>jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm run lint
+
+  tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test</code></pre>
+
+    <p>The <code>needs</code> keyword creates a <strong>dependency</strong>: the <span class="keyword">tests</span> job only starts if <span class="keyword">lint</span> succeeded.</p>
+
+    <h3>Fail fast vs run all</h3>
+
+    <p>By default, in a matrix, if one job fails, GitHub cancels the others. This is <span class="keyword">fail-fast</span> mode:</p>
+
+    <pre data-lang="yaml"><code>strategy:
+  fail-fast: true  # default: stops everything as soon as a job fails
+  matrix:
+    os: [ubuntu-latest, windows-latest]</code></pre>
+
+    <p>If you want to see <strong>all</strong> results even when some fail:</p>
+
+    <pre data-lang="yaml"><code>strategy:
+  fail-fast: false  # continues even if a job fails
+  matrix:
+    os: [ubuntu-latest, windows-latest]</code></pre>
+
+    <h3>Test only on Pull Requests</h3>
+
+    <p>To save resources, you can limit tests to Pull Requests:</p>
+
+    <pre data-lang="yaml"><code>on:
+  pull_request:
+    branches: [main]</code></pre>
+
+    <p>This avoids re-running tests on every push to every branch. Tests only trigger when someone proposes to merge into <span class="git-cmd">main</span>.</p>
+
+    <div class="narrative">
+      <p>"A Trial Master knows how to <strong>organize tests intelligently</strong>. Fast checks run first, slow ones last. Expensive trials are only run when necessary. Wisdom is also <strong>efficiency</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Hands-on exercise -->
+    <h2>Hands-on exercise - Create an automated test suite</h2>
+
+    <div class="quest-objective">
+      <p>Create your own Automated Trials:</p>
+      <ol>
+        <li>Create an <code>automated-trials</code> repository</li>
+        <li>Create a <code>calculate.sh</code> script (command-line calculator)</li>
+        <li>Create a test script <code>test-calculate.sh</code></li>
+        <li>Create a GitHub Actions workflow with a lint job and a test job</li>
+        <li>Use a matrix to test on 2 operating systems</li>
+        <li>Commit everything and run the verification</li>
+      </ol>
+    </div>
+
+    <h3>Step 1 - Create the repository</h3>
+
+    <pre data-lang="bash"><code>mkdir automated-trials
+cd automated-trials
+git init</code></pre>
+
+    <h3>Step 2 - Create the calculation script</h3>
+
+    <p>Create a <code>calculate.sh</code> file that performs simple math operations:</p>
+
+    <pre data-lang="bash"><code>cat > calculate.sh << 'EOF'
+#!/usr/bin/env bash
+# calculate.sh - Simple command-line calculator
+# Usage: ./calculate.sh <operation> <number1> <number2>
+
+operation="$1"
+a="$2"
+b="$3"
+
+if [ -z "$operation" ] || [ -z "$a" ] || [ -z "$b" ]; then
+    echo "Usage: ./calculate.sh <operation> <number1> <number2>"
+    echo "Operations: addition, subtraction, multiplication"
+    exit 1
+fi
+
+case "$operation" in
+    addition)
+        echo $(( a + b ))
+        ;;
+    subtraction)
+        echo $(( a - b ))
+        ;;
+    multiplication)
+        echo $(( a * b ))
+        ;;
+    *)
+        echo "Error: unknown operation '$operation'"
+        exit 1
+        ;;
+esac
+EOF</code></pre>
+
+    <p>Make it executable:</p>
+
+    <pre data-lang="bash"><code>chmod +x calculate.sh</code></pre>
+
+    <p>Test it manually:</p>
+
+    <pre data-lang="bash"><code>./calculate.sh addition 2 3
+# Should display: 5
+
+./calculate.sh multiplication 4 7
+# Should display: 28</code></pre>
+
+    <h3>Step 3 - Create the test script</h3>
+
+    <p>Create a <code>test-calculate.sh</code> file that automatically verifies each operation:</p>
+
+    <pre data-lang="bash"><code>cat > test-calculate.sh << 'EOF'
+#!/usr/bin/env bash
+# test-calculate.sh - Automated tests for calculate.sh
+
+SCRIPT="./calculate.sh"
+ERRORS=0
+TOTAL=0
+
+check() {
+    local description="$1"
+    local expected="$2"
+    local actual="$3"
+    TOTAL=$((TOTAL + 1))
+
+    if [ "$expected" = "$actual" ]; then
+        echo "  PASS: $description"
+    else
+        echo "  FAIL: $description (expected: '$expected', got: '$actual')"
+        ERRORS=$((ERRORS + 1))
+    fi
+}
+
+echo "=== Tests for calculate.sh ==="
+echo ""
+
+echo "-- Addition tests --"
+check "2 + 3 = 5"       "5"  "$($SCRIPT addition 2 3)"
+check "0 + 0 = 0"       "0"  "$($SCRIPT addition 0 0)"
+check "100 + 200 = 300"  "300" "$($SCRIPT addition 100 200)"
+
+echo ""
+echo "-- Subtraction tests --"
+check "10 - 3 = 7"      "7"  "$($SCRIPT subtraction 10 3)"
+check "5 - 5 = 0"       "0"  "$($SCRIPT subtraction 5 5)"
+
+echo ""
+echo "-- Multiplication tests --"
+check "4 x 7 = 28"      "28" "$($SCRIPT multiplication 4 7)"
+check "0 x 100 = 0"     "0"  "$($SCRIPT multiplication 0 100)"
+check "3 x 3 = 9"       "9"  "$($SCRIPT multiplication 3 3)"
+
+echo ""
+echo "=== Result: $((TOTAL - ERRORS))/$TOTAL tests passed ==="
+
+if [ "$ERRORS" -gt 0 ]; then
+    exit 1
+fi
+
+exit 0
+EOF</code></pre>
+
+    <p>Make it executable and test it:</p>
+
+    <pre data-lang="bash"><code>chmod +x test-calculate.sh
+./test-calculate.sh</code></pre>
+
+    <p>You should see all tests pass.</p>
+
+    <h3>Step 4 - Create the GitHub Actions workflow</h3>
+
+    <p>Create the folder and workflow file:</p>
+
+    <pre data-lang="bash"><code>mkdir -p .github/workflows</code></pre>
+
+    {% raw %}<pre data-lang="yaml"><code># .github/workflows/trials.yml
+name: Automated Trials
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Form check (lint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the shebang of calculate.sh
+        run: |
+          first_line=$(head -n 1 calculate.sh)
+          if [ "$first_line" != "#!/usr/bin/env bash" ]; then
+            echo "ERROR: calculate.sh must start with #!/usr/bin/env bash"
+            exit 1
+          fi
+          echo "OK: shebang correct"
+
+      - name: Check the shebang of test-calculate.sh
+        run: |
+          first_line=$(head -n 1 test-calculate.sh)
+          if [ "$first_line" != "#!/usr/bin/env bash" ]; then
+            echo "ERROR: test-calculate.sh must start with #!/usr/bin/env bash"
+            exit 1
+          fi
+          echo "OK: shebang correct"
+
+  tests:
+    name: Tests (${{ matrix.os }})
+    needs: lint
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make scripts executable
+        run: |
+          chmod +x calculate.sh
+          chmod +x test-calculate.sh
+
+      - name: Run the tests
+        run: ./test-calculate.sh</code></pre>{% endraw %}
+
+    <div class="tip">
+      <p>To write the YAML file, use the command <code>cat > .github/workflows/trials.yml &lt;&lt; 'EOF'</code> followed by the content, then <code>EOF</code> on its own line.</p>
+    </div>
+
+    <h3>Step 5 - Commit everything</h3>
+
+    <pre data-lang="bash"><code>git add calculate.sh test-calculate.sh .github/workflows/trials.yml
+git commit -m "Add the calculator, tests and CI workflow"</code></pre>
+
+    <h3>Step 6 - Verify the structure</h3>
+
+    <pre data-lang="bash"><code># The calculation script exists and works
+./calculate.sh addition 10 20
+
+# The tests pass
+./test-calculate.sh
+
+# The workflow exists
+cat .github/workflows/trials.yml</code></pre>
+
+    <h3>Step 7 - Run the verification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Concept summary -->
+    <h2>Concept summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Linting</strong></td>
+          <td>Verification of code style and formatting</td>
+        </tr>
+        <tr>
+          <td><strong>Unit tests</strong></td>
+          <td>Tests of individual functions in isolation</td>
+        </tr>
+        <tr>
+          <td><strong>Integration tests</strong></td>
+          <td>Tests of multiple components together</td>
+        </tr>
+        <tr>
+          <td><strong>End-to-end tests</strong></td>
+          <td>Tests of the complete application journey</td>
+        </tr>
+        <tr>
+          <td><strong>Test matrix</strong></td>
+          <td>Parallel execution across multiple OS/versions</td>
+        </tr>
+        <tr>
+          <td><strong>Cache</strong></td>
+          <td>Saving dependencies between runs</td>
+        </tr>
+        <tr>
+          <td><strong>Artifacts</strong></td>
+          <td>Files produced during the workflow to keep</td>
+        </tr>
+        <tr>
+          <td><strong>Status checks</strong></td>
+          <td>Mandatory checks before a merge</td>
+        </tr>
+        <tr>
+          <td><strong>Test coverage</strong></td>
+          <td>Percentage of code actually tested</td>
+        </tr>
+        <tr>
+          <td><strong>Fail fast</strong></td>
+          <td>Stop all jobs as soon as one fails</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- YAML summary -->
+    <h2>YAML summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Element</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>strategy: matrix:</code></td>
+          <td>Define the OS/version combinations to test</td>
+        </tr>
+        <tr>
+          <td><code>needs: job_name</code></td>
+          <td>Create a dependency between jobs</td>
+        </tr>
+        <tr>
+          <td><code>fail-fast: false</code></td>
+          <td>Continue even if a job fails</td>
+        </tr>
+        <tr>
+          <td><code>actions/cache@v4</code></td>
+          <td>Cache dependencies</td>
+        </tr>
+        <tr>
+          <td><code>actions/upload-artifact@v4</code></td>
+          <td>Save produced files</td>
+        </tr>
+        <tr>
+          <td><code>actions/download-artifact@v4</code></td>
+          <td>Retrieve saved artifacts</td>
+        </tr>
+        <tr>
+          <td><code>on: pull_request:</code></td>
+          <td>Trigger only on PRs</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>The Forge Master watches the test mirrors rotate around your chronicle. One by one, they light up green. Addition - green. Subtraction - green. Multiplication - green. Ubuntu - green. macOS - green. The linting validates the form. The tests confirm the correctness.</p>
+      <p>"You have grasped the essence of the Automated Trials. Every chronicle you submit from now on will be <strong>scrutinized by tireless guardians</strong>. The linter checks the form. Unit tests check the correctness. The matrix checks compatibility. And the status checks <strong>forbid entry to flawed scrolls</strong>."</p>
+      <p>He points to a deeper section of the Forges, where even more complex machines automatically assemble pieces together.</p>
+      <p>"You know how to test. Soon, you will know how to <strong>build and deploy</strong>. But that is the next trial."</p>
+    </div>

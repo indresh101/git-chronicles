@@ -1,0 +1,678 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_19
+quest_number: "19"
+arc: 4
+title: "The Other Forges"
+subtitle: "GitLab CI, Bitbucket Pipelines, Jenkins and portability"
+quest_slug_fr: "19-les-autres-forges"
+quest_slug_en: "19-the-other-forges"
+permalink: /en/quests/19-the-other-forges/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>The Master Archivist leads you to the top of the tallest tower of the Forge. From there, you discover a breathtaking panorama: beyond the lands of GitHub, other forges glow on the horizon. Columns of smoke and light rise from distant cities, each with its own towers, its own fires, its own construction philosophies.</p>
+      <p>"You thought GitHub's Forge was the only one? No, young Master. Across the kingdom, <strong>other forges operate with different philosophies</strong>. GitLab, Bitbucket, Jenkins, and many more. A true Master Archivist knows them all, for <strong>each forge possesses unique strengths</strong>. Today, you will discover these distant lands and learn to forge in each of them."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: Why multiple platforms -->
+    <h2>Why learn <span class="keyword">multiple platforms</span>?</h2>
+
+    <p>You might wonder: "If I know GitHub Actions, why learn anything else?" Excellent question. Here's the answer:</p>
+
+    <ul>
+      <li><strong>The job market</strong>: some companies use GitLab, others Bitbucket, others still Jenkins. Knowing multiple platforms makes you much more employable.</li>
+      <li><strong>Needs vary</strong>: an open source project will naturally go to GitHub, but a company with internal servers may prefer self-hosted GitLab.</li>
+      <li><strong>Portability</strong>: understanding the common concepts lets you switch from one platform to another in hours, not weeks.</li>
+      <li><strong>Critical thinking</strong>: knowing the alternatives lets you choose the right tool rather than being stuck with a default choice.</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"A blacksmith who knows only one type of forge is <strong>prisoner of his forge</strong>. One who knows them all is <strong>free to choose</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: GitLab CI/CD -->
+    <h2><span class="keyword">GitLab CI/CD</span> - The Imperial Forge</h2>
+
+    <p>GitLab is often considered GitHub's most complete competitor. Its main strength: <strong>everything is integrated</strong>. CI/CD, container registry, project management, security - all in a single platform.</p>
+
+    <h3>The <code>.gitlab-ci.yml</code> file</h3>
+
+    <p>Like GitHub Actions uses files in <code>.github/workflows/</code>, GitLab uses a <strong>single file</strong> at the repository root: <span class="keyword"><code>.gitlab-ci.yml</code></span>.</p>
+
+    <pre data-lang="yaml"><code>stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  script:
+    - echo "Running tests..."
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying..."
+  only:
+    - main</code></pre>
+
+    <h3>Key concepts of GitLab CI</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Stages</strong></td>
+          <td>The pipeline steps, executed in order</td>
+        </tr>
+        <tr>
+          <td><strong>Jobs</strong></td>
+          <td>Individual tasks, attached to a stage</td>
+        </tr>
+        <tr>
+          <td><strong>Script</strong></td>
+          <td>Commands to execute in a job</td>
+        </tr>
+        <tr>
+          <td><strong>Runners</strong></td>
+          <td>Machines that execute jobs (shared or private)</td>
+        </tr>
+        <tr>
+          <td><strong>Artifacts</strong></td>
+          <td>Files produced by a job, passed to subsequent ones</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>A more complete example</h3>
+
+    <pre data-lang="yaml"><code>stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  APP_NAME: "my-application"
+
+build:
+  stage: build
+  script:
+    - echo "Building $APP_NAME..."
+    - mkdir -p build
+    - cp src/*.py build/
+  artifacts:
+    paths:
+      - build/
+
+unit-test:
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - python -m pytest tests/
+
+lint-test:
+  stage: test
+  script:
+    - echo "Checking style..."
+    - python -m flake8 src/
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying $APP_NAME..."
+  only:
+    - main
+  when: manual</code></pre>
+
+    <h3>GitLab's strengths</h3>
+
+    <ul>
+      <li><strong>All-in-one</strong>: CI/CD, Docker container registry, project management, wiki, static pages - everything is natively integrated.</li>
+      <li><strong>Self-hosting</strong>: you can install GitLab on your own servers. This is a huge advantage for companies that want to keep control of their data.</li>
+      <li><strong>Built-in container registry</strong>: every GitLab project has its own Docker registry, ready to use.</li>
+      <li><strong>Deployment environments</strong>: GitLab lets you define environments (staging, production) and visualize deployments directly in the interface.</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"The Imperial Forge of GitLab is an <strong>autonomous kingdom</strong>. It needs no other city to function. Everything is under one roof. That is its greatest strength - and sometimes its weakness, for this power can be <strong>intimidating for beginners</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: Bitbucket Pipelines -->
+    <h2><span class="keyword">Bitbucket Pipelines</span> - The Merchant Guilds' Forge</h2>
+
+    <p>Bitbucket is the forge of the <strong>Atlassian</strong> ecosystem - the same family as Jira (project management) and Confluence (documentation). If your company uses Jira, Bitbucket integrates naturally.</p>
+
+    <h3>The <code>bitbucket-pipelines.yml</code> file</h3>
+
+    <p>Bitbucket also uses a YAML file at the repository root:</p>
+
+    <pre data-lang="yaml"><code>pipelines:
+  default:
+    - step:
+        name: Tests
+        script:
+          - echo "Running tests..."
+
+  branches:
+    main:
+      - step:
+          name: Tests
+          script:
+            - echo "Running tests..."
+      - step:
+          name: Deployment
+          script:
+            - echo "Deploying..."</code></pre>
+
+    <h3>Key concepts of Bitbucket Pipelines</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Pipelines</strong></td>
+          <td>The global configuration container</td>
+        </tr>
+        <tr>
+          <td><strong>Steps</strong></td>
+          <td>Individual stages (equivalent to jobs)</td>
+        </tr>
+        <tr>
+          <td><strong>Script</strong></td>
+          <td>Commands to execute in a step</td>
+        </tr>
+        <tr>
+          <td><strong>Pipes</strong></td>
+          <td>Pre-built integrations (deploy to AWS, Slack, etc.)</td>
+        </tr>
+        <tr>
+          <td><strong>Caches</strong></td>
+          <td>Dependency caching between runs</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Example with Pipes</h3>
+
+    <p><strong>Pipes</strong> are a Bitbucket specialty - they are ready-to-use integrations:</p>
+
+    <pre data-lang="yaml"><code>pipelines:
+  default:
+    - step:
+        name: Tests
+        caches:
+          - node
+        script:
+          - npm install
+          - npm test
+    - step:
+        name: Slack Notification
+        script:
+          - pipe: atlassian/slack-notify:2.0.0
+            variables:
+              WEBHOOK_URL: $SLACK_WEBHOOK
+              MESSAGE: "Build completed successfully!"</code></pre>
+
+    <h3>Bitbucket's strengths</h3>
+
+    <ul>
+      <li><strong>Jira integration</strong>: commits and branches are automatically linked to Jira tickets. You create a branch from a ticket, and everything is tracked.</li>
+      <li><strong>Pipes</strong>: pre-built integrations that simplify common tasks (AWS deployment, notifications, etc.).</li>
+      <li><strong>Free private repos</strong>: historically, Bitbucket offered free private repos before GitHub.</li>
+      <li><strong>Confluence integration</strong>: documentation is directly linked to the code.</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"The Merchant Guilds' Forge of Bitbucket is <strong>woven into a commercial network</strong>. Every Jira ticket, every Confluence page, every commit - all are connected. For large organized guilds, it's a <strong>considerable advantage</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: Other forges -->
+    <h2>Other notable forges</h2>
+
+    <p>The world of forges is not limited to these three giants. Here are other important players:</p>
+
+    <h3><span class="keyword">Jenkins</span> - The Veteran</h3>
+
+    <p><strong>Jenkins</strong> is one of the oldest CI/CD tools. It is entirely <strong>self-hosted</strong> and extremely <strong>flexible</strong>.</p>
+
+    <ul>
+      <li><span class="badge-green">Strengths</span>: infinite customization, immense plugin ecosystem (over 1800), free and open source.</li>
+      <li><span class="badge-red">Weaknesses</span>: aging interface, complex configuration, maintenance required.</li>
+      <li><strong>Config file</strong>: <code>Jenkinsfile</code> (Groovy syntax)</li>
+    </ul>
+
+    <pre data-lang="bash"><code>pipeline {
+    agent any
+    stages {
+        stage('Test') {
+            steps {
+                sh 'echo "Running tests..."'
+            }
+        }
+    }
+}</code></pre>
+
+    <p>Jenkins remains widely used in large companies that have invested heavily in their infrastructure.</p>
+
+    <h3><span class="keyword">CircleCI</span> - The Cloud Sprinter</h3>
+
+    <p><strong>CircleCI</strong> is a cloud-native CI/CD platform, known for its <strong>speed</strong> and <strong>efficiency</strong>.</p>
+
+    <ul>
+      <li><span class="badge-green">Strengths</span>: very fast, excellent Docker support, good interface.</li>
+      <li><span class="badge-red">Weaknesses</span>: cost increases quickly with usage, fewer auxiliary features.</li>
+      <li><strong>Config file</strong>: <code>.circleci/config.yml</code></li>
+    </ul>
+
+    <h3><span class="keyword">Travis CI</span> - The Open Source Pioneer</h3>
+
+    <p><strong>Travis CI</strong> was historically the favorite CI/CD platform for open source projects. It popularized the concept of CI/CD integrated with forges.</p>
+
+    <ul>
+      <li><span class="badge-green">Strengths</span>: simple to configure, pioneer of GitHub integration.</li>
+      <li><span class="badge-red">Weaknesses</span>: lost popularity after its acquisition, reduced free tier.</li>
+      <li><strong>Config file</strong>: <code>.travis.yml</code></li>
+    </ul>
+
+    <h3><span class="keyword">Forgejo/Gitea Actions</span> - The Free Alternative</h3>
+
+    <p><strong>Forgejo</strong> and <strong>Gitea</strong> are self-hosted, lightweight, open source forges. Their Actions system is <strong>compatible with GitHub Actions</strong> - you can often reuse your workflows directly!</p>
+
+    <ul>
+      <li><span class="badge-green">Strengths</span>: lightweight, self-hosted, GitHub Actions compatible, privacy-respecting.</li>
+      <li><span class="badge-red">Weaknesses</span>: smaller community, fewer third-party actions available.</li>
+      <li><strong>Config file</strong>: <code>.forgejo/workflows/</code> or <code>.gitea/workflows/</code> (same syntax as GitHub Actions)</li>
+    </ul>
+
+    <div class="narrative">
+      <p>"Each forge was built by different artisans, with <strong>different philosophies</strong>. Jenkins is the indestructible veteran, CircleCI the sprinter, Travis the pioneer, and Forgejo the free path. <strong>None is perfect, but each excels in its domain</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: Comparison table -->
+    <h2>Comparison table</h2>
+
+    <p>Here is a summary to help you understand the differences:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Criterion</th>
+          <th>GitHub Actions</th>
+          <th>GitLab CI</th>
+          <th>Bitbucket Pipelines</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Config file</strong></td>
+          <td><code>.github/workflows/*.yml</code></td>
+          <td><code>.gitlab-ci.yml</code></td>
+          <td><code>bitbucket-pipelines.yml</code></td>
+        </tr>
+        <tr>
+          <td><strong>Self-hosting</strong></td>
+          <td>No (except runners)</td>
+          <td>Yes (GitLab CE/EE)</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>Docker registry</strong></td>
+          <td>GitHub Packages</td>
+          <td>Natively integrated</td>
+          <td>Not integrated</td>
+        </tr>
+        <tr>
+          <td><strong>Marketplace/Plugins</strong></td>
+          <td>GitHub Marketplace</td>
+          <td>CI/CD Catalogue</td>
+          <td>Atlassian Pipes</td>
+        </tr>
+        <tr>
+          <td><strong>Project integration</strong></td>
+          <td>Issues, Projects</td>
+          <td>Boards, Epics, Milestones</td>
+          <td>Jira, Confluence</td>
+        </tr>
+        <tr>
+          <td><strong>Free (CI)</strong></td>
+          <td>2000 min/month</td>
+          <td>400 min/month</td>
+          <td>50 min/month</td>
+        </tr>
+        <tr>
+          <td><strong>Main strength</strong></td>
+          <td>Community, Actions</td>
+          <td>All-in-one</td>
+          <td>Atlassian ecosystem</td>
+        </tr>
+        <tr>
+          <td><strong>Ideal for</strong></td>
+          <td>Open source, startups</td>
+          <td>Enterprises, DevOps</td>
+          <td>Teams on Jira</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: How to choose -->
+    <h2>How to choose the right platform?</h2>
+
+    <p>The choice depends on your context. Here's a simple guide:</p>
+
+    <ul>
+      <li><strong>Doing open source?</strong> - GitHub. The community is there, contributors know the platform.</li>
+      <li><strong>Your company wants full internal control?</strong> - Self-hosted GitLab. Data on your servers, total customization.</li>
+      <li><strong>Your team already uses Jira?</strong> - Bitbucket. The native integration with the Atlassian ecosystem saves a lot of time.</li>
+      <li><strong>You want a lightweight, free solution?</strong> - Forgejo/Gitea. Perfect for a personal server or a small team.</li>
+      <li><strong>You have an existing complex system?</strong> - Jenkins. Its flexibility is unmatched for special cases.</li>
+    </ul>
+
+    <div class="key-message">
+      <p>Choosing a forge is not a question of <strong>best</strong> or <strong>worst</strong>. It's a question of <strong>context</strong>. The best hammer is the one that fits the nail you need to drive.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7: Portability -->
+    <h2>Portability - <span class="keyword">The art of not being trapped</span></h2>
+
+    <p>A common trap: putting <strong>all</strong> your CI/CD logic in your platform's YAML file. If you change forges one day, you have to rewrite everything.</p>
+
+    <p>The solution? <strong>Keep the logic in scripts, not in the YAML.</strong></p>
+
+    <h3>Bad approach <span class="highlight-red">(everything in the YAML)</span></h3>
+
+    <pre data-lang="yaml"><code># .github/workflows/ci.yml - Hard to port
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -r requirements.txt
+      - run: python -m pytest tests/ --cov=src
+      - run: python -m flake8 src/ --max-line-length=120
+      - run: echo "All tests pass!"</code></pre>
+
+    <h3>Good approach <span class="highlight">(logic in a script)</span></h3>
+
+    <p>First, create a <code>scripts/test.sh</code> script:</p>
+
+    <pre data-lang="bash"><code>#!/bin/bash
+# scripts/test.sh - The logic is here, not in the YAML
+echo "Installing dependencies..."
+pip install -r requirements.txt
+
+echo "Running tests..."
+python -m pytest tests/ --cov=src
+
+echo "Checking style..."
+python -m flake8 src/ --max-line-length=120
+
+echo "All tests pass!"</code></pre>
+
+    <p>Then, each YAML file simply calls this script:</p>
+
+    <pre data-lang="yaml"><code># GitHub Actions
+- run: bash scripts/test.sh
+
+# GitLab CI
+script:
+  - bash scripts/test.sh
+
+# Bitbucket Pipelines
+script:
+  - bash scripts/test.sh</code></pre>
+
+    <p>Result: if you change platforms, you only need to rewrite the minimal YAML file. All your logic stays intact.</p>
+
+    <div class="tip">
+      <p>This approach is called <strong>"shell-first CI"</strong>. It's a good practice adopted by experienced DevOps teams. As a bonus, you can test your scripts locally before pushing!</p>
+    </div>
+
+    <div class="narrative">
+      <p>"The wisest Master Archivists <strong>never chain themselves to a single forge</strong>. They write their scrolls so they can be carried anywhere. That's portability - and it's a <strong>skill worth its weight in gold</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Hands-on exercise -->
+    <h2>Hands-on exercise - Forge on three anvils</h2>
+
+    <div class="quest-objective">
+      <p>Prove your mastery of the Forges by writing the same pipeline on three platforms:</p>
+      <ol>
+        <li>Create a <code>multi-forge</code> repository with a test script</li>
+        <li>Write the <strong>GitHub Actions</strong> pipeline in <code>.github/workflows/ci.yml</code></li>
+        <li>Write the <strong>GitLab CI</strong> pipeline in <code>.gitlab-ci.yml</code></li>
+        <li>Write the <strong>Bitbucket Pipelines</strong> pipeline in <code>bitbucket-pipelines.yml</code></li>
+        <li>All three pipelines must call the same test script</li>
+        <li>Commit everything and run the verification</li>
+      </ol>
+    </div>
+
+    <h3>Step 1 - Create the repository</h3>
+
+    <pre data-lang="bash"><code>mkdir multi-forge
+cd multi-forge
+git init</code></pre>
+
+    <h3>Step 2 - Create the test script</h3>
+
+    <p>Create a <code>scripts/</code> folder and a <code>scripts/test.sh</code> file:</p>
+
+    <pre data-lang="bash"><code>mkdir scripts</code></pre>
+
+    <p>Write the content of <code>scripts/test.sh</code>:</p>
+
+    <pre data-lang="bash"><code>#!/bin/bash
+# scripts/test.sh - Portable test script
+
+echo "=== Running tests ==="
+
+# Test 1: verify the README file exists
+if [ -f "README.md" ]; then
+    echo "PASS: README.md exists"
+else
+    echo "FAIL: README.md missing"
+    exit 1
+fi
+
+# Test 2: verify the scripts folder exists
+if [ -d "scripts" ]; then
+    echo "PASS: scripts/ folder exists"
+else
+    echo "FAIL: scripts/ folder missing"
+    exit 1
+fi
+
+echo "=== All tests pass ==="</code></pre>
+
+    <p>Make it executable:</p>
+
+    <pre data-lang="bash"><code>chmod +x scripts/test.sh</code></pre>
+
+    <h3>Step 3 - Create a README</h3>
+
+    <pre data-lang="bash"><code>echo "# Multi-Forge" > README.md
+echo "Multi-platform CI/CD demonstration project." >> README.md</code></pre>
+
+    <h3>Step 4 - Write the GitHub Actions pipeline</h3>
+
+    <pre data-lang="bash"><code>mkdir -p .github/workflows</code></pre>
+
+    <p>Content of <code>.github/workflows/ci.yml</code>:</p>
+
+    <pre data-lang="yaml"><code>name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: bash scripts/test.sh</code></pre>
+
+    <h3>Step 5 - Write the GitLab CI pipeline</h3>
+
+    <p>Content of <code>.gitlab-ci.yml</code> (at the root):</p>
+
+    <pre data-lang="yaml"><code>stages:
+  - test
+
+test:
+  stage: test
+  script:
+    - bash scripts/test.sh</code></pre>
+
+    <h3>Step 6 - Write the Bitbucket Pipelines pipeline</h3>
+
+    <p>Content of <code>bitbucket-pipelines.yml</code> (at the root):</p>
+
+    <pre data-lang="yaml"><code>pipelines:
+  default:
+    - step:
+        name: Tests
+        script:
+          - bash scripts/test.sh</code></pre>
+
+    <h3>Step 7 - Commit everything</h3>
+
+    <pre data-lang="bash"><code>git add .
+git commit -m "Add CI pipelines for GitHub, GitLab and Bitbucket"</code></pre>
+
+    <h3>Step 8 - Run the verification</h3>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Summary -->
+    <h2>Concept summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>GitLab CI/CD</strong></td>
+          <td>CI/CD platform integrated into GitLab, file <code>.gitlab-ci.yml</code></td>
+        </tr>
+        <tr>
+          <td><strong>Bitbucket Pipelines</strong></td>
+          <td>CI/CD integrated into Bitbucket, file <code>bitbucket-pipelines.yml</code></td>
+        </tr>
+        <tr>
+          <td><strong>Jenkins</strong></td>
+          <td>Self-hosted CI/CD tool, very flexible, file <code>Jenkinsfile</code></td>
+        </tr>
+        <tr>
+          <td><strong>CircleCI</strong></td>
+          <td>Fast cloud-native CI/CD platform</td>
+        </tr>
+        <tr>
+          <td><strong>Travis CI</strong></td>
+          <td>CI/CD pioneer for open source</td>
+        </tr>
+        <tr>
+          <td><strong>Forgejo/Gitea</strong></td>
+          <td>Self-hosted forges compatible with GitHub Actions</td>
+        </tr>
+        <tr>
+          <td><strong>Portability</strong></td>
+          <td>Keep the logic in scripts, not in the YAML</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Configuration files summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>File</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GitHub Actions</td>
+          <td><code>*.yml</code></td>
+          <td><code>.github/workflows/</code></td>
+        </tr>
+        <tr>
+          <td>GitLab CI</td>
+          <td><code>.gitlab-ci.yml</code></td>
+          <td>Repository root</td>
+        </tr>
+        <tr>
+          <td>Bitbucket Pipelines</td>
+          <td><code>bitbucket-pipelines.yml</code></td>
+          <td>Repository root</td>
+        </tr>
+        <tr>
+          <td>Jenkins</td>
+          <td><code>Jenkinsfile</code></td>
+          <td>Repository root</td>
+        </tr>
+        <tr>
+          <td>CircleCI</td>
+          <td><code>config.yml</code></td>
+          <td><code>.circleci/</code></td>
+        </tr>
+        <tr>
+          <td>Travis CI</td>
+          <td><code>.travis.yml</code></td>
+          <td>Repository root</td>
+        </tr>
+        <tr>
+          <td>Forgejo/Gitea</td>
+          <td><code>*.yml</code></td>
+          <td><code>.forgejo/workflows/</code> or <code>.gitea/workflows/</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>The Master Archivist contemplates the three anvils before you - each bears a different pipeline, but all forge the same result. He slowly nods his head, visibly satisfied.</p>
+      <p>"You have forged on three different anvils with equal mastery. GitHub, GitLab, Bitbucket - you now know the <strong>philosophies of each forge</strong> and you know how to adapt your work to each one. And above all, you understood the most important secret: <strong>portability</strong>. Your scripts are free, chained to no forge."</p>
+      <p>He strikes three blows on the largest anvil. The flames of the Automated Forges rise one last time, casting monumental shadows on the walls.</p>
+      <p>"The Arc of the Automated Forges is complete. You have mastered the eternal forges, the kingdom's actions, the automated trials, and the alternative forges. You are an <strong>Accomplished Blacksmith</strong>."</p>
+      <p>The Master Archivist hands you a golden badge - a hammer crossed with a quill, the symbol of those who master both writing and forging.</p>
+      <p>"But the world evolves, Blacksmith. Beyond the guilds and forges you know, new paths open. Rebel archivists are experimenting with <strong>decentralized versioning</strong> - no central server, no dominant forge. Radicle, the peer-to-peer protocol for code... This is <strong>Arc 5: Beyond the Guilds</strong>. And it will change your vision of everything you have learned."</p>
+    </div>

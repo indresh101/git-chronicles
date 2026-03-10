@@ -1,0 +1,274 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_04
+quest_number: "04"
+arc: 1
+title: "The Archive is Everywhere"
+subtitle: "Git local, .git/, clone, bare repo"
+quest_slug_fr: "04-larchive-est-partout"
+quest_slug_en: "04-the-archive-is-everywhere"
+permalink: /en/quests/04-the-archive-is-everywhere/
+---
+
+      <!-- Narrative introduction -->
+      <div class="narrative">
+        <p>You find the Master Archivist in an unusual room. No shelves, no stacked scrolls. Just an empty table and a candle. He looks at you with an enigmatic smile.</p>
+        <p>"Young Archivist, you've learned to seal scrolls in the Archive. But tell me... <strong>where exactly is the Archive?</strong>"</p>
+        <p>You point toward the great central hall of the Citadel. The Master shakes his head.</p>
+        <p>"No. The Archive is not a place. The Archive is <strong>everywhere</strong>. Every copy of the knowledge IS the Archive. There is no central hall. <strong>Every Archivist carries the entire history with them.</strong> That is Git's secret."</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Section 1: Git is local -->
+      <h2><span class="highlight">Git needs no server</span></h2>
+
+      <p>This is the most widespread misconception among beginners: many think that <strong>Git = GitHub</strong>. That to use Git, you need an online account, a server, an internet connection.</p>
+
+      <div class="key-message">
+        <p>Git = GitHub is a misconception. Git is a <span class="keyword">distributed</span> and <span class="keyword">local</span> tool - it works entirely on your machine, without any server.</p>
+      </div>
+
+      <p><span class="highlight-red">That's wrong.</span></p>
+
+      <p>Git is a <span class="keyword">local</span> tool. It works entirely on your machine, without any <span class="keyword">network</span> connection. Everything Git needs fits in a single folder: <span class="keyword"><code>.git/</code></span>.</p>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Section 2: Exploring .git/ -->
+      <h2>Exploring the <span class="keyword"><code>.git/</code></span> folder</h2>
+
+      <p>When you run <span class="git-cmd">git init</span>, Git creates a hidden folder <span class="keyword"><code>.git/</code></span> at the root of your project. That's where <strong>everything</strong> is stored. Here's its structure:</p>
+
+      <div class="git-tree">
+        <span class="tree-folder">.git/</span><br>
+        &nbsp;&nbsp;<span class="tree-folder">objects/</span> <span class="tree-comment">&larr; the data (commits, compressed files)</span><br>
+        &nbsp;&nbsp;<span class="tree-folder">refs/</span> <span class="tree-comment">&larr; branches and tags</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-folder">heads/</span> <span class="tree-comment">&larr; local branches</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-folder">tags/</span> <span class="tree-comment">&larr; tags</span><br>
+        &nbsp;&nbsp;<span class="tree-folder">hooks/</span> <span class="tree-comment">&larr; automatic scripts</span><br>
+        &nbsp;&nbsp;<span class="tree-file">HEAD</span> <span class="tree-comment">&larr; "where am I right now?"</span><br>
+        &nbsp;&nbsp;<span class="tree-file">config</span> <span class="tree-comment">&larr; local repo configuration</span><br>
+        &nbsp;&nbsp;<span class="tree-file">index</span> <span class="tree-comment">&larr; staging area</span><br>
+      </div>
+
+      <p>To explore this folder yourself:</p>
+
+      <pre data-lang="bash"><code>ls -la .git/          # Linux / macOS / Git Bash</code></pre>
+
+      <pre data-lang="powershell"><code>Get-ChildItem .git\ -Force   # PowerShell</code></pre>
+
+      <div class="warning">
+        <p><strong><span class="highlight">All of Git is this <code>.git/</code> folder.</span></strong> Delete it and your repo vanishes - you keep only the working files, but the entire history is lost. Copy this folder elsewhere, and you have a complete <span class="keyword">clone</span>.</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Section 3: Local clone -->
+      <h2><span class="keyword">Local clone</span> - No internet needed</h2>
+
+      <p>Since Git is entirely <span class="keyword">local</span>, you can <strong><span class="highlight">clone a repo without any internet connection</span></strong>. Just point to a folder on your own machine:</p>
+
+      <pre data-lang="bash"><code># Depuis le dossier parent qui contient mon-archive/
+git clone ./mon-archive ./ma-copie
+
+# Vérifie que l'historique est identique
+cd ma-copie
+git log --oneline</code></pre>
+
+      <pre data-lang="powershell"><code># Depuis le dossier parent qui contient mon-archive\
+git clone .\mon-archive .\ma-copie
+
+cd ma-copie
+git log --oneline</code></pre>
+
+      <div class="tip">
+        <p>The command <span class="git-cmd">git clone</span> automatically creates a <span class="keyword">remote</span> named <code>origin</code> that points to the clone source. Here, <code>origin</code> points to <code>../mon-archive</code> - a simple path on your disk, not an internet URL.</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Section 4: Bare repo -->
+      <h2><span class="keyword">Bare repo</span> - A repo without a working space</h2>
+
+      <p>A <strong><span class="keyword">bare repo</span></strong> is a repo that contains <strong>only</strong> the contents of <span class="keyword"><code>.git/</code></span> - no working files. It's the format used by <strong>Git servers</strong>.</p>
+
+      <pre data-lang="bash"><code># Créer un bare repo
+git init --bare ./archive-centrale.git
+
+# Ajouter comme remote et pousser
+cd mon-archive
+git remote add origine ../archive-centrale.git
+git push origine main</code></pre>
+
+      <pre data-lang="powershell"><code># Créer un bare repo
+git init --bare .\archive-centrale.git
+
+# Ajouter comme remote et pousser
+cd mon-archive
+git remote add origine ..\archive-centrale.git
+git push origine main</code></pre>
+
+      <p>This is <strong>exactly</strong> what a Git server does. When you <span class="git-cmd">git push</span> to GitHub, you're sending your commits to a <span class="keyword">bare repo</span> hosted on their servers. Nothing magical about it.</p>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Section 5: Visual schema -->
+      <h2>The architecture in action</h2>
+
+      <p>Here's how the three repos interact:</p>
+
+      <div class="archi-schema">
+        <div class="archi-box">
+          <span class="box-icon">📂</span>
+          <span class="box-title">mon-archive/</span>
+          <span class="box-desc">Original working repo<br><code>.git/</code> + files</span>
+        </div>
+
+        <div class="archi-arrow">
+          <span class="archi-arrow-label">git push</span>
+          &#10145;
+        </div>
+
+        <div class="archi-box bare">
+          <span class="box-icon">🏛️</span>
+          <span class="box-title">archive-centrale.git</span>
+          <span class="box-desc">Bare repo (server)<br>No working files</span>
+        </div>
+
+        <div class="archi-arrow">
+          <span class="archi-arrow-label">git clone</span>
+          &#10145;
+        </div>
+
+        <div class="archi-box">
+          <span class="box-icon">📂</span>
+          <span class="box-title">clone-depuis-bare/</span>
+          <span class="box-desc">Clone from bare<br><code>.git/</code> + files</span>
+        </div>
+      </div>
+
+      <p style="text-align:center; font-size:0.9rem; color:var(--color-brown-medium);">All three repos contain the <strong>same history</strong>. Each copy is autonomous.</p>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Section 6: Demystification -->
+      <h2>Demystifying platforms</h2>
+
+      <p>GitHub, GitLab, Forgejo, Bitbucket... are <strong>servers</strong> that host <strong><span class="keyword">bare repos</span></strong> and add a <strong>web interface</strong> on top.</p>
+
+      <table class="platform-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Git</th>
+            <th>Platform</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Commits, branches, history</td>
+            <td><span class="badge-green">&#10003;</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Push, pull, clone</td>
+            <td><span class="badge-green">&#10003;</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Issues (bug tickets)</td>
+            <td></td>
+            <td><span class="badge-gold">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>Pull Requests / Merge Requests</td>
+            <td></td>
+            <td><span class="badge-gold">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>CI/CD (automated tests)</td>
+            <td></td>
+            <td><span class="badge-gold">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>Built-in wiki</td>
+            <td></td>
+            <td><span class="badge-gold">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>Web interface for code</td>
+            <td></td>
+            <td><span class="badge-gold">&#10003;</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tip">
+        <p>You <strong>don't need</strong> a GitHub account to use Git. You <strong>don't need</strong> the internet to make commits. A shared folder, a USB drive, or an SSH server is enough to collaborate.</p>
+      </div>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Section 7: Practical exercise -->
+      <h2>Practical exercise</h2>
+
+      <div class="quest-objective">
+        <p>Create three copies of the same repo and verify they share the same history.</p>
+        <ol>
+          <li><span class="git-cmd">git clone</span> <code>mon-archive/</code> to <code>ma-copie/</code></li>
+          <li>Create a <span class="keyword">bare repo</span> <code>archive-centrale.git</code></li>
+          <li>Add it as a <span class="keyword">remote</span> in <code>mon-archive/</code> and push</li>
+          <li><span class="git-cmd">git clone</span> from the <span class="keyword">bare repo</span> to <code>clone-depuis-bare/</code></li>
+          <li>Verify that all 3 have the same history with <code>git log --oneline</code></li>
+          <li>Run the verification script</li>
+        </ol>
+      </div>
+
+      <h3>Prerequisites</h3>
+
+      <p>You need the <code>mon-archive/</code> repo from quest 03. If you don't have it:</p>
+
+      <pre data-lang="bash"><code>mkdir mon-archive && cd mon-archive
+git init
+echo "Bienvenue dans l'Archive" > README.md
+git add README.md
+git commit -m "Premier parchemin"
+cd ..</code></pre>
+
+      <h3>The commands</h3>
+
+      <pre data-lang="bash"><code># 1. Clone local
+git clone ./mon-archive ./ma-copie
+
+# 2. Bare repo
+git init --bare ./archive-centrale.git
+
+# 3. Ajouter la remote et pousser
+cd mon-archive
+git remote add origine ../archive-centrale.git
+git push origine main
+cd ..
+
+# 4. Clone depuis le bare repo
+git clone ./archive-centrale.git ./clone-depuis-bare
+
+# 5. Vérifier l'historique
+cd mon-archive && git log --oneline && cd ..
+cd ma-copie && git log --oneline && cd ..
+cd clone-depuis-bare && git log --oneline && cd ..</code></pre>
+
+      <h3>Verification</h3>
+
+      <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+      <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Narrative conclusion -->
+      <div class="narrative">
+        <p>The Master Archivist looks at you with pride.</p>
+        <p>"You now understand <strong>the true power of the Archive</strong>. It depends on no tower, no server, no platform. <strong>Every copy is complete. Every Archivist is autonomous.</strong> In the next quest, we'll explore the <strong>Lines of Time</strong> - you'll learn to navigate through the Archive's history."</p>
+      </div>

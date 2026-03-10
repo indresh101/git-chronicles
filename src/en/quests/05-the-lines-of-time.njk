@@ -1,0 +1,308 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_05
+quest_number: "05"
+arc: 1
+title: "The Lines of Time"
+subtitle: "git log, diff, show, .gitignore"
+quest_slug_fr: "05-les-lignes-du-temps"
+quest_slug_en: "05-the-lines-of-time"
+permalink: /en/quests/05-the-lines-of-time/
+---
+
+      <!-- Narrative introduction -->
+      <section>
+        <h2>Introduction</h2>
+
+        <div class="narrative">
+          <p>The doors of the Grand Hall of Archives swing open with a solemn creak. Immense shelves, laden with yellowed scrolls and leather-bound registers, rise up to the vaulted ceiling. The air smells of dust and ancient ink. The Master Archivist awaits you, lantern in hand.</p>
+        </div>
+
+        <blockquote>
+          <p>"Apprentice, you've proven your worth. You know how to create archives and record entries. But a true Archivist doesn't just write - they also know how to <strong><span class="highlight">read the past</span></strong>. Today, I'm entrusting you with <strong>an ancient archive</strong>. Generations of archivists have recorded the kingdom's history within it. Your mission: <strong>explore these lines of time</strong> and uncover their secrets."</p>
+        </blockquote>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Retrieve the archive -->
+      <section>
+        <h2>Retrieve the archive</h2>
+
+        <p>The Master Archivist hands you an old sealed chest - a complete archive of the kingdom. To open it:</p>
+
+        <pre data-lang="bash"><code>git clone archive.bundle les-lignes-du-temps
+cd les-lignes-du-temps</code></pre>
+
+        <p>You now have a local copy of the entire archive. Let's see what it contains.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Exploring the history -->
+      <section>
+        <h2>Exploring the history</h2>
+
+        <p>Git stores every modification as <span class="keyword">commits</span> - like the pages of a history book. Here are the commands to navigate through time.</p>
+
+        <h3>View the complete list of commits</h3>
+
+        <pre data-lang="bash"><code>git log</code></pre>
+
+        <p>Displays all commits, from newest to oldest, with the author, date, and message. The display is paginated - use the arrow keys to navigate and press <strong><code>q</code></strong> to quit.</p>
+
+        <h3>Compact version (one line per commit)</h3>
+
+        <pre data-lang="bash"><code>git log --oneline</code></pre>
+
+        <p>Each commit fits on a single line: its <span class="keyword">hash</span> (unique identifier, abbreviated) and its message. This is the most practical view for getting an overview.</p>
+
+        <h3>With a graph (branch preview)</h3>
+
+        <pre data-lang="bash"><code>git log --oneline --graph</code></pre>
+
+        <p>Adds a small ASCII drawing that shows the history's structure. We'll cover branches in detail in a future quest, but it's nice to look at.</p>
+
+        <h3>Details of a specific commit</h3>
+
+        <pre data-lang="bash"><code>git show &lt;hash&gt;</code></pre>
+
+        <p>Replace <code>&lt;hash&gt;</code> with the hash (short or long) of a commit. You'll see exactly <strong>which files</strong> were modified and <strong>which lines</strong> changed.</p>
+
+        <h3>Compare two moments in time</h3>
+
+        <pre data-lang="bash"><code>git diff &lt;hash1&gt; &lt;hash2&gt;</code></pre>
+
+        <p>Shows the differences between two commits. Added lines appear in <strong>green</strong> (preceded by <span class="highlight-green"><code>+</code></span>), deleted lines in <strong>red</strong> (preceded by <span class="highlight-red"><code>-</code></span>).</p>
+
+        <h3>Filter by author</h3>
+
+        <pre data-lang="bash"><code>git log --author="Aldric"</code></pre>
+
+        <p>Shows only commits made by a given author. The search is partial: <code>"Aldric"</code> will find "Aldric the Scribe".</p>
+
+        <h3>Search in messages</h3>
+
+        <pre data-lang="bash"><code>git log --grep="dragon"</code></pre>
+
+        <p>Shows only commits whose message contains the searched word.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Exploration mission -->
+      <section>
+        <h2>Exploration mission</h2>
+
+        <p>Time to put your new skills into practice. Using the commands above, answer these questions:</p>
+
+        <ol>
+          <li><strong>How many commits</strong> does the archive contain?<br><em>(hint: <span class="git-cmd">git log --oneline</span> and count, or use <span class="git-cmd">git rev-list --count HEAD</span>)</em></li>
+          <li><strong>Which author</strong> made the most commits?</li>
+          <li><strong>Find the commit</strong> that mentions "dragon" in its message. What is its hash?</li>
+          <li><strong>Which file</strong> was modified in the 3rd commit?<br><em>(hint: <span class="git-cmd">git log --oneline</span> to find the hash, then <span class="git-cmd">git show &lt;hash&gt;</span>)</em></li>
+          <li><strong>Find the commits with bad messages</strong> - "fix", "trucs", "modif", "wip", "oups". Use <span class="git-cmd">git show</span> on each one: what should they have said instead?</li>
+        </ol>
+
+        <div class="tip">
+          <p>Take the time to really explore. Use <span class="git-cmd">git show</span> on several commits to understand what each one modified. You learn by digging.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- The .gitignore -->
+      <section>
+        <h2><code>.gitignore</code> - Files that should never be archived</h2>
+
+        <p>While exploring the archive, you may have noticed suspicious files: <code>debug.log</code>, <code>.DS_Store</code>, <code>Thumbs.db</code>, a <code>__pycache__/</code> folder... These files should <span class="highlight">never have been archived</span>. They are <span class="highlight-red">parasitic</span> files - automatically generated by the system or tools, they pollute the archive without adding any value.</p>
+
+        <p>And it gets worse: <code>secret-du-royaume.txt</code> contains confidential information. A secret committed by mistake stays in the history <span class="highlight-red">forever (or nearly)</span>. That's an important lesson.</p>
+
+        <h3>The <span class="keyword">.gitignore</span> file</h3>
+
+        <p>To avoid these mistakes, Git offers a simple mechanism: a file named <strong><span class="keyword">.gitignore</span></strong> at the project's root. Each line contains a <strong>pattern</strong> of files to ignore.</p>
+
+        <h3>Syntax</h3>
+
+        <pre data-lang="gitignore"><code># Ceci est un commentaire
+
+# Ignorer un fichier précis
+debug.log
+secret-du-royaume.txt
+
+# Ignorer tous les fichiers avec une extension donnée
+*.log
+*.tmp
+
+# Ignorer un dossier entier (et tout son contenu)
+__pycache__/
+node_modules/
+
+# Ignorer des fichiers système
+.DS_Store
+Thumbs.db
+
+# Ignorer les fichiers d'environnement (secrets, mots de passe)
+.env
+.env.local</code></pre>
+
+        <h3>Common patterns to know</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>What it ignores</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>*.log</code></td><td>All <code>.log</code> files</td></tr>
+            <tr><td><code>*.tmp</code></td><td>All temporary files</td></tr>
+            <tr><td><code>.DS_Store</code></td><td>macOS file (folder metadata)</td></tr>
+            <tr><td><code>Thumbs.db</code></td><td>Windows file (image thumbnails)</td></tr>
+            <tr><td><code>__pycache__/</code></td><td>Python cache</td></tr>
+            <tr><td><code>node_modules/</code></td><td>Node.js dependencies</td></tr>
+            <tr><td><code>.env</code></td><td>Environment variables (often secrets!)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip">
+          <p>The website <a href="https://www.toptal.com/developers/gitignore">gitignore.io</a> generates <span class="keyword">.gitignore</span> files tailored to your language and tools. Very handy!</p>
+        </div>
+
+        <h3>Warning: <span class="keyword">.gitignore</span> doesn't remove what's already tracked</h3>
+
+        <div class="key-message">
+          <p>If a file is <strong>already in the history</strong> (it has been committed), adding it to <span class="keyword">.gitignore</span> is not enough. You need to <strong>remove it from tracking</strong> first:</p>
+
+          <pre data-lang="bash"><code>git rm --cached debug.log</code></pre>
+
+          <p>The <code>--cached</code> option means: "remove this file from Git tracking, but don't delete it from disk". The file stays on your machine, but Git will no longer track it.</p>
+        </div>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Commit message best practices -->
+      <section>
+        <h2>Commit message best practices</h2>
+
+        <p>While exploring the archive, you saw two types of messages:</p>
+
+        <div class="comparison">
+          <div class="comparison-good">
+            <h3>Good messages</h3>
+            <p>"Add the northern creatures registry"</p>
+            <p>"Fix the swamp dragon entry"</p>
+            <p>"Update the border map"</p>
+            <p>"Add journal notes for days 15 to 25"</p>
+          </div>
+          <div class="comparison-bad">
+            <h3>Bad messages</h3>
+            <p>"fix" - Fix what? Nobody knows.</p>
+            <p>"stuff" - What stuff? Mystery.</p>
+            <p>"changes" - Thanks, we figured it was a change.</p>
+            <p>"wip" - "Work In Progress"... but on what?</p>
+            <p>"oops" - There was a mistake, but which one?</p>
+          </div>
+        </div>
+
+        <h3>The golden rules</h3>
+
+        <ol>
+          <li><strong>Start with a verb</strong> in the imperative: "Add", "Fix", "Update", "Remove", "Refactor"...</li>
+          <li><strong>Keep it short</strong>: the title should be 50 characters maximum.</li>
+          <li><strong>Be descriptive</strong>: explain the <strong>why</strong>, not just the <strong>what</strong>. "Fix tax calculation that rounded to integer" is better than "fix bug".</li>
+          <li><strong>Write for others</strong> (and for your future self): in 6 months, you'll be glad to understand what you did.</li>
+        </ol>
+
+        <h3>Going further: <span class="keyword">Conventional Commits</span></h3>
+
+        <p>There's a popular convention called <a href="https://www.conventionalcommits.org/"><span class="keyword">Conventional Commits</span></a> that prefixes messages:</p>
+
+        <pre><code>feat: Add the search system
+fix: Fix the score calculation
+docs: Update the installation guide
+refactor: Simplify the validation logic</code></pre>
+
+        <p>It's not mandatory, but it's increasingly common in professional projects.</p>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Final exercise -->
+      <section>
+        <h2>Final exercise - Clean up the archive</h2>
+
+        <div class="quest-objective">
+          <p>The Master Archivist entrusts you with one last mission: clean the archives of parasitic files and protect them for the future.</p>
+        </div>
+
+        <h3>Step 1 - Create a <span class="keyword">.gitignore</span></h3>
+
+        <p>In the <code>les-lignes-du-temps/</code> folder, create a <span class="keyword">.gitignore</span> file with at least these patterns:</p>
+
+        <pre data-lang="gitignore"><code># Fichiers de log
+*.log
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Cache Python
+__pycache__/
+
+# Secrets (ne jamais archiver !)
+secret-du-royaume.txt</code></pre>
+
+        <h3>Step 2 - Remove parasitic files from tracking</h3>
+
+        <p>These files are already tracked by Git. The <span class="keyword">.gitignore</span> alone is not enough - you need to remove them from tracking:</p>
+
+        <pre data-lang="bash"><code>git rm --cached debug.log
+git rm --cached .DS_Store
+git rm --cached Thumbs.db
+git rm --cached -r __pycache__/
+git rm --cached secret-du-royaume.txt</code></pre>
+
+        <h3>Step 3 - Commit the cleanup</h3>
+
+        <pre data-lang="bash"><code>git add .gitignore
+git commit -m "Ajouter le .gitignore et retirer les fichiers parasites du suivi"</code></pre>
+
+        <p>Notice the message: it's clear, descriptive, and starts with a verb.</p>
+
+        <h3>Step 4 - Verify</h3>
+
+        <p>Run the verification script to validate your quest:</p>
+
+        <p><strong>Bash</strong> (Linux / macOS / Git Bash on Windows):</p>
+
+        <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+        <p><strong>PowerShell</strong> (Windows):</p>
+
+        <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+        <p>The script checks:</p>
+
+        <ol class="steps">
+          <li>You are inside a Git repository</li>
+          <li>A <span class="keyword">.gitignore</span> file exists</li>
+          <li>The <span class="keyword">.gitignore</span> contains a pattern for <code>.log</code> files</li>
+          <li><code>debug.log</code> is no longer tracked by Git</li>
+          <li>Your last commit has a descriptive message (at least 10 characters)</li>
+        </ol>
+      </section>
+
+      <div class="fancy-separator"></div>
+
+      <!-- Narrative conclusion -->
+      <div class="narrative">
+        <p>The Master Archivist reviews the cleaned archives, nodding with approval.</p>
+        <div class="key-message">
+          <p>"Excellent work, apprentice. You now know how to <strong>read the lines of time</strong>, <strong>spot the mistakes of the past</strong>, and <strong>protect the archives for the future</strong>. A good Archivist doesn't just write history - <strong>they take care of it</strong>. You're ready for what comes next."</p>
+        </div>
+      </div>

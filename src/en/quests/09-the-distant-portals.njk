@@ -1,0 +1,375 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_09
+quest_number: "09"
+arc: 2
+title: "The Distant Portals"
+subtitle: "Remote, push, fetch and pull"
+quest_slug_fr: "09-les-portails-distants"
+quest_slug_en: "09-the-distant-portals"
+permalink: /en/quests/09-the-distant-portals/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>The Master Archivist takes you to a room you had never noticed. The walls are covered with immense mirrors, but each one shows a different place - a citadel in the mountains, an outpost by the sea, an underground library. At the center of each mirror, a golden light pulses softly.</p>
+      <p>"Apprentice, you have learned to <strong>create branches</strong>, to <strong>merge timelines</strong>, and to <strong>resolve conflicts</strong> between them. But you have always worked alone, in your own citadel. Yet the Archives of the Guild do not live in a single place. Look at these mirrors - they are <strong>Distant Portals</strong>. Each one connects our citadel to a <strong>Guild outpost</strong> somewhere in the kingdom. Through these portals, Archivists <strong>send their chronicles</strong> and <strong>receive those of others</strong>. Today, you will learn to master these portals."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: What is a remote -->
+    <h2>What is a <span class="keyword">remote</span>?</h2>
+
+    <p>A <strong><span class="keyword">remote</span></strong> (or remote repository) is another Git repository that yours is connected to. It is a <strong>portal</strong> to a copy of the Archives that lives elsewhere - on a server, on a colleague's machine, or even in another folder on your own machine.</p>
+
+    <div class="key-message">
+      <p>A <span class="keyword">remote</span> is a connection to another Git repository. It is the magic portal that allows Archivists to share their chronicles across the kingdom.</p>
+    </div>
+
+    <p>When you ran <span class="git-cmd">git clone</span> in quest 04, Git automatically created a remote named <code>origin</code> that pointed to the source repository. That was your first portal, even if you didn't know it yet.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: List remotes -->
+    <h2>List <span class="keyword">remotes</span></h2>
+
+    <p>To see which portals are configured in your repository:</p>
+
+    <pre data-lang="bash"><code>git remote -v</code></pre>
+
+    <p>The <code>-v</code> (verbose) flag displays the associated URLs:</p>
+
+    <pre data-lang="bash"><code>origin  /path/to/repo.git (fetch)
+origin  /path/to/repo.git (push)</code></pre>
+
+    <p>Each remote has <strong>two lines</strong>: one for <code>fetch</code> (receiving) and one for <code>push</code> (sending). Usually, they point to the same location.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: Add a remote -->
+    <h2>Add a <span class="keyword">remote</span></h2>
+
+    <p>To open a new portal to another repository:</p>
+
+    <pre data-lang="bash"><code>git remote add &lt;name&gt; &lt;url&gt;</code></pre>
+
+    <p>Example:</p>
+
+    <pre data-lang="bash"><code>git remote add portail /tmp/portail-central.git</code></pre>
+
+    <p>By convention:</p>
+    <ul>
+      <li><code>origin</code> is the main remote (automatically created by <span class="git-cmd">git clone</span>)</li>
+      <li>You can add as many remotes as you want with names of your choice</li>
+    </ul>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: git push -->
+    <h2>Sending commits: <span class="git-cmd">git push</span></h2>
+
+    <p>To send your commits through a portal:</p>
+
+    <pre data-lang="bash"><code>git push &lt;remote&gt; &lt;branch&gt;</code></pre>
+
+    <p>Example:</p>
+
+    <pre data-lang="bash"><code>git push portail main</code></pre>
+
+    <p>This sends all commits from your <code>main</code> branch that do not yet exist on the <code>portail</code> remote.</p>
+
+    <h3>Setting up tracking with <code>-u</code></h3>
+
+    <p>The first time you push a branch, you can set up <span class="keyword">tracking</span>:</p>
+
+    <pre data-lang="bash"><code>git push -u portail main</code></pre>
+
+    <p>The <code>-u</code> option (or <code>--set-upstream</code>) creates a permanent link between your local <code>main</code> branch and the <code>main</code> branch on the <code>portail</code> remote. After that, you can simply write:</p>
+
+    <pre data-lang="bash"><code>git push</code></pre>
+
+    <p>Without specifying the remote or the branch - Git will know where to send.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: fetch vs pull -->
+    <h2><span class="highlight">Retrieving changes: fetch vs pull</span></h2>
+
+    <p>This is one of the most important distinctions to understand.</p>
+
+    <h3><span class="git-cmd">git fetch</span> - Observe without touching</h3>
+
+    <pre data-lang="bash"><code>git fetch &lt;remote&gt;</code></pre>
+
+    <p><span class="git-cmd">git fetch</span> downloads new commits from the remote, but <strong><span class="highlight-red">does not modify anything in your work</span></strong>. The changes are stored in <span class="keyword">tracking branches</span> (like <code>portail/main</code>), not in your local branches.</p>
+
+    <div class="tip">
+      <p><span class="git-cmd">git fetch</span> is like looking through the portal to see what other Archivists have done, <strong>without touching your own scrolls</strong>.</p>
+    </div>
+
+    <h3><span class="git-cmd">git pull</span> - Retrieve and merge</h3>
+
+    <pre data-lang="bash"><code>git pull &lt;remote&gt; &lt;branch&gt;</code></pre>
+
+    <p><span class="git-cmd">git pull</span> does <strong>two things</strong> in a single command:</p>
+
+    <ol>
+      <li><span class="git-cmd">git fetch</span> - downloads new commits</li>
+      <li><span class="git-cmd">git merge</span> - merges the changes into your current branch</li>
+    </ol>
+
+    <p>It is like opening the portal, grabbing the scrolls, and <strong>integrating them directly</strong> into your chronicle.</p>
+
+    <h3>When to use one or the other?</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Situation</th>
+          <th>Command</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>You want to see what changed before deciding</td>
+          <td><span class="git-cmd">git fetch</span></td>
+          <td>You keep total control</td>
+        </tr>
+        <tr>
+          <td>You want to retrieve and integrate immediately</td>
+          <td><span class="git-cmd">git pull</span></td>
+          <td>Faster, less control</td>
+        </tr>
+        <tr>
+          <td>You are working on a sensitive branch</td>
+          <td><span class="git-cmd">git fetch</span> + <span class="git-cmd">git merge</span></td>
+          <td>You inspect before merging</td>
+        </tr>
+        <tr>
+          <td>You are alone on the branch</td>
+          <td><span class="git-cmd">git pull</span></td>
+          <td>No risk of surprise conflicts</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="warning">
+      <p><strong>As a general rule:</strong> <span class="git-cmd">git fetch</span> followed by an examination then a <span class="git-cmd">git merge</span> is the safest method. <span class="git-cmd">git pull</span> is a handy shortcut when you are sure everything will go well.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: Tracking branches -->
+    <h2><span class="keyword">Tracking branches</span></h2>
+
+    <p>When you run <span class="git-cmd">git fetch</span>, the retrieved commits are stored in <strong><span class="keyword">tracking branches</span></strong>. These are read-only branches that reflect the state of a remote.</p>
+
+    <pre data-lang="bash"><code># View all branches, including tracking branches
+git branch -a</code></pre>
+
+    <p>You will see something like:</p>
+
+    <pre data-lang="bash"><code>* main
+  remotes/portail/main</code></pre>
+
+    <h3><code>portail/main</code> vs <code>main</code></h3>
+
+    <ul>
+      <li><strong><code>main</code></strong>: your local branch. This is where you work.</li>
+      <li><strong><code>portail/main</code></strong> (or <code>remotes/portail/main</code>): the tracking branch. It is the <strong>last known snapshot</strong> of the <code>main</code> branch on the <code>portail</code> remote.</li>
+    </ul>
+
+    <div class="key-message">
+      <p>After a <span class="git-cmd">git fetch</span>, the tracking branch <code>portail/main</code> is up to date with the remote, but your local <code>main</code> branch has not moved. It is up to you to decide when to merge.</p>
+    </div>
+
+    <pre data-lang="bash"><code># View remote commits not yet merged
+git log main..portail/main --oneline
+
+# Merge when you are ready
+git merge portail/main</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7: Delete a remote branch -->
+    <h2>Delete a remote branch</h2>
+
+    <p>If a branch no longer needs to exist on the remote:</p>
+
+    <pre data-lang="bash"><code>git push &lt;remote&gt; --delete &lt;branch&gt;</code></pre>
+
+    <p>Example:</p>
+
+    <pre data-lang="bash"><code>git push portail --delete ancienne-expedition</code></pre>
+
+    <div class="tip">
+      <p>This deletes the branch <strong>on the remote only</strong>. Your local branch is not affected.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8: Recommended workflow -->
+    <h2>The recommended <span class="keyword">workflow</span></h2>
+
+    <p>Here is the typical workflow when you collaborate through a portal:</p>
+
+    <div class="steps">
+      <ol>
+        <li><strong><span class="git-cmd">git fetch</span></strong> - Download the latest changes</li>
+        <li><strong>Examine</strong> - <code>git log main..portail/main</code> to see what changed</li>
+        <li><strong>Merge or rebase</strong> - <code>git merge portail/main</code> or <code>git rebase portail/main</code></li>
+        <li><strong>Work</strong> - Make your own commits</li>
+        <li><strong>Push</strong> - <span class="git-cmd">git push</span> to share your work</li>
+      </ol>
+    </div>
+
+    <p>This cycle repeats throughout the collaboration.</p>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 9: Practical exercise -->
+    <h2>Practical exercise - The Central Portal</h2>
+
+    <div class="narrative">
+      <p>"A Guild outpost has just been established: the <strong>Central Portal</strong>. You will open it, send your chronicles through it, then discover that another Archivist has also contributed through this same portal. It is up to you to <strong>retrieve their work</strong> and <strong>integrate it with yours</strong>."</p>
+    </div>
+
+    <div class="quest-objective">
+      <p>Create a local bare repo, connect it as a remote, push your commits, simulate a second Archivist, then retrieve their changes with fetch and merge.</p>
+    </div>
+
+    <h3>Step 1 - Create your working repository</h3>
+
+    <pre data-lang="bash"><code>mkdir portails-distants
+cd portails-distants
+
+# Create your working repository
+mkdir citadelle
+cd citadelle
+git init
+echo "# Chroniques de la Citadelle" > chroniques.md
+git add chroniques.md
+git commit -m "Fonder la chronique de la Citadelle"
+cd ..</code></pre>
+
+    <h3>Step 2 - Create the Central Portal (bare repo)</h3>
+
+    <pre data-lang="bash"><code>git init --bare portail-central.git</code></pre>
+
+    <h3>Step 3 - Open the portal from your citadel</h3>
+
+    <pre data-lang="bash"><code>cd citadelle
+git remote add portail ../portail-central.git
+git remote -v
+cd ..</code></pre>
+
+    <h3>Step 4 - Send your chronicles</h3>
+
+    <pre data-lang="bash"><code>cd citadelle
+git push -u portail main
+cd ..</code></pre>
+
+    <h3>Step 5 - Another Archivist arrives</h3>
+
+    <pre data-lang="bash"><code># Simulate a second Archivist
+git clone portail-central.git avant-poste
+cd avant-poste
+echo "Rapport de l'avant-poste : tout est calme aux frontières." >> chroniques.md
+git add chroniques.md
+git commit -m "Ajouter le rapport de l'avant-poste"
+git push origin main
+cd ..</code></pre>
+
+    <h3>Step 6 - Discover the changes (fetch)</h3>
+
+    <pre data-lang="bash"><code>cd citadelle
+git fetch portail
+
+# Examine what changed
+git log main..portail/main --oneline</code></pre>
+
+    <h3>Step 7 - Integrate the changes (merge)</h3>
+
+    <pre data-lang="bash"><code>git merge portail/main
+
+# Verify the file contains both contributions
+cat chroniques.md</code></pre>
+
+    <h3>Step 8 - Verification</h3>
+
+    <p>From the <code>citadelle/</code> folder, run the verification script:</p>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <p>The script checks:</p>
+    <ol>
+      <li>You are in a Git repository</li>
+      <li>At least one remote is configured</li>
+      <li>You have pushed at least once to a remote</li>
+      <li>You have retrieved changes from a remote</li>
+    </ol>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Summary -->
+    <h2>Command summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Command</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>git remote -v</code></td>
+          <td>List remotes and their URLs</td>
+        </tr>
+        <tr>
+          <td><code>git remote add &lt;name&gt; &lt;url&gt;</code></td>
+          <td>Add a new remote</td>
+        </tr>
+        <tr>
+          <td><code>git push &lt;remote&gt; &lt;branch&gt;</code></td>
+          <td>Send commits to a remote</td>
+        </tr>
+        <tr>
+          <td><code>git push -u &lt;remote&gt; &lt;branch&gt;</code></td>
+          <td>Push and set up tracking</td>
+        </tr>
+        <tr>
+          <td><code>git fetch &lt;remote&gt;</code></td>
+          <td>Download without merging</td>
+        </tr>
+        <tr>
+          <td><code>git pull &lt;remote&gt; &lt;branch&gt;</code></td>
+          <td>Download and merge</td>
+        </tr>
+        <tr>
+          <td><code>git branch -a</code></td>
+          <td>View all branches (local + tracking)</td>
+        </tr>
+        <tr>
+          <td><code>git log main..&lt;remote&gt;/main</code></td>
+          <td>View unmerged remote commits</td>
+        </tr>
+        <tr>
+          <td><code>git push &lt;remote&gt; --delete &lt;branch&gt;</code></td>
+          <td>Delete a remote branch</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>You gaze at the room's mirrors. Each portal glows with a steady light - the connections are established, chronicles flow freely between your citadel and the Guild's outposts. The Master Archivist nods with satisfaction.</p>
+      <p>"You now know how to <strong>open portals</strong>, <strong>send your chronicles across the kingdom</strong>, and <strong>receive the work of other Archivists</strong>. You understand the difference between <strong>observing</strong> and <strong>integrating</strong>, between <strong>fetch</strong> and <strong>pull</strong>. This is an essential skill, for an Archivist who works alone in their tower serves no one. True power comes from <strong>collaboration through the portals</strong>."</p>
+    </div>

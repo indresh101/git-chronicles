@@ -1,0 +1,648 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_A4
+quest_number: "A4"
+arc: 6
+title: "The Artificer's Plans"
+subtitle: "Git for hardware, KiCad and electronics"
+quest_slug_fr: "A4-les-plans-de-lartificier"
+quest_slug_en: "A4-the-artificers-plans"
+permalink: /en/quests/A4-the-artificers-plans/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>In the depths of the Citadel, well below the archive halls, lie the <strong>underground workshops of the Artificers</strong>. Here, the flickering light of braziers reveals workbenches covered with mechanical blueprints, enchanted circuits and automaton models. The Artificers don't work with ordinary scrolls - their creations are <strong>physical artifacts</strong>, complex schematics that standard inks cannot differentiate.</p>
+      <p>The Master Artificer greets you with a nod. "You know how to version text. But can you version a <strong>printed circuit board</strong>? A <strong>mechanical schematic</strong>? A <strong>three-dimensional blueprint</strong>? That's a whole different challenge. And it's the one we'll tackle today."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: The binary file challenge -->
+    <h2>The challenge of <span class="keyword">binary files</span></h2>
+
+    <p>When you work with source code, Git excels: each file is text, and Git can calculate differences line by line. But in the world of hardware and electronics, the majority of files are <strong>binary</strong>:</p>
+
+    <ul>
+      <li><strong>Electronic schematics</strong> (.kicad_sch, .sch) - circuits and components</li>
+      <li><strong>Printed circuit boards</strong> (.kicad_pcb, .brd) - physical routing</li>
+      <li><strong>3D models</strong> (.step, .stl, .FCStd) - enclosures and mechanical parts</li>
+      <li><strong>Manufacturing files</strong> (.gbr, .drl) - Gerbers for the factory</li>
+    </ul>
+
+    <p>The fundamental problem: when you run <span class="git-cmd">git diff</span> on a binary file, Git simply responds <code>Binary files differ</code>. Impossible to know what changed.</p>
+
+    <pre data-lang="bash"><code># On a text file, git diff shows the changes:
+git diff main.py
+# -  print("Hello")
+# +  print("Bonjour")
+
+# On a binary file, git diff is silent:
+git diff board.kicad_pcb
+# Binary files a/board.kicad_pcb and b/board.kicad_pcb differ</code></pre>
+
+    <p>Additionally, each modification of a binary file creates a <strong>complete copy</strong> in the Git history. A 5 MB PCB modified 20 times = 100 MB of history. The repository grows fast.</p>
+
+    <div class="key-message">
+      <p>Hardware versioned with Git requires specific strategies: open formats when possible, visual diff tools, and rigorous repository organization.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: KiCad + Git -->
+    <h2><span class="keyword">KiCad</span> + Git - the winning duo</h2>
+
+    <p><strong>KiCad</strong> is a free and open source electronic design automation (EDA) software. Its great strength for versioning: most of its files are in <strong>text format</strong> (S-expressions), which makes diffs possible.</p>
+
+    <h3>Structure of a KiCad project</h3>
+
+    <pre data-lang="bash"><code>my-kicad-project/
+├── my-project.kicad_pro     # Project file (text, JSON)
+├── my-project.kicad_sch     # Electronic schematic (text, S-expr)
+├── my-project.kicad_pcb     # Printed circuit board (text, S-expr)
+├── sym-lib-table             # Symbol library table
+├── fp-lib-table              # Footprint library table
+├── my-project.kicad_prl     # Local preferences (DO NOT VERSION)
+├── fp-info-cache             # Footprint cache (DO NOT VERSION)
+└── production/               # Generated manufacturing files
+    ├── gerbers/
+    └── bom/</code></pre>
+
+    <p>Good news: <code>.kicad_sch</code> and <code>.kicad_pcb</code> files are structured text. Git can calculate diffs, even if reading them isn't always intuitive.</p>
+
+    <h3>The complete KiCad .gitignore</h3>
+
+    <pre data-lang="bash"><code># .gitignore for a KiCad project
+
+# Backup files
+*.kicad_sch-bak
+*.kicad_pcb-bak
+*-backups/
+_autosave-*
+
+# Local preferences (specific to each workstation)
+*.kicad_prl
+
+# Cache
+fp-info-cache
+
+# Netlist (generated, not source)
+*.net
+
+# Lock files
+*.lck
+
+# Manufacturing folder (generated, version separately if needed)
+# production/gerbers/
+# production/bom/
+
+# Generated 3D files
+*.wrl
+
+# Misc
+*~
+\#*\#</code></pre>
+
+    <div class="tip">
+      <p><strong>Tip:</strong> <code>.kicad_prl</code> files contain your display preferences (zoom, active layer, etc.). They change constantly and should <strong>never</strong> be versioned - each developer has their own.</p>
+    </div>
+
+    <h3>KiCad commit best practices</h3>
+
+    <p>Since KiCad files are text, each save in KiCad can modify many lines (positions, internal identifiers). To keep a readable history:</p>
+
+    <ul>
+      <li><strong>One commit per logical change</strong>: "Add 3.3V voltage regulator", not "Various modifications"</li>
+      <li><strong>Separate schematic and PCB</strong>: first the schematic, then the routing</li>
+      <li><strong>Don't commit after every save</strong>: wait until you have a coherent state</li>
+    </ul>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: Visual diff -->
+    <h2><span class="keyword">Visual diff</span> for schematics</h2>
+
+    <p>Even though KiCad files are text, reading an S-expression diff isn't very meaningful. That's where <strong>visual diff</strong> tools come in: they generate images of each version and compare them visually.</p>
+
+    <h3>kidiff</h3>
+
+    <p><strong>kidiff</strong> is the most popular tool. It generates PNG images of each version of the schematic or PCB, then displays them side by side in a web browser.</p>
+
+    <pre data-lang="bash"><code># Installation
+pip install kidiff
+
+# Compare the schematic between two commits
+kidiff my-project.kicad_sch HEAD~1 HEAD
+
+# Compare the PCB between a branch and main
+kidiff my-project.kicad_pcb main feature-regulator
+
+# Compare with the working directory (uncommitted changes)
+kidiff my-project.kicad_sch HEAD</code></pre>
+
+    <h3>plotgitsch (KiCad 5 and earlier)</h3>
+
+    <p>For older projects using KiCad 5, <strong>plotgitsch</strong> offers similar functionality:</p>
+
+    <pre data-lang="bash"><code># Installation (requires OCaml)
+opam install plotgitsch
+
+# Compare between two commits
+plotgitsch -ik my-project.sch HEAD~3 HEAD</code></pre>
+
+    <h3>kicad-diff</h3>
+
+    <p><strong>kicad-diff</strong> is another tool that integrates directly into Git as an external diff tool:</p>
+
+    <pre data-lang="bash"><code># Configuration in .gitconfig
+git config --global diff.kicad.command kicad-diff
+
+# Then in the project's .gitattributes
+# *.kicad_sch diff=kicad
+# *.kicad_pcb diff=kicad
+
+# Then, git diff automatically uses the visual diff
+git diff my-project.kicad_sch</code></pre>
+
+    <div class="key-message">
+      <p>Visual diff is <strong>essential</strong> for hardware code review. Without it, it's practically impossible to verify that a schematic change is correct by reading raw text.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: Production files -->
+    <h2><span class="keyword">Gerber</span> and <span class="keyword">BOM</span> files</h2>
+
+    <p><strong>Production</strong> files are those you send to the PCB manufacturer. The question arises: should you version them?</p>
+
+    <h3>Gerber files</h3>
+
+    <p><strong>Gerbers</strong> (.gbr, .drl) are the manufacturing files for the printed circuit board. Each PCB layer (copper, solder mask, silkscreen, drill holes) has its own file.</p>
+
+    <ul>
+      <li><strong>Advantage of versioning them:</strong> you know exactly which Gerbers were sent for each PCB version</li>
+      <li><strong>Disadvantage:</strong> they are generated from the PCB, so they are derived data</li>
+    </ul>
+
+    <p>Best practice: <strong>generate Gerbers at release time</strong> and attach them as artifacts to the Git release, rather than committing them to the history.</p>
+
+    <h3>The BOM (Bill of Materials)</h3>
+
+    <p>The <strong>BOM</strong> is the list of required components. In KiCad, you can export it as CSV - a text format perfect for versioning.</p>
+
+    <pre data-lang="bash"><code># Example BOM in CSV (versioned in Git)
+# Reference, Value, Footprint, Quantity
+# R1, 10k, 0805, 1
+# R2, 4.7k, 0805, 1
+# C1, 100nF, 0805, 1
+# U1, ATmega328P, TQFP-32, 1
+
+# Generate BOM from KiCad CLI
+kicad-cli sch export bom my-project.kicad_sch -o production/bom/bom.csv</code></pre>
+
+    <div class="tip">
+      <p><strong>Tip:</strong> Always version the BOM as CSV in the repository. It's text, diffs are perfect, and you can see exactly which components changed between two versions.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: Mechanical CAD -->
+    <h2><span class="keyword">Mechanical CAD</span> and Git</h2>
+
+    <p>Hardware isn't limited to electronics. Enclosures, mechanical parts, assemblies - all of this needs to be versioned too.</p>
+
+    <h3>FreeCAD (.FCStd = ZIP archive)</h3>
+
+    <p><strong>FreeCAD</strong> is a free and open source 3D CAD software. Its native format <code>.FCStd</code> is actually a <strong>ZIP archive</strong> containing XML files. Git treats it as binary, but there are tricks:</p>
+
+    <pre data-lang="bash"><code># A .FCStd file is a ZIP
+unzip -l enclosure.FCStd
+# Archive:  enclosure.FCStd
+#   Length      Date    Time    Name
+# ---------  ---------- -----   ----
+#     12543  2026-03-09 14:30   Document.xml
+#      2341  2026-03-09 14:30   GuiDocument.xml
+#      8923  2026-03-09 14:30   Brep/Part__Feature.brp
+
+# Trick: use a Git filter to extract the XML
+# .gitattributes
+# *.FCStd diff=fcstd
+
+# .gitconfig
+# [diff "fcstd"]
+#   textconv = unzip -p -c Document.xml</code></pre>
+
+    <h3>OpenSCAD (.scad = pure text)</h3>
+
+    <p><strong>OpenSCAD</strong> is a versioner's dream: <code>.scad</code> files are <strong>pure source code</strong>. You describe your 3D part with code, and Git handles diffs perfectly.</p>
+
+    <pre data-lang="bash"><code># OpenSCAD example - enclosure for a PCB
+// enclosure.scad - Enclosure for electronic board v1.2
+
+pcb_width = 50;
+pcb_length = 80;
+pcb_thickness = 1.6;
+clearance = 2;  // Gap around the PCB
+wall_thickness = 2;
+
+module bottom_enclosure() {
+    difference() {
+        // Exterior
+        cube([pcb_width + 2*clearance + 2*wall_thickness,
+              pcb_length + 2*clearance + 2*wall_thickness,
+              15]);
+        // Interior (hollow)
+        translate([wall_thickness, wall_thickness, wall_thickness])
+            cube([pcb_width + 2*clearance,
+                  pcb_length + 2*clearance,
+                  15]);
+    }
+}
+
+bottom_enclosure();</code></pre>
+
+    <p>With OpenSCAD, a <span class="git-cmd">git diff</span> shows you exactly what changed: "clearance went from 2 mm to 3 mm". Crystal clear.</p>
+
+    <h3>Fusion 360 and cloud tools</h3>
+
+    <p><strong>Fusion 360</strong> (Autodesk) stores files in the cloud. Versioning is managed by the platform itself, not by Git. If you use Fusion 360:</p>
+
+    <ul>
+      <li>Regularly export to <strong>STEP</strong> (.step) for archiving in Git</li>
+      <li>STEP is an open standard, readable by all CAD software</li>
+      <li>Version the STEP exports as reference "snapshots"</li>
+    </ul>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: Repository organization -->
+    <h2>Organizing a <span class="keyword">hardware repo</span></h2>
+
+    <p>A well-organized hardware project in Git follows a clear structure that separates sources, firmware, documentation and production files:</p>
+
+    <pre data-lang="bash"><code>my-hw-project/
+├── hw/                          # Everything hardware
+│   ├── electronics/             # Electronic design
+│   │   ├── my-project.kicad_pro
+│   │   ├── my-project.kicad_sch
+│   │   ├── my-project.kicad_pcb
+│   │   ├── sym-lib-table
+│   │   ├── fp-lib-table
+│   │   └── libs/                # Custom libraries
+│   │       ├── symbols/
+│   │       └── footprints/
+│   └── mechanical/              # Mechanical parts
+│       ├── enclosure.scad       # or .FCStd
+│       └── exports/             # Exported STEP, STL
+│           ├── enclosure-v1.step
+│           └── enclosure-v1.stl
+├── firmware/                    # Embedded code
+│   ├── src/
+│   ├── include/
+│   └── platformio.ini           # or Makefile, CMakeLists.txt
+├── docs/                        # Documentation
+│   ├── architecture.md
+│   ├── pinout.md
+│   └── images/
+├── production/                  # Manufacturing files
+│   ├── gerbers/
+│   ├── bom/
+│   │   └── bom.csv
+│   └── pick-and-place/
+├── .gitignore
+├── LICENSE
+├── CHANGELOG.md
+└── README.md</code></pre>
+
+    <div class="tip">
+      <p><strong>Tip:</strong> Separate <code>hw/</code> and <code>firmware/</code> at the top level. This allows a firmware developer to do a <strong>sparse checkout</strong> without downloading the electronic design files (often bulky).</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 7: Hardware releases -->
+    <h2>Managing <span class="keyword">hardware releases</span></h2>
+
+    <p>In software, a release is a version of the code. In hardware, a release corresponds to a <strong>physical version of the PCB</strong> - once manufactured, you can't modify it with a simple commit.</p>
+
+    <h3>Tag convention for hardware</h3>
+
+    <p>Git tags are perfect for marking PCB versions:</p>
+
+    <pre data-lang="bash"><code># First PCB version sent to manufacturing
+git tag -a v1.0-rev-a -m "PCB v1.0 Rev A - First prototype"
+
+# Bug fixes (missing trace, resistor value)
+git tag -a v1.1-rev-b -m "PCB v1.1 Rev B - Power supply fix"
+
+# Major change (new microcontroller, layout redesign)
+git tag -a v2.0-rev-a -m "PCB v2.0 Rev A - Migration to STM32"</code></pre>
+
+    <p>The <code>vX.Y-rev-Z</code> convention is common in the industry:</p>
+
+    <ul>
+      <li><strong>X</strong> (major): architecture change, new main component</li>
+      <li><strong>Y</strong> (minor): bug fixes, value adjustments</li>
+      <li><strong>rev-Z</strong> (revision): PCB revision letter (a, b, c...)</li>
+    </ul>
+
+    <h3>Manufacturing files in releases</h3>
+
+    <p>Rather than committing Gerbers to the history, attach them to releases:</p>
+
+    <pre data-lang="bash"><code># Generate Gerbers
+kicad-cli pcb export gerbers my-project.kicad_pcb -o production/gerbers/
+
+# Generate drill files
+kicad-cli pcb export drill my-project.kicad_pcb -o production/gerbers/
+
+# Create a manufacturing archive
+cd production/gerbers/
+zip ../../my-project-v1.0-rev-a-gerbers.zip *.gbr *.drl
+cd ../..
+
+# Create the tag and release
+git tag -a v1.0-rev-a -m "PCB v1.0 Rev A"
+git push origin v1.0-rev-a
+
+# On GitHub, create a release and attach the Gerber ZIP
+gh release create v1.0-rev-a my-project-v1.0-rev-a-gerbers.zip \
+  --title "PCB v1.0 Rev A - First prototype" \
+  --notes "First PCB version sent to manufacturing."</code></pre>
+
+    <h3>Hardware changelog</h3>
+
+    <p>A <code>CHANGELOG.md</code> is even more important in hardware than in software - you need to know exactly what changed between two physical revisions:</p>
+
+    <pre data-lang="bash"><code># CHANGELOG.md
+
+## [v1.1-rev-b] - 2026-03-15
+### Fixed
+- Resistor R12: 10k -> 4.7k (incorrect voltage divider)
+- Missing trace between U3 pin 7 and C15
+- J2 footprint corrected (2.0mm pitch instead of 2.54mm)
+
+### Added
+- Diagnostic LED D4 on GPIO PA5
+- Test point TP3 on 3.3V rail
+
+## [v1.0-rev-a] - 2026-03-01
+### Initial version
+- STM32F103 microcontroller
+- 5V USB power supply + 3.3V regulator
+- 4 analog inputs, 2 PWM outputs</code></pre>
+
+    <div class="key-message">
+      <p>In hardware, a Git tag = a physical version. The changelog is vital because it documents the differences between objects that exist in the real world and cannot be "updated" like software.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 8: Best practices -->
+    <h2>Best practices - <span class="keyword">summary</span></h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Practice</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Use KiCad (text format)</strong></td>
+          <td>Readable diffs, no proprietary lock-in</td>
+        </tr>
+        <tr>
+          <td><strong>Prefer OpenSCAD for mechanical parts</strong></td>
+          <td>Source code = perfect diffs</td>
+        </tr>
+        <tr>
+          <td><strong>Install a visual diff tool</strong></td>
+          <td>Essential for schematic review</td>
+        </tr>
+        <tr>
+          <td><strong>Separate hw/, firmware/, docs/</strong></td>
+          <td>Clarity and sparse checkout possible</td>
+        </tr>
+        <tr>
+          <td><strong>Version the BOM as CSV</strong></td>
+          <td>Text = clear diffs on components</td>
+        </tr>
+        <tr>
+          <td><strong>Tags = PCB versions</strong></td>
+          <td>Clear link between code and physical object</td>
+        </tr>
+        <tr>
+          <td><strong>Gerbers in releases, not in history</strong></td>
+          <td>Avoid inflating the repository</td>
+        </tr>
+        <tr>
+          <td><strong>Detailed hardware changelog</strong></td>
+          <td>Know what changed between two physical revisions</td>
+        </tr>
+        <tr>
+          <td><strong>Rigorous .gitignore</strong></td>
+          <td>Don't version caches, backups, local preferences</td>
+        </tr>
+        <tr>
+          <td><strong>Export proprietary 3D models as STEP</strong></td>
+          <td>Open standard format, long-term archiving</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Practical exercise -->
+    <h2>Practical exercise - <span class="keyword">Initialize a hardware repo</span></h2>
+
+    <div class="quest-objective">
+      <p>Create a Git repository for a fictional electronics project (a temperature sensor) with the right structure and best practices:</p>
+      <ol>
+        <li>Create the recommended folder structure</li>
+        <li>Add a KiCad-adapted .gitignore</li>
+        <li>Create a README and a CHANGELOG</li>
+        <li>Simulate a first "schematic" commit and a second "PCB routing" commit</li>
+        <li>Mark the version with a hardware tag</li>
+      </ol>
+    </div>
+
+    <h3>Step 1 - Create the structure</h3>
+
+    <pre data-lang="bash"><code># Create the repository
+mkdir temperature-sensor
+cd temperature-sensor
+git init
+
+# Create the hardware directory tree
+mkdir -p hw/electronics/libs/symbols
+mkdir -p hw/electronics/libs/footprints
+mkdir -p hw/mechanical/exports
+mkdir -p firmware/src
+mkdir -p firmware/include
+mkdir -p docs/images
+mkdir -p production/gerbers
+mkdir -p production/bom
+mkdir -p production/pick-and-place</code></pre>
+
+    <h3>Step 2 - The .gitignore</h3>
+
+    <pre data-lang="bash"><code># Create the .gitignore
+cat > .gitignore << 'EOF'
+# KiCad
+*.kicad_sch-bak
+*.kicad_pcb-bak
+*-backups/
+_autosave-*
+*.kicad_prl
+fp-info-cache
+*.net
+*.lck
+*.wrl
+*~
+\#*\#
+
+# Firmware (PlatformIO)
+.pio/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+EOF
+
+git add .gitignore
+git commit -m "Add KiCad + firmware .gitignore"</code></pre>
+
+    <h3>Step 3 - README and CHANGELOG</h3>
+
+    <pre data-lang="bash"><code># Create the README
+cat > README.md << 'EOF'
+# Temperature Sensor
+
+Electronic board for DS18B20 temperature sensor.
+
+## Structure
+- hw/ - Electronic and mechanical design
+- firmware/ - Embedded code (PlatformIO)
+- docs/ - Documentation
+- production/ - Manufacturing files
+EOF
+
+# Create the CHANGELOG
+cat > CHANGELOG.md << 'EOF'
+# Changelog
+
+## [v1.0-rev-a] - 2026-03-09
+### Initial version
+- Schematic: MCU + DS18B20 sensor + USB
+- PCB: 40x30mm board, 2 layers
+EOF
+
+git add README.md CHANGELOG.md
+git commit -m "Add README and CHANGELOG"</code></pre>
+
+    <h3>Step 4 - Simulate source files</h3>
+
+    <pre data-lang="bash"><code># Simulate a schematic file (a real one would be generated by KiCad)
+cat > hw/electronics/sensor.kicad_sch << 'EOF'
+(kicad_sch (version 20230121) (generator eeschema)
+  (uuid "example-uuid-schema")
+  (paper "A4")
+  (title_block (title "Temperature Sensor") (rev "A"))
+)
+EOF
+
+git add hw/
+git commit -m "Add electronic schematic - DS18B20 sensor"
+
+# Simulate a PCB file
+cat > hw/electronics/sensor.kicad_pcb << 'EOF'
+(kicad_pcb (version 20221018) (generator pcbnew)
+  (general (thickness 1.6))
+  (paper "A4")
+  (layers (0 "F.Cu" signal) (31 "B.Cu" signal))
+)
+EOF
+
+git add hw/electronics/sensor.kicad_pcb
+git commit -m "PCB routing - 2-layer 40x30mm board"</code></pre>
+
+    <h3>Step 5 - Mark the version</h3>
+
+    <pre data-lang="bash"><code># Create the hardware release tag
+git tag -a v1.0-rev-a -m "PCB v1.0 Rev A - First temperature sensor prototype"
+
+# Verify
+git log --oneline --decorate
+# abc1234 (HEAD -> main, tag: v1.0-rev-a) PCB routing - 2-layer 40x30mm board
+# def5678 Add electronic schematic - DS18B20 sensor
+# ghi9012 Add README and CHANGELOG
+# jkl3456 Add KiCad + firmware .gitignore</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Concept summary -->
+    <h2>Concept summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Binary files</strong></td>
+          <td>Non-text files that Git cannot diff line by line</td>
+        </tr>
+        <tr>
+          <td><strong>KiCad</strong></td>
+          <td>Free electronic design software, text format files</td>
+        </tr>
+        <tr>
+          <td><strong>kidiff</strong></td>
+          <td>Visual diff tool for KiCad schematics and PCBs</td>
+        </tr>
+        <tr>
+          <td><strong>Gerbers</strong></td>
+          <td>Manufacturing files sent to the PCB manufacturer</td>
+        </tr>
+        <tr>
+          <td><strong>BOM</strong></td>
+          <td>Bill of Materials - component list (version as CSV)</td>
+        </tr>
+        <tr>
+          <td><strong>FreeCAD (.FCStd)</strong></td>
+          <td>ZIP archive containing XML - binary for Git</td>
+        </tr>
+        <tr>
+          <td><strong>OpenSCAD (.scad)</strong></td>
+          <td>Parametric CAD in code - text format, perfect diffs</td>
+        </tr>
+        <tr>
+          <td><strong>STEP</strong></td>
+          <td>Open standard format for 3D models, ideal for archiving</td>
+        </tr>
+        <tr>
+          <td><strong>Hardware tags</strong></td>
+          <td>vX.Y-rev-Z convention for PCB versions</td>
+        </tr>
+        <tr>
+          <td><strong>Hardware changelog</strong></td>
+          <td>Documentation of changes between physical revisions</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Narrative conclusion -->
+    <div class="narrative">
+      <p>The Master Artificer examines your repository with attention. He nods, satisfied. "You understand now that versioning doesn't stop at code. <strong>Every circuit, every mechanical part, every manufacturing file</strong> deserves to be protected by history."</p>
+      <p>"Artificers who work without Git waste hours searching for 'the right version' of a schematic. They send the wrong Gerbers to the manufacturer. They no longer remember why that resistor value changed. You will know. <strong>Your history is your memory.</strong>"</p>
+      <p>He hands you a brass key engraved with a miniature printed circuit. "Keep it. It's the symbol of the Versioning Artificers. You've earned your place in the workshop."</p>
+    </div>

@@ -1,0 +1,526 @@
+---
+layout: layouts/quest.njk
+lang: en
+quest_id: quest_20
+quest_number: "20"
+arc: 5
+title: "The Free Paths"
+subtitle: "Decentralization, Radicle, alternatives and the future of Git"
+quest_slug_fr: "20-les-chemins-libres"
+quest_slug_en: "20-the-free-paths"
+permalink: /en/quests/20-the-free-paths/
+---
+
+    <!-- Narrative introduction -->
+    <div class="narrative">
+      <p>The Master Archivist awaits you at dawn, before the great doors of the Citadel. He wears neither his ceremonial robes nor his usual teaching garments. Today, he is dressed in a simple travel cloak, an ancient lantern in hand. Without a word, he opens the doors and beckons you to follow. For the first time since the beginning of your apprenticeship, you leave the walls of the Citadel.</p>
+      <p>Beyond the ramparts, the wild lands stretch as far as the eye can see. No paved roads, no watchtowers, no guilds. Just free paths, traced by those who refuse to follow the imposed routes.</p>
+      <p>"Look around you carefully. Here, <strong>no guild governs</strong>. No central Forge, no single authority. The archivists who live in these lands have chosen another path - <strong>the free path</strong>. They share their chronicles directly with each other, as equals, without intermediaries. This is the last lesson I have to teach you. And it may be <strong>the most important of all</strong>."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 1: Limits of centralization -->
+    <h2>The limits of the <span class="keyword">centralized world</span></h2>
+
+    <p>Throughout your journey, you have used platforms like GitHub, GitLab, Bitbucket. These forges are powerful, but they have a fundamental flaw: <strong>they are centralized</strong>.</p>
+
+    <h3>The single point of failure</h3>
+
+    <p>When GitHub goes down - and it happens - millions of developers worldwide find themselves blocked. No more push, no more pull, no more CI/CD. Work stops.</p>
+
+    <p>This is called a <span class="keyword">Single Point of Failure</span>. The entire infrastructure depends on a single place. If that place goes down, everything goes down.</p>
+
+    <h3>Corporate control</h3>
+
+    <p>GitHub has belonged to Microsoft since 2018. GitLab is a publicly traded company. These platforms can:</p>
+
+    <ul>
+      <li><strong>Change their terms of service</strong> overnight</li>
+      <li><strong>Raise prices</strong> or remove free features</li>
+      <li><strong>Delete repositories</strong> for political, legal or commercial reasons</li>
+      <li><strong>Restrict access</strong> to certain countries (economic sanctions)</li>
+    </ul>
+
+    <h3>Vendor lock-in</h3>
+
+    <p>You use GitHub Actions? GitHub Pages? GitHub Packages? The more platform-specific services you use, the more you are <strong>locked in</strong>. Migration becomes increasingly difficult.</p>
+
+    <div class="narrative">
+      <p>"The great guilds offer protection and comfort. But at what price? <strong>Whoever entrusts all their chronicles to a single guild depends entirely on its goodwill.</strong> And guilds are not eternal."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 2: The irony of Git -->
+    <h2>The irony of <span class="keyword">Git</span> - a distributed tool used in a centralized way</h2>
+
+    <p>Here is something fascinating: <strong>Git was designed to be distributed</strong>. Linus Torvalds created it in 2005 precisely to avoid depending on a central server (after the breakup with BitKeeper).</p>
+
+    <p>In Git, every clone is a complete repository. Every developer has the entire history. In theory, there is no "main server" - just peers synchronizing their copies.</p>
+
+    <p>And yet, what did we do? We <strong>re-centralized</strong> the entire system around GitHub. The <code>origin</code> became the single source of truth. Pull Requests exist only on the platform. Issues, wikis, CI - everything is on a central server.</p>
+
+    <pre data-lang="bash"><code>What Git allows:              What we do in practice:
+
+  Alice <-> Bob                  Alice -> GitHub <- Bob
+    |         |                            |
+  Carol <-> Dave                        Carol
+                                           |
+  (peer-to-peer)                         Dave
+
+                                 (centralized star)</code></pre>
+
+    <p>It's like having a car capable of flying, but only using it to park.</p>
+
+    <div class="narrative">
+      <p>"Git was <strong>born free</strong>. It was designed so that every archivist would be the equal of any other. But the great guilds turned this free tool into <strong>a system of dependence</strong>. It's not Git's fault - it's ours."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 3: Radicle -->
+    <h2><span class="keyword">Radicle</span> - peer-to-peer collaboration</h2>
+
+    <p><strong>Radicle</strong> is a code collaboration protocol that works peer-to-peer. No central server, no account to create, no company controlling the infrastructure.</p>
+
+    <h3>How it works</h3>
+
+    <p>Radicle is <strong>built on Git</strong>. It's not a replacement for Git, it's a collaboration layer that uses Git as its foundation:</p>
+
+    <ul>
+      <li><strong>No central server</strong>: repositories are shared directly between peers</li>
+      <li><strong>Cryptographic identity</strong>: no username/password. You are identified by a cryptographic key (like SSH, but for your identity)</li>
+      <li><strong>Patches instead of Pull Requests</strong>: contributions are made through "patches" that are proposed, discussed and merged peer to peer</li>
+      <li><strong>Seeds</strong>: nodes that stay online to improve availability (like "seeds" that keep data accessible)</li>
+    </ul>
+
+    <h3>Basic commands</h3>
+
+    <pre data-lang="bash"><code># Initialize a Radicle project in an existing Git repo
+rad init
+
+# Publish your repo to the network
+rad push
+
+# Retrieve a project from the network
+rad clone rad:&lt;project-identifier&gt;
+
+# Synchronize with peers
+rad sync
+
+# Propose a patch (equivalent of a Pull Request)
+rad patch create
+
+# List pending patches
+rad patch list</code></pre>
+
+    <h3>What changes compared to GitHub</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>GitHub</th>
+          <th>Radicle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Hosting</strong></td>
+          <td>Microsoft's servers</td>
+          <td>Peer-to-peer (no central server)</td>
+        </tr>
+        <tr>
+          <td><strong>Identity</strong></td>
+          <td>User account</td>
+          <td>Cryptographic key</td>
+        </tr>
+        <tr>
+          <td><strong>Contributions</strong></td>
+          <td>Pull Requests</td>
+          <td>Patches</td>
+        </tr>
+        <tr>
+          <td><strong>Availability</strong></td>
+          <td>Depends on GitHub</td>
+          <td>Depends on peers and seeds</td>
+        </tr>
+        <tr>
+          <td><strong>Censorship</strong></td>
+          <td>Possible (the company controls)</td>
+          <td>Very difficult (decentralized)</td>
+        </tr>
+        <tr>
+          <td><strong>Cost</strong></td>
+          <td>Free with limits / paid</td>
+          <td>Entirely free and open</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>The current state of Radicle</h3>
+
+    <p>Let's be honest: Radicle is still young. The community is small but passionate. The interface is not as polished as GitHub. Some features are still missing.</p>
+
+    <p>But the idea is powerful. And like every movement that starts small - Linux, Git itself, the Web - sometimes a determined community is all it takes to change the world.</p>
+
+    <div class="narrative">
+      <p>"Radicle is like the first villages beyond the walls. Small, imperfect, but <strong>free</strong>. They need no one's permission to exist. And one day, who knows - perhaps these villages will become cities greater than the ones we know."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 4: Other alternatives -->
+    <h2>Other <span class="keyword">alternative paths</span></h2>
+
+    <p>Radicle is not the only alternative. Other projects explore different philosophies:</p>
+
+    <h3>Forgejo / Gitea - Lightweight self-hosting</h3>
+
+    <p><strong>Forgejo</strong> (community fork of Gitea) is a forge you can host yourself on a simple server. Interface similar to GitHub, lightweight, fast, and entirely under your control.</p>
+
+    <ul>
+      <li><strong>Philosophy</strong>: "your code, your server, your rules"</li>
+      <li><strong>Advantage</strong>: compatible with GitHub workflows (including Actions via Forgejo Actions)</li>
+      <li><strong>Ideal for</strong>: teams that want GitHub's comfort without the dependence</li>
+    </ul>
+
+    <h3>SourceHut - Radical minimalism</h3>
+
+    <p><strong>SourceHut</strong> (sr.ht) is a minimalist forge created by Drew DeVault. No mandatory JavaScript, email-based workflow (patches by email, like the Linux kernel).</p>
+
+    <ul>
+      <li><strong>Philosophy</strong>: "the Web should be simple"</li>
+      <li><strong>Advantage</strong>: fast, accessible, privacy-respecting</li>
+      <li><strong>Ideal for</strong>: developers who prefer the command line and email</li>
+    </ul>
+
+    <h3>Fossil - The integrated alternative</h3>
+
+    <p><strong>Fossil</strong> is not based on Git - it's a completely different version control system, created by Richard Hipp (the creator of SQLite). It natively includes a wiki, a ticket system, and a forum.</p>
+
+    <ul>
+      <li><strong>Philosophy</strong>: "one tool for everything"</li>
+      <li><strong>Advantage</strong>: a single binary, everything is integrated, no external services needed</li>
+      <li><strong>Ideal for</strong>: small projects that want a complete and self-contained tool</li>
+    </ul>
+
+    <h3>Software Heritage - The universal archive</h3>
+
+    <p><strong>Software Heritage</strong> is a project by the INRIA foundation that archives all of humanity's public source code. Its goal is not collaboration but <strong>preservation</strong> - ensuring that code never disappears.</p>
+
+    <div class="narrative">
+      <p>"There are as many paths as there are archivists. Some prefer the solitude of their own forge, others the minimalism of scrolls and mail. Others still create <strong>eternal libraries</strong> that will outlive the guilds themselves. Every path has its value."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 5: The future -->
+    <h2>The future of <span class="keyword">version control</span></h2>
+
+    <p>The world of version control doesn't stop where we are. Here are the trends shaping the future:</p>
+
+    <h3>Artificial intelligence in development</h3>
+
+    <p>AI tools are already transforming the way we write and review code:</p>
+
+    <ul>
+      <li><strong>Code assistants</strong> (Copilot, Claude, etc.): real-time code generation and suggestions</li>
+      <li><strong>Automated review</strong>: AIs that analyze Pull Requests and suggest improvements</li>
+      <li><strong>Conflict resolution</strong>: AI could one day help resolve complex merge conflicts</li>
+      <li><strong>Test generation</strong>: automatically creating tests from code</li>
+    </ul>
+
+    <h3>Ever-larger repositories</h3>
+
+    <p>Git is evolving to handle increasingly massive projects:</p>
+
+    <ul>
+      <li><strong>Git LFS</strong> (<em>Large File Storage</em>): store large files outside the repository</li>
+      <li><strong>Partial clone</strong>: clone a repository without downloading the entire history</li>
+      <li><strong>Sparse checkout</strong>: retrieve only the folders you need</li>
+      <li><span class="git-cmd">git maintenance</span>: automatic optimization tasks to keep large repos performant</li>
+    </ul>
+
+    <pre data-lang="bash"><code># Partial clone - only download objects when needed
+git clone --filter=blob:none &lt;url&gt;
+
+# Sparse checkout - retrieve only certain folders
+git sparse-checkout init
+git sparse-checkout set src/ docs/
+
+# Automatic maintenance
+git maintenance start</code></pre>
+
+    <h3>The Monorepo vs Polyrepo debate</h3>
+
+    <p>A great debate stirs the development world:</p>
+
+    <ul>
+      <li><strong>Monorepo</strong>: all the company's code in a single giant repository (Google, Meta, Microsoft do this)</li>
+      <li><strong>Polyrepo</strong>: one repository per project/service (the majority of companies)</li>
+    </ul>
+
+    <p>Each approach has its strengths. The monorepo simplifies code sharing and cross-cutting refactors. The polyrepo offers independence and simplicity.</p>
+
+    <h3>GitOps - Infrastructure driven by Git</h3>
+
+    <p><span class="keyword">GitOps</span> is a philosophy where all infrastructure is described in files versioned with Git. Modifying infrastructure means making a commit. Deploying means merging.</p>
+
+    <ul>
+      <li>The Git repository becomes <strong>the source of truth</strong> for infrastructure</li>
+      <li>Deployments are <strong>automatic</strong> and <strong>auditable</strong></li>
+      <li>Rollbacks are as simple as a <span class="git-cmd">git revert</span></li>
+    </ul>
+
+    <div class="narrative">
+      <p>"The world never stops evolving. New forges will appear, new philosophies will be born. But the foundations you have learned - <strong>the commit, the branch, the merge, the history</strong> - these foundations are eternal. They will outlive all trends and all guilds."</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Section 6: Retrospective -->
+    <h2>Retrospective - <span class="keyword">Your complete journey</span></h2>
+
+    <p>Take a moment to measure how far you've come. You arrived at this Citadel not knowing what a commit was. Look where you are now.</p>
+
+    <h3>Arc 1 - The Versioner's Foundations</h3>
+
+    <p>You learned the basics of Git - the foundations upon which everything rests:</p>
+
+    <ul>
+      <li><span class="git-cmd">git init</span>, <span class="git-cmd">git add</span>, <span class="git-cmd">git commit</span> - create and record history</li>
+      <li><span class="git-cmd">git status</span>, <span class="git-cmd">git log</span>, <span class="git-cmd">git diff</span> - observe and understand history</li>
+      <li><span class="git-cmd">git clone</span> - retrieve another's history</li>
+      <li>The <code>.gitignore</code> file - know what should not be archived</li>
+    </ul>
+
+    <h3>Arc 2 - The Collaborator's Paths</h3>
+
+    <p>You learned to work with others:</p>
+
+    <ul>
+      <li><span class="git-cmd">git branch</span>, <span class="git-cmd">git switch</span>, <span class="git-cmd">git merge</span> - create and merge branches</li>
+      <li><span class="git-cmd">git rebase</span> - rewrite history cleanly</li>
+      <li><span class="git-cmd">git remote</span>, <span class="git-cmd">git push</span>, <span class="git-cmd">git pull</span> - synchronize with the world</li>
+      <li>Pull Requests and code review - collaborate with rigor</li>
+    </ul>
+
+    <h3>Arc 3 - The Advanced Arts</h3>
+
+    <p>You mastered advanced techniques:</p>
+
+    <ul>
+      <li><span class="git-cmd">git stash</span> - set aside work in progress</li>
+      <li><span class="git-cmd">git bisect</span> - track down a bug through history</li>
+      <li><span class="git-cmd">git blame</span> - find the author of each line</li>
+      <li><span class="git-cmd">git cherry-pick</span> - pick a specific commit</li>
+      <li><span class="git-cmd">git tag</span> - mark important versions</li>
+      <li>Git hooks - automate checks</li>
+    </ul>
+
+    <h3>Arc 4 - The Automated Forges</h3>
+
+    <p>You discovered automation:</p>
+
+    <ul>
+      <li>Continuous Integration (CI) - automatically test on every push</li>
+      <li>Continuous Deployment (CD) - automatically deploy to production</li>
+      <li>GitHub Actions - write automation workflows</li>
+      <li>The other forges - GitLab CI, Bitbucket Pipelines, Jenkins</li>
+    </ul>
+
+    <h3>Arc 5 - Beyond the Guilds</h3>
+
+    <p>And now, you have seen beyond:</p>
+
+    <ul>
+      <li>The limits of centralization</li>
+      <li>The irony of Git used in a centralized way</li>
+      <li>Radicle and peer-to-peer collaboration</li>
+      <li>Alternatives and the future of version control</li>
+    </ul>
+
+    <div class="key-message">
+      <p>Twenty quests. Five arcs. Dozens of commands. Hundreds of concepts. And yet, <strong>it all comes down to a single idea</strong>: capturing the history of code so nothing is ever lost. It's simple. It's beautiful. And now, you have mastered it.</p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Final exercise -->
+    <h2>Final exercise - <span class="keyword">My journey</span></h2>
+
+    <div class="quest-objective">
+      <p>For your final trial, create a repository that contains your personal reflection on everything you have learned:</p>
+      <ol>
+        <li>Create a <code>my-journey</code> repository</li>
+        <li>Write a <code>my-journey.txt</code> file with your personal reflection</li>
+        <li>Commit with a meaningful message</li>
+        <li>Tag it with <code>v1.0.0</code></li>
+        <li>Run the verification to receive your title of Master Versioner</li>
+      </ol>
+    </div>
+
+    <div class="narrative">
+      <p>"For your final trial, I am not asking you to solve a technical problem. I am asking you something harder: <strong>step back and reflect on your journey</strong>. Create a repository that contains your personal reflection on everything you have learned. This is your first act as a Master Versioner."</p>
+    </div>
+
+    <h3>Step 1 - Create the repository</h3>
+
+    <pre data-lang="bash"><code>mkdir my-journey
+cd my-journey
+git init</code></pre>
+
+    <h3>Step 2 - Write your reflection</h3>
+
+    <p>Create a <code>my-journey.txt</code> file and write your personal reflection. There is no imposed format. Here are some ideas to inspire you:</p>
+
+    <ul>
+      <li>What surprised you the most about Git?</li>
+      <li>Which command or concept did you find the most difficult?</li>
+      <li>How do you plan to use Git in your future projects?</li>
+      <li>What do you take away from this adventure?</li>
+    </ul>
+
+    <p>This is your text. Write what you want, in your own words.</p>
+
+    <h3>Step 3 - Commit with a meaningful message</h3>
+
+    <pre data-lang="bash"><code>git add my-journey.txt
+git commit -m "My journey as a Master Versioner"</code></pre>
+
+    <p>Choose a commit message that has meaning for you. This is your first commit as a Master Versioner - it deserves a beautiful message.</p>
+
+    <h3>Step 4 - Tag your version</h3>
+
+    <pre data-lang="bash"><code>git tag -a v1.0.0 -m "My first version as a Master Versioner"</code></pre>
+
+    <p>This tag marks the beginning of your new chapter. Version <code>v1.0.0</code> - stable, complete, ready.</p>
+
+    <h3>Step 5 - Run the verification</h3>
+
+    <p><strong>Bash</strong> (Linux / macOS / Git Bash on Windows):</p>
+
+    <pre data-lang="bash"><code>bash verifier.sh</code></pre>
+
+    <p><strong>PowerShell</strong> (Windows):</p>
+
+    <pre data-lang="powershell"><code>.\verifier.ps1</code></pre>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Final ceremony -->
+    <h2>The final ceremony</h2>
+
+    <div class="narrative">
+      <p>The sun sets over the wild lands. The Master Archivist stops at the top of a hill overlooking the entire kingdom. From there, you can see the Citadel in the distance, the Forge towers, the roads between the guilds, and the free paths that wind toward the horizon.</p>
+      <p>He turns to you. His gaze is different - no longer that of a master to his student, but that of an equal to his peer.</p>
+    </div>
+
+    <div class="narrative">
+      <p>"The day you arrived at the Citadel, you didn't even know what a commit was. You looked at scrolls without understanding the symbols. You were afraid of losing your work, afraid of breaking something, afraid of the unknown."</p>
+      <p>"And look at you now."</p>
+      <p>"You know how to <strong>create chronicles</strong> and protect them for eternity. You know how to <strong>weave branches</strong> and merge them with grace. You know how to <strong>travel through time</strong>, track errors through history, and resurrect the past when the present shatters."</p>
+      <p>"You know how to <strong>collaborate with other archivists</strong>, resolve conflicts, and build together works greater than what a single mind could imagine."</p>
+      <p>"You know how to <strong>forge automated pipelines</strong> that test, verify and deploy without rest, day and night, without ever failing."</p>
+      <p>"And today, you have seen <strong>beyond the walls</strong>. You know that guilds are not eternal, that freedom is a choice, and that the future belongs to those who build it."</p>
+    </div>
+
+    <div class="narrative">
+      <p>The Master Archivist slowly unfastens the badge he wears on his left shoulder - a quill intertwined with a tree whose branches form an infinite network. It is the symbol of the Master Versioners, worn by the guardians of the kingdom's chronicles for generations.</p>
+      <p>He places it on your shoulder.</p>
+    </div>
+
+    <div class="narrative">
+      <p>"I name you <strong>Master Versioner</strong> - guardian of the kingdom's chronicles, master of branches and merges, weaver of time, forger of eternal pipelines, and walker of the free paths."</p>
+      <p>"This title is not given to you. You <strong>earned</strong> it. Every commit, every branch, every merge, every resolved conflict - you are the one who traced this path."</p>
+      <p>"But remember: a Master Versioner is never at the end of their apprenticeship. The world evolves, tools change, new philosophies are born. <strong>Your curiosity is your most powerful weapon.</strong> Never stop learning. Never stop exploring."</p>
+      <p>"Now, go. The kingdom needs you. Your own chronicles await. And they will be magnificent."</p>
+    </div>
+
+    <div class="narrative">
+      <p>The Master Archivist smiles at you one last time, then descends alone toward the Citadel, his lantern swaying gently in the twilight.</p>
+      <p>You stay a moment at the top of the hill. Before you, the kingdom stretches as far as the eye can see - the guilds, the forges, the free paths, and beyond, lands that no one has yet explored.</p>
+      <p>You breathe deeply. You are ready.</p>
+      <p><strong>The Versioner's Chronicles are just beginning.</strong></p>
+    </div>
+
+    <div class="fancy-separator"></div>
+
+    <!-- Summary -->
+    <h2>Concept summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Centralization</strong></td>
+          <td>Dependence on a single server/platform</td>
+        </tr>
+        <tr>
+          <td><strong>Decentralization</strong></td>
+          <td>Architecture without a central point of control</td>
+        </tr>
+        <tr>
+          <td><strong>Radicle</strong></td>
+          <td>Peer-to-peer collaboration protocol on Git</td>
+        </tr>
+        <tr>
+          <td><strong>Patches</strong></td>
+          <td>Decentralized contributions (alternative to Pull Requests)</td>
+        </tr>
+        <tr>
+          <td><strong>Seeds</strong></td>
+          <td>Radicle nodes that improve availability</td>
+        </tr>
+        <tr>
+          <td><strong>Forgejo / Gitea</strong></td>
+          <td>Lightweight self-hosted forges</td>
+        </tr>
+        <tr>
+          <td><strong>SourceHut</strong></td>
+          <td>Minimalist email-based forge</td>
+        </tr>
+        <tr>
+          <td><strong>Fossil</strong></td>
+          <td>Version control system with built-in wiki/tickets</td>
+        </tr>
+        <tr>
+          <td><strong>Software Heritage</strong></td>
+          <td>Universal source code archive</td>
+        </tr>
+        <tr>
+          <td><strong>Git LFS</strong></td>
+          <td>Managing large files in Git</td>
+        </tr>
+        <tr>
+          <td><strong>Partial clone</strong></td>
+          <td>Clone without the full history</td>
+        </tr>
+        <tr>
+          <td><strong>Sparse checkout</strong></td>
+          <td>Retrieve only certain folders</td>
+        </tr>
+        <tr>
+          <td><strong>GitOps</strong></td>
+          <td>Infrastructure managed via Git</td>
+        </tr>
+        <tr>
+          <td><strong>Monorepo</strong></td>
+          <td>All code in a single repository</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fancy-separator"></div>
+
+    <div class="key-message">
+      <p><em>End of the Versioner's Chronicles.</em></p>
+      <p>Thank you for completing these twenty quests. May your commits be clear, your branches clean, and your merges conflict-free.</p>
+    </div>

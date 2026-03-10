@@ -1,0 +1,180 @@
+---
+layout: layouts/cheatsheet.njk
+lang: en
+title: "Git Essentials"
+cheatsheet_slug_fr: "git-essentiel"
+cheatsheet_slug_en: "git-essentials"
+permalink: /en/cheatsheets/git-essentials/
+---
+
+<div class="cheatsheet">
+
+      <section>
+        <h2>Configuration</h2>
+<pre data-lang="bash"><code>git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+git config --global core.editor nano
+git config --global init.defaultBranch main
+git config --list --show-origin   # see all config
+git config --local user.email "pro@work.com"  # per-repo config</code></pre>
+        <h3>Config levels</h3>
+        <p><code>--system</code> (machine) &lt; <code>--global</code> (user) &lt; <code>--local</code> (repo)</p>
+        <h3>Useful aliases</h3>
+<pre data-lang="bash"><code>git config --global alias.st "status -s"
+git config --global alias.lg "log --oneline --graph --all"
+git config --global alias.co "switch"</code></pre>
+      </section>
+
+      <section>
+        <h2>Create a repository</h2>
+<pre data-lang="bash"><code>git init                    # new repo in current folder
+git init my-project         # create folder + init
+git clone URL               # copy a remote repo
+git clone URL my-folder     # clone into a specific folder
+git clone --depth 1 URL     # shallow clone (last commit only)
+git clone --bare URL        # bare repo (no working tree)</code></pre>
+      </section>
+
+      <section>
+        <h2>Daily workflow</h2>
+<pre data-lang="bash"><code># Check status
+git status              # full status
+git status -s           # compact status (M/A/??)
+
+# Add to staging
+git add file.txt        # a single file
+git add .               # entire current folder
+git add -p              # add in chunks (interactive)
+git add *.js            # by pattern
+
+# Commit
+git commit -m "message"       # commit with message
+git commit -am "message"      # add tracked + commit
+git commit --amend            # modify last commit
+git commit --amend --no-edit  # amend without changing message
+
+# Differences
+git diff                # unstaged changes
+git diff --staged       # staged changes (ready to commit)
+git diff HEAD           # all changes vs last commit
+git diff branch1..branch2  # between two branches</code></pre>
+      </section>
+
+      <section>
+        <h2>History</h2>
+<pre data-lang="bash"><code>git log                        # full history
+git log --oneline              # one line per commit
+git log --oneline --graph --all  # graph of all branches
+git log -n 5                   # last 5 commits
+git log --since="2 weeks ago"  # since 2 weeks ago
+git log --author="Name"        # by author
+git log -- file.txt            # history of a file
+git log -p                     # with diffs
+git log --stat                 # with stats (+/-)
+git show abc1234               # details of a commit</code></pre>
+      </section>
+
+      <section>
+        <h2>Branches</h2>
+<pre data-lang="bash"><code># List
+git branch              # local branches
+git branch -a           # all (local + remote)
+git branch -v           # with last commit
+
+# Create / switch
+git switch my-branch         # switch branch
+git switch -c new-branch     # create + switch
+git switch -                 # go back to previous branch
+
+# Rename / delete
+git branch -m old new         # rename
+git branch -d my-branch       # delete (if merged)
+git branch -D my-branch       # delete (force)
+
+# Merge
+git merge my-branch            # merge into current branch
+git merge --no-ff my-branch    # force a merge commit
+git merge --squash my-branch   # all in a single commit
+git merge --abort              # abort a merge in progress</code></pre>
+      </section>
+
+      <section>
+        <h2>Remote (remote repository)</h2>
+<pre data-lang="bash"><code># Configure
+git remote -v                     # see remotes
+git remote add origin URL         # add a remote
+git remote rename origin upstream # rename
+git remote remove origin          # remove
+
+# Send
+git push -u origin main           # first push + tracking
+git push                          # push (if tracking set up)
+git push --tags                   # send tags
+git push --force-with-lease       # force (safe)
+
+# Receive
+git fetch                  # download without merging
+git fetch --all            # from all remotes
+git fetch --prune          # clean deleted refs
+git pull                   # fetch + merge
+git pull --rebase          # fetch + rebase (linear history)</code></pre>
+      </section>
+
+      <section>
+        <h2>Undo / go back</h2>
+<pre data-lang="bash"><code># Files (working tree)
+git restore file.txt            # undo unstaged changes
+git restore .                   # undo everything
+
+# Staging
+git restore --staged file       # unstage a file
+git restore --staged .          # unstage everything
+
+# Commits
+git reset --soft HEAD~1    # undo commit, keep staging
+git reset --mixed HEAD~1   # undo commit + staging (default)
+git reset --hard HEAD~1    # undo everything (destructive!)
+
+# Create a reverting commit (safe)
+git revert abc1234         # undo a commit without losing history
+git revert HEAD            # undo the last commit</code></pre>
+      </section>
+
+      <section>
+        <h2>.gitignore - Common patterns</h2>
+<pre data-lang="bash"><code># Generic files
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+vendor/
+__pycache__/
+*.pyc
+.venv/
+
+# Build / compilation
+build/
+dist/
+bin/
+obj/
+*.o
+*.exe
+
+# Secrets / local config
+.env
+.env.local
+*.key
+credentials.json
+
+# IDE
+.vscode/
+.idea/
+*.swp</code></pre>
+        <p><code>git check-ignore -v file</code> - check why a file is ignored</p>
+      </section>
+
+    </div>
