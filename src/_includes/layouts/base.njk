@@ -18,6 +18,58 @@
   <link rel="alternate" hreflang="en" href="/en/">
   {% endif %}
   <link rel="alternate" hreflang="x-default" href="/fr/">
+  <link rel="prefetch" href="/ai.txt">
+  <link rel="prefetch" href="/llms.txt">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta name="theme-color" content="#8b4513">
+  {% set meta_desc_fr = subtitle | default('Apprenez Git à travers une aventure heroic fantasy. Un cours gamifié et bilingue avec 23 quêtes, des cheatsheets et des exercices pratiques. 100% gratuit et open source.') %}
+  {% set meta_desc_en = subtitle | default('Learn Git through an epic fantasy adventure. A gamified, bilingual course with 23 quests, cheatsheets and hands-on exercises. 100% free and open source.') %}
+  {% set meta_desc = meta_desc_fr if lang == "fr" else meta_desc_en %}
+  {% set meta_title = title + " - " + ("Les Chroniques du Versionneur" if lang == "fr" else "The Git Chronicles") %}
+  {% set site_name = "Les Chroniques du Versionneur" if lang == "fr" else "The Git Chronicles" %}
+  <meta name="description" content="{{ meta_desc }}">
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="{{ 'fr_FR' if lang == 'fr' else 'en_US' }}">
+  <meta property="og:locale:alternate" content="{{ 'en_US' if lang == 'fr' else 'fr_FR' }}">
+  <meta property="og:site_name" content="{{ site_name }}">
+  <meta property="og:title" content="{{ meta_title }}">
+  <meta property="og:description" content="{{ meta_desc }}">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  <meta property="og:image" content="{{ site.url }}/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ site_name }}">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ meta_title }}">
+  <meta name="twitter:description" content="{{ meta_desc }}">
+  <meta name="twitter:image" content="{{ site.url }}/assets/og-image.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "{% if lang == 'fr' %}Les Chroniques du Versionneur{% else %}The Git Chronicles{% endif %}",
+    "description": "{% if lang == 'fr' %}Un cours Git interactif et gamifié avec un récit heroic fantasy. 23 quêtes, de git init au CI/CD. Bilingue FR/EN, gratuit et open source.{% else %}An interactive, gamified Git course with a fantasy narrative. 23 quests from git init to CI/CD. Bilingual FR/EN, free and open source.{% endif %}",
+    "url": "{{ site.url }}/{{ lang }}/",
+    "provider": {
+      "@type": "Person",
+      "name": "Dxsk",
+      "url": "https://github.com/Dxsk"
+    },
+    "inLanguage": ["fr", "en"],
+    "isAccessibleForFree": true,
+    "license": "https://opensource.org/licenses/MIT",
+    "teaches": ["Git", "Version Control", "CI/CD", "GitHub", "GitLab", "Git LFS", "Radicle"],
+    "numberOfCredits": 23,
+    "hasCourseInstance": {
+      "@type": "CourseInstance",
+      "courseMode": "online",
+      "courseWorkload": "23 quests + 6 bonus quests"
+    }
+  }
+  </script>
 </head>
 <body>
   <div class="wip-banner">
