@@ -70,14 +70,14 @@ permalink: /en/quests/04-the-archive-is-everywhere/
 
       <p>Since Git is entirely <span class="keyword">local</span>, you can <strong><span class="highlight">clone a repo without any internet connection</span></strong>. Just point to a folder on your own machine:</p>
 
-      <pre data-lang="bash"><code># Depuis le dossier parent qui contient mon-archive/
+      <pre data-lang="bash"><code># From the parent folder containing mon-archive/
 git clone ./mon-archive ./ma-copie
 
-# Vérifie que l'historique est identique
+# Verify that the history is identical
 cd ma-copie
 git log --oneline</code></pre>
 
-      <pre data-lang="powershell"><code># Depuis le dossier parent qui contient mon-archive\
+      <pre data-lang="powershell"><code># From the parent folder containing mon-archive\
 git clone .\mon-archive .\ma-copie
 
 cd ma-copie
@@ -94,18 +94,18 @@ git log --oneline</code></pre>
 
       <p>A <strong><span class="keyword">bare repo</span></strong> is a repo that contains <strong>only</strong> the contents of <span class="keyword"><code>.git/</code></span> - no working files. It's the format used by <strong>Git servers</strong>.</p>
 
-      <pre data-lang="bash"><code># Créer un bare repo
+      <pre data-lang="bash"><code># Create a bare repo
 git init --bare ./archive-centrale.git
 
-# Ajouter comme remote et pousser
+# Add as remote and push
 cd mon-archive
 git remote add origine ../archive-centrale.git
 git push origine main</code></pre>
 
-      <pre data-lang="powershell"><code># Créer un bare repo
+      <pre data-lang="powershell"><code># Create a bare repo
 git init --bare .\archive-centrale.git
 
-# Ajouter comme remote et pousser
+# Add as remote and push
 cd mon-archive
 git remote add origine ..\archive-centrale.git
 git push origine main</code></pre>
@@ -232,9 +232,9 @@ git push origine main</code></pre>
 
       <pre data-lang="bash"><code>mkdir mon-archive && cd mon-archive
 git init
-echo "Bienvenue dans l'Archive" > README.md
+echo "Welcome to the Archive" > README.md
 git add README.md
-git commit -m "Premier parchemin"
+git commit -m "First parchment"
 cd ..</code></pre>
 
       <h3>The commands</h3>
@@ -245,16 +245,16 @@ git clone ./mon-archive ./ma-copie
 # 2. Bare repo
 git init --bare ./archive-centrale.git
 
-# 3. Ajouter la remote et pousser
+# 3. Add the remote and push
 cd mon-archive
 git remote add origine ../archive-centrale.git
 git push origine main
 cd ..
 
-# 4. Clone depuis le bare repo
+# 4. Clone from the bare repo
 git clone ./archive-centrale.git ./clone-depuis-bare
 
-# 5. Vérifier l'historique
+# 5. Verify the history
 cd mon-archive && git log --oneline && cd ..
 cd ma-copie && git log --oneline && cd ..
 cd clone-depuis-bare && git log --oneline && cd ..</code></pre>

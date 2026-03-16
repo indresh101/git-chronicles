@@ -37,7 +37,7 @@ git init</code></pre>
     <p>You can verify that the <code>.git/</code> folder was created:</p>
 
     <pre data-lang="bash"><code>ls -la
-# Tu verras un dossier .git/</code></pre>
+# You will see a .git/ folder</code></pre>
 
     <div class="tip">
       <p>Never manually touch the contents of the <code>.git/</code> folder. It's Git's vault - let it manage its own affairs.</p>
@@ -70,13 +70,13 @@ git init</code></pre>
 
     <p>This command moves a file from the <span class="keyword">Working Directory</span> to the <span class="keyword">Staging Area</span> (the Preparation Hall, seen in quest 02). It's the preparation step before the final sealing.</p>
 
-    <pre data-lang="bash"><code># Ajouter un fichier spécifique
+    <pre data-lang="bash"><code># Add a specific file
 git add mission.txt
 
-# Ajouter plusieurs fichiers
-git add fichier1.txt fichier2.txt
+# Add multiple files
+git add file1.txt file2.txt
 
-# Ajouter TOUS les fichiers modifiés ou nouveaux
+# Add ALL modified or new files
 git add .</code></pre>
 
     <p>After a <span class="git-cmd">git add</span>, run a <span class="git-cmd">git status</span>: the file should switch from red to green.</p>
@@ -92,11 +92,11 @@ git add .</code></pre>
 
     <p>The <span class="keyword">commit</span> is the act of sealing: you take everything in the <span class="keyword">Staging Area</span> and permanently archive it in the <span class="keyword">Repository</span> with an explanatory message.</p>
 
-    <pre data-lang="bash"><code>git commit -m "Ajouter le rapport d'observation des frontières nord"</code></pre>
+    <pre data-lang="bash"><code>git commit -m "Add the northern border observation report"</code></pre>
 
     <p>Expected output:</p>
 
-    <pre><code>[main (root-commit) a1b2c3d] Ajouter le rapport d'observation des frontières nord
+    <pre><code>[main (root-commit) a1b2c3d] Add the northern border observation report
  1 file changed, 15 insertions(+)
  create mode 100644 mission.txt</code></pre>
 
@@ -201,8 +201,8 @@ git init</code></pre>
 
     <p>Copy the file <code>parchemins/mission.txt</code> (provided with this quest) into your <code>mon-archive/</code> repository:</p>
 
-    <pre data-lang="bash"><code># Depuis le dossier mon-archive/, copie le fichier mission.txt
-# Adapte le chemin selon l'emplacement de ta quête
+    <pre data-lang="bash"><code># From the mon-archive/ folder, copy the mission.txt file
+# Adjust the path based on your quest location
 cp ../parchemins/mission.txt .</code></pre>
 
     <p>Verify with <span class="git-cmd">git status</span> - the file should appear in <span class="highlight-red">red</span> (untracked).</p>
@@ -215,8 +215,8 @@ cp ../parchemins/mission.txt .</code></pre>
     <p>Add the file to the <span class="keyword">staging</span> area, then seal it:</p>
 
     <pre data-lang="bash"><code>git add mission.txt
-git status          # mission.txt devrait être en VERT maintenant
-git commit -m "Ajouter l'ordre de mission de la Guilde"</code></pre>
+git status          # mission.txt should be GREEN now
+git commit -m "Add the Guild's mission order"</code></pre>
 
     <div class="warning">
       <p>Choose a descriptive <span class="keyword">commit</span> message! No <code>"Initial commit"</code> or <code>"test"</code>. Describe what you're actually doing.</p>
@@ -243,9 +243,9 @@ git commit -m "Ajouter l'ordre de mission de la Guilde"</code></pre>
 
     <p>Run <span class="git-cmd">git status</span> to see the modification, then archive it:</p>
 
-    <pre data-lang="bash"><code>git status          # mission.txt en ROUGE (modifié)
+    <pre data-lang="bash"><code>git status          # mission.txt in RED (modified)
 git add mission.txt
-git commit -m "Compléter le rapport d'observation des frontières"</code></pre>
+git commit -m "Complete the border observation report"</code></pre>
 
     <div class="fancy-separator"></div>
 
@@ -258,8 +258,8 @@ git commit -m "Compléter le rapport d'observation des frontières"</code></pre>
 
     <p>You should see your <strong>two commits</strong>, from newest to oldest:</p>
 
-    <pre><code>b2c3d4e Compléter le rapport d'observation des frontières
-a1b2c3d Ajouter l'ordre de mission de la Guilde</code></pre>
+    <pre><code>b2c3d4e Complete the border observation report
+a1b2c3d Add the Guild's mission order</code></pre>
 
     <div class="fancy-separator"></div>
 

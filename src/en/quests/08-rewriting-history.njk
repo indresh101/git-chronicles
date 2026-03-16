@@ -297,25 +297,25 @@ git init</code></pre>
 
         <p>Create a file <code>registre.txt</code> and make 3 commits:</p>
 
-        <pre data-lang="bash"><code>echo "Jour 1 : Fondation du royaume" > registre.txt
+        <pre data-lang="bash"><code>echo "Day 1: Founding of the kingdom" > registre.txt
 git add registre.txt
-git commit -m "Ajouter l'entrée du Jour 1"
+git commit -m "Add Day 1 entry"
 
-echo "Jour 2 : Alliance avec les elfes" >> registre.txt
+echo "Day 2: Alliance with the elves" >> registre.txt
 git add registre.txt
-git commit -m "Ajouter l'entrée du Jour 2"
+git commit -m "Add Day 2 entry"
 
-echo "Jour 3 : Découverte de la mine d'or" >> registre.txt
+echo "Day 3: Discovery of the gold mine" >> registre.txt
 git add registre.txt
-git commit -m "Ajoouter l'entrée du Jour 3"</code></pre>
+git commit -m "Addd Day 3 entry"</code></pre>
 
-        <p>Oops! The message of the last commit contains a typo: "Ajoouter" instead of "Ajouter".</p>
+        <p>Oops! The message of the last commit contains a typo: "Addd" instead of "Add".</p>
 
         <h3>Step 3 - Fix with <span class="git-cmd">--amend</span></h3>
 
         <p>Fix the last commit message:</p>
 
-        <pre data-lang="bash"><code>git commit --amend -m "Ajouter l'entrée du Jour 3"</code></pre>
+        <pre data-lang="bash"><code>git commit --amend -m "Add Day 3 entry"</code></pre>
 
         <p>Verify with <span class="git-cmd">git log --oneline</span> that the message is corrected.</p>
 
@@ -325,13 +325,13 @@ git commit -m "Ajoouter l'entrée du Jour 3"</code></pre>
 
         <pre data-lang="bash"><code>git checkout -b refonte-archives
 
-echo "Jour 4 : Construction de la forteresse" >> registre.txt
+echo "Day 4: Construction of the fortress" >> registre.txt
 git add registre.txt
-git commit -m "Ajouter l'entrée du Jour 4"
+git commit -m "Add Day 4 entry"
 
-echo "Jour 5 : Traité de paix avec les nains" >> registre.txt
+echo "Day 5: Peace treaty with the dwarves" >> registre.txt
 git add registre.txt
-git commit -m "Ajouter l'entrée du Jour 5"</code></pre>
+git commit -m "Add Day 5 entry"</code></pre>
 
         <h3>Step 5 - Add a commit on main</h3>
 
@@ -339,9 +339,9 @@ git commit -m "Ajouter l'entrée du Jour 5"</code></pre>
 
         <pre data-lang="bash"><code>git checkout main
 
-echo "Annexe : Liste des rois" >> annexes.txt
+echo "Appendix: List of kings" >> annexes.txt
 git add annexes.txt
-git commit -m "Ajouter la liste des rois en annexe"</code></pre>
+git commit -m "Add the list of kings as appendix"</code></pre>
 
         <h3>Step 6 - Rebase the branch</h3>
 

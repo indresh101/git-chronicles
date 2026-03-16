@@ -126,25 +126,25 @@ cd les-lignes-du-temps</code></pre>
 
         <h3>Syntax</h3>
 
-        <pre data-lang="gitignore"><code># Ceci est un commentaire
+        <pre data-lang="gitignore"><code># This is a comment
 
-# Ignorer un fichier précis
+# Ignore a specific file
 debug.log
-secret-du-royaume.txt
+kingdom-secret.txt
 
-# Ignorer tous les fichiers avec une extension donnée
+# Ignore all files with a given extension
 *.log
 *.tmp
 
-# Ignorer un dossier entier (et tout son contenu)
+# Ignore an entire folder (and all its contents)
 __pycache__/
 node_modules/
 
-# Ignorer des fichiers système
+# Ignore system files
 .DS_Store
 Thumbs.db
 
-# Ignorer les fichiers d'environnement (secrets, mots de passe)
+# Ignore environment files (secrets, passwords)
 .env
 .env.local</code></pre>
 
@@ -244,18 +244,18 @@ refactor: Simplify the validation logic</code></pre>
 
         <p>In the <code>les-lignes-du-temps/</code> folder, create a <span class="keyword">.gitignore</span> file with at least these patterns:</p>
 
-        <pre data-lang="gitignore"><code># Fichiers de log
+        <pre data-lang="gitignore"><code># Log files
 *.log
 
-# Fichiers système
+# System files
 .DS_Store
 Thumbs.db
 
-# Cache Python
+# Python cache
 __pycache__/
 
-# Secrets (ne jamais archiver !)
-secret-du-royaume.txt</code></pre>
+# Secrets (never archive!)
+kingdom-secret.txt</code></pre>
 
         <h3>Step 2 - Remove parasitic files from tracking</h3>
 
@@ -265,12 +265,12 @@ secret-du-royaume.txt</code></pre>
 git rm --cached .DS_Store
 git rm --cached Thumbs.db
 git rm --cached -r __pycache__/
-git rm --cached secret-du-royaume.txt</code></pre>
+git rm --cached kingdom-secret.txt</code></pre>
 
         <h3>Step 3 - Commit the cleanup</h3>
 
         <pre data-lang="bash"><code>git add .gitignore
-git commit -m "Ajouter le .gitignore et retirer les fichiers parasites du suivi"</code></pre>
+git commit -m "Add .gitignore and remove unwanted files from tracking"</code></pre>
 
         <p>Notice the message: it's clear, descriptive, and starts with a verb.</p>
 

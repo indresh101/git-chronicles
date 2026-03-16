@@ -374,19 +374,19 @@ git commit -m "Creer le registre des defenses du royaume"</code></pre>
 
     <pre data-lang="bash"><code>echo "" >> defenses.txt
 echo "## Fortifications" >> defenses.txt
-echo "- Renforcer les murailles nord avec de la pierre enchantee" >> defenses.txt
-echo "- Ajouter des tours de guet aux quatre coins" >> defenses.txt
+echo "- Reinforce northern walls with enchanted stone" >> defenses.txt
+echo "- Add watchtowers at all four corners" >> defenses.txt
 git add defenses.txt
-git commit -m "Ajouter les propositions de fortifications"</code></pre>
+git commit -m "Add fortification proposals"</code></pre>
 
     <p>Second commit - add training:</p>
 
     <pre data-lang="bash"><code>echo "" >> defenses.txt
-echo "## Formations" >> defenses.txt
-echo "- Former les gardes au combat magique" >> defenses.txt
-echo "- Etablir des rondes nocturnes doublees" >> defenses.txt
+echo "## Training" >> defenses.txt
+echo "- Train guards in magical combat" >> defenses.txt
+echo "- Establish doubled night patrols" >> defenses.txt
 git add defenses.txt
-git commit -m "Ajouter les propositions de formations"</code></pre>
+git commit -m "Add training proposals"</code></pre>
 
     <h3>Step 4 - Examine the modifications (simulate the review)</h3>
 
@@ -412,7 +412,7 @@ git diff main..proposition/ameliorer-defenses</code></pre>
       <li>It matches what platforms do when they merge a PR</li>
     </ul>
 
-    <pre data-lang="bash"><code>git merge --no-ff proposition/ameliorer-defenses -m "Fusionner la proposition d'amelioration des defenses"</code></pre>
+    <pre data-lang="bash"><code>git merge --no-ff proposition/ameliorer-defenses -m "Merge the defense improvement proposal"</code></pre>
 
     <h3>Step 6 - Delete the merged branch</h3>
 
@@ -424,12 +424,12 @@ git diff main..proposition/ameliorer-defenses</code></pre>
 
     <p>You should see something like:</p>
 
-    <pre data-lang="bash"><code>*   abc1234 Fusionner la proposition d'amelioration des defenses
+    <pre data-lang="bash"><code>*   abc1234 Merge the defense improvement proposal
 |\
-| * def5678 Ajouter les propositions de formations
-| * ghi9012 Ajouter les propositions de fortifications
+| * def5678 Add training proposals
+| * ghi9012 Add fortification proposals
 |/
-* jkl3456 Creer le registre des defenses du royaume</code></pre>
+* jkl3456 Create the kingdom defense registry</code></pre>
 
     <h3>Step 8 - Run the verification</h3>
 
