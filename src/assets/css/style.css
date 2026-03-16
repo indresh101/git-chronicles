@@ -279,6 +279,9 @@ li::marker {
   transition: color var(--transition-fast);
   display: flex;
   align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
 }
 
 .header-github:hover {
@@ -543,9 +546,16 @@ pre[data-lang]::before {
   background: var(--color-parchment-dark);
   border-left: 4px solid var(--color-gold);
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  color: var(--color-brown-medium);
+  color: var(--color-brown-dark);
   font-size: 1.02em;
   line-height: 1.8;
+}
+
+.narrative .keyword {
+  color: var(--color-brown-dark);
+  text-decoration: underline;
+  text-decoration-color: var(--color-gold);
+  text-underline-offset: 2px;
 }
 
 .narrative p:last-child {
@@ -1509,23 +1519,23 @@ tbody tr:hover {
 
 .site-footer a {
   color: var(--color-gold-light);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color var(--transition-fast);
+  text-decoration: underline;
+  text-decoration-color: rgba(232, 212, 139, 0.4);
+  text-underline-offset: 2px;
+  transition: text-decoration-color var(--transition-fast);
 }
 
 .site-footer a:hover {
-  border-bottom-color: var(--color-gold-light);
+  text-decoration-color: var(--color-gold-light);
 }
 
 .footer-thanks {
   font-style: italic;
-  opacity: 0.85;
 }
 
 .footer-license {
-  font-size: 0.75rem;
-  opacity: 0.6;
+  font-size: 0.8rem;
+  color: var(--color-parchment-darker);
   margin-top: var(--spacing-sm) !important;
 }
 
@@ -1736,6 +1746,9 @@ tbody tr:hover {
 
   .site-header .logo {
     font-size: 1.1rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 
   .tip, .warning, .quest-objective, .narrative {
