@@ -163,6 +163,7 @@ unintegrated
 gamified
 dxscloud
 Dxsk
+Andralax
 
 # AI/SEO related terms
 llms
