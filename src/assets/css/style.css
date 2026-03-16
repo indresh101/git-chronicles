@@ -379,7 +379,7 @@ li::marker {
 .sidebar-nav .quest-link.active {
   background: rgba(200, 169, 81, 0.2);
   border-left-color: var(--color-gold);
-  color: var(--color-gold-dark);
+  color: var(--color-brown-dark);
   font-weight: 600;
 }
 
@@ -1379,17 +1379,6 @@ tbody tr:hover {
   text-decoration: none;
 }
 
-
-/* --- Site Footer --- */
-.site-footer {
-  text-align: center;
-  padding: var(--spacing-xl) var(--spacing-lg);
-  border-top: 1px solid var(--color-parchment-dark);
-  color: var(--color-brown-medium);
-  font-size: 0.85rem;
-  margin-top: var(--spacing-2xl);
-}
-
 .site-footer a {
   color: var(--color-gold-dark);
 }
@@ -1505,7 +1494,7 @@ tbody tr:hover {
 
 .site-footer {
   background: var(--color-brown-dark);
-  color: var(--color-parchment-dark);
+  color: var(--color-parchment-light);
   text-align: center;
   padding: var(--spacing-xl) var(--spacing-lg);
   font-size: 0.85rem;
@@ -1535,7 +1524,7 @@ tbody tr:hover {
 
 .footer-license {
   font-size: 0.8rem;
-  color: var(--color-parchment-darker);
+  color: var(--color-parchment);
   margin-top: var(--spacing-sm) !important;
 }
 
